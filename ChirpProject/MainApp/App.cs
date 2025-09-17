@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using SimpleDB;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -13,26 +14,29 @@ namespace ChirpProject.MainApp
 {
     internal record Cheep
     {
+        public Cheep() { }
+
+        public Cheep(string message)
+        {
+            Message = message;
+            Author = Environment.UserName;
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+
         public string Author { get; set; }
         public string Message { get; set; }
-        public string Timestamp { get; set; }
+        public long Timestamp { get; set; }
     }
 
 
 
     public class App
     {
-        private readonly string csvDirectory;
-        private readonly string csvFile;
-        private readonly string header = "Author,Message,Timestamp";
-
+        IDatabaseRepository<Cheep>database;
 
         public App()
         {
-            csvDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CHIRP", "resources");
-            csvFile = Path.Combine(csvDirectory, "csv_db.csv");
-
-            initialize();
+            database = new CSVDatabase<Cheep>();
         }
 
 
@@ -65,7 +69,7 @@ namespace ChirpProject.MainApp
                         }
                         break;
                     case "read":
-                        ReadCheep();
+                        IterateCheeps();
                         break;
                     case "help":
                         Console.WriteLine(helpMessage);
@@ -78,26 +82,18 @@ namespace ChirpProject.MainApp
                         Console.WriteLine(helpMessage);
                         break;
                 }
-
-            }
-
-
-        }
-
-        public void initialize()
-        {
-            if (!File.Exists(csvFile))
-            {
-                Directory.CreateDirectory(csvDirectory);
-                writeToCheepDB(header);
             }
         }
 
-        private void writeToCheepDB(string message)
+        public void IterateCheeps()
         {
-            using (StreamWriter sw = new StreamWriter(csvFile, append: true, Encoding.UTF8))
+            IEnumerable<Cheep> cheeps = database.Read();
+
+            foreach (Cheep cheep in cheeps)
             {
-                sw.WriteLine(message);
+                DateTime dateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp).UtcDateTime;
+
+                Console.WriteLine($"{cheep.Author} @ {dateTimeUtc:yyyy-MM-dd HH:mm:ss}: {cheep.Message}");
             }
         }
 
@@ -109,50 +105,7 @@ namespace ChirpProject.MainApp
                 return;
             }
 
-            long unixTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            message = $"{Environment.UserName},\"{message}\",{unixTimestamp}";
-
-            writeToCheepDB(message);
+            database.Store(new Cheep(message));
         }
-
-
-        public void ReadCheep()
-        {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = ",",
-                TrimOptions = TrimOptions.Trim,
-                IgnoreBlankLines = true,
-                Quote = '"',
-                Mode = CsvMode.RFC4180,
-                HasHeaderRecord = true
-            };
-
-
-
-            using (var reader = new StreamReader(csvFile))
-            {
-                using (var csv = new CsvReader(reader, config))
-                {
-                    IEnumerable<Cheep> records = csv.GetRecords<Cheep>();
-
-                    foreach (Cheep record in records)
-                    {
-                        if (long.TryParse(record.Timestamp, out long result))
-                        {
-                            DateTime dateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(result).UtcDateTime;
-
-                            Console.WriteLine($"{record.Author} @ {dateTimeUtc:yyyy-MM-dd HH:mm:ss}: {record.Message}");
-                        }
-
-
-                    }
-                }
-            }
-
-        }
-
-
     }
 }
