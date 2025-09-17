@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ChirpProject.MainApp
 {
-    internal class Cheep
+    internal record Cheep
     {
         public string Author { get; set; }
         public string Message { get; set; }
