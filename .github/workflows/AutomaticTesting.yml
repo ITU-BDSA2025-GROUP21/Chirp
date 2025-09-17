@@ -1,5 +1,5 @@
 name: AutomaticTesting
-run-name: ${{github.actor} is pushing to main.}
+run-name: ${{ github.actor }} is pushing.
 
 permissions:
   contents: write
