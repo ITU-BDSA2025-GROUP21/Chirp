@@ -74,6 +74,7 @@ namespace SimpleDB
                 using (var csv = new CsvWriter(writer, csvConfig))
                 {
                     csv.WriteRecord(record);
+                    csv.NextRecord();
                 }
             }
         }
