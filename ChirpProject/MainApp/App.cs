@@ -9,36 +9,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ChirpProject.MainApp.CheepClass;
 
 namespace ChirpProject.MainApp
 {
-    internal record Cheep
-    {
-        public Cheep() { }
-
-        public Cheep(string message)
-        {
-            Message = message;
-            Author = Environment.UserName;
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        }
-
-        public string Author { get; set; }
-        public string Message { get; set; }
-        public long Timestamp { get; set; }
-    }
-
-
-
     public class App
     {
-        IDatabaseRepository<Cheep>database;
+        public IDatabaseRepository<Cheep>database;
 
         public App()
         {
             database = new CSVDatabase<Cheep>();
         }
 
+        public App(bool test)
+        {
+            if (test == false) database = new CSVDatabase<Cheep>();
+            else database = new TestDatabase<Cheep>();
+        }
 
         public void StartProgram()
         {
