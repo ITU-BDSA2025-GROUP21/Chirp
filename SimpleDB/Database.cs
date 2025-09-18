@@ -10,7 +10,6 @@ namespace SimpleDB
     {
         private readonly string csvDirectory;
         private readonly string csvFile;
-        private readonly string csvHeader = "Author;Message;Timestamp";
         private readonly CsvConfiguration csvConfig;
 
         public CSVDatabase() {
@@ -35,11 +34,11 @@ namespace SimpleDB
             if (!File.Exists(csvFile))
             {
                 Directory.CreateDirectory(csvDirectory);
-                AppendHeader(csvHeader);
+                AppendHeader();
             }
         }
 
-        public void AppendHeader(string header)
+        public void AppendHeader()
         {
             using (StreamWriter sw = new StreamWriter(csvFile, append: true, Encoding.UTF8))
             {
@@ -53,11 +52,19 @@ namespace SimpleDB
 
         public IEnumerable<T> Read(int? limit = null)
         {
+
             using (var reader = new StreamReader(csvFile, Encoding.UTF8))
             {
                 using (var csv = new CsvReader(reader, csvConfig))
                 {
-                    return csv.GetRecords<T>().ToList();
+                    if(limit == null)
+                    {
+                        return csv.GetRecords<T>().ToList();
+                    } else
+                    {
+                      return csv.GetRecords<T>().Take(limit.Value).ToList();
+                    }
+
                 }
             }
         }
