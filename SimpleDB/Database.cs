@@ -5,17 +5,12 @@ using System.Text;
 
 namespace SimpleDB
 {
-    public interface IDatabaseRepository<T>
-    {
-        public IEnumerable<T> Read(int? limit = null);
-        public void Store(T record);
-    }
 
     public sealed class CSVDatabase<T> : IDatabaseRepository<T>
     {
         private readonly string csvDirectory;
         private readonly string csvFile;
-        private readonly string csvHeader = "Author,Message,Timestamp";
+        private readonly string csvHeader = "Author;Message;Timestamp";
         private readonly CsvConfiguration csvConfig;
 
         public CSVDatabase() {
@@ -24,7 +19,7 @@ namespace SimpleDB
 
             csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                Delimiter = ",",
+                Delimiter = ";",
                 TrimOptions = TrimOptions.Trim,
                 IgnoreBlankLines = true,
                 Quote = '"',
