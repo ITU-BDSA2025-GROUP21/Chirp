@@ -64,7 +64,6 @@ namespace SimpleDB
                     {
                       return csv.GetRecords<T>().Take(limit.Value).ToList();
                     }
-
                 }
             }
         }

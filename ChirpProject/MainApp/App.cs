@@ -1,42 +1,30 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using SimpleDB;
-using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace ChirpProject.MainApp
 {
     internal record Cheep
     {
-        public Cheep() { }
-
-        public Cheep(string message)
+        public Cheep(string Author, string Message, long Timestamp)
         {
-            Message = message;
-            Author = Environment.UserName;
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            this.Message = Message;
+            this.Author = Author;
+            this.Timestamp = Timestamp;
         }
 
         public string Author { get; set; }
         public string Message { get; set; }
         public long Timestamp { get; set; }
     }
-
-
-
     public class App
     {
-        IDatabaseRepository<Cheep>database;
-
+        private HttpClient client;
+        private string WebAPIUrl = "http://localhost:5147/";
         public App()
         {
-            database = new CSVDatabase<Cheep>();
+            client = new HttpClient();
         }
 
 
@@ -46,7 +34,7 @@ namespace ChirpProject.MainApp
             Welcome to Cheep!
             Commands:
             * Cheep [message]: Send a cheep
-            * Read: Read the cheeps
+            * Read: <limit (optional> Read the cheeps. If you give it a limit, it will give the first [limit] cheeps.
             * Help: Get this message again.
             * Exit: Exit the program
             ";
@@ -58,7 +46,8 @@ namespace ChirpProject.MainApp
 
             while (input[0] != "exit")
             {
-                input = Console.ReadLine().ToLower().Split(' ');
+                input = Console.ReadLine().Split(' ', 2);
+                input[0] = input[0].ToLower().Trim();
 
                 switch (input[0])
                 {
@@ -69,7 +58,12 @@ namespace ChirpProject.MainApp
                         }
                         break;
                     case "read":
-                        IterateCheeps();
+                        int? limit = null;
+                        if (input.Length > 1 && int.TryParse(input[1], out int parsed))
+                        {
+                            limit = parsed;
+                        }
+                        IterateCheeps(limit);
                         break;
                     case "help":
                         Console.WriteLine(helpMessage);
@@ -85,9 +79,10 @@ namespace ChirpProject.MainApp
             }
         }
 
-        public void IterateCheeps()
+        public async void IterateCheeps(int? limit = null)
         {
-            IEnumerable<Cheep> cheeps = database.Read();
+
+            IEnumerable<Cheep> cheeps = await GetCheepAsyncJson(limit);
 
             foreach (Cheep cheep in cheeps)
             {
@@ -97,6 +92,31 @@ namespace ChirpProject.MainApp
             }
         }
 
+        private async Task<IEnumerable<Cheep>> GetCheepAsyncJson(int? limit = null)
+        {
+            string URI = WebAPIUrl + "cheeps";
+            if (limit != null) URI += "?limit=" + limit;
+
+            HttpResponseMessage response = await client.GetAsync(URI);
+
+            if(!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(HandleResponse(response));
+                return null;
+            }
+
+            IEnumerable<Cheep> cheeps = await response.Content.ReadFromJsonAsync<IEnumerable<Cheep>>();
+
+            if(cheeps == null)
+            {
+                Console.WriteLine("Returned JSON from WebAPI is not in correct format.");
+            }
+
+            return cheeps;
+
+        }
+
+
         public void SendCheep(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -105,7 +125,29 @@ namespace ChirpProject.MainApp
                 return;
             }
 
-            database.Store(new Cheep(message));
+            Cheep cheep = new Cheep(Environment.UserName, message, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+
+            string result = PostCheepAsyncJson(cheep).GetAwaiter().GetResult();
+
+            Console.WriteLine(result);
+        }
+
+        private async Task<string> PostCheepAsyncJson(Cheep cheep)
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync(WebAPIUrl + "cheep", cheep);
+            return HandleResponse(response);
+        }
+
+        private string HandleResponse(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                return response.ReasonPhrase;
+            }
+            else
+            {
+                return $"Error: {response.StatusCode}, {response.ReasonPhrase}";
+            }
         }
     }
 }
