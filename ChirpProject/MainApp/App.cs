@@ -27,6 +27,11 @@ namespace ChirpProject.MainApp
             client = new HttpClient();
         }
 
+        public App(bool test)
+        {
+            if (test == false) database = new CSVDatabase<Cheep>();
+            else database = new TestDatabase<Cheep>();
+        }
 
         public void StartProgram()
         {

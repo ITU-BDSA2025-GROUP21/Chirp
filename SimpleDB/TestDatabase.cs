@@ -6,21 +6,16 @@ using System.Text;
 namespace SimpleDB
 {
 
-    public sealed class CSVDatabase<T> : IDatabaseRepository<T>
+    public class TestDatabase<T> : IDatabaseRepository<T>
     {
         private readonly string csvDirectory;
         private readonly string csvFile;
         private readonly CsvConfiguration csvConfig;
 
-        public CSVDatabase() {
-
-            var home = Environment.GetEnvironmentVariable("HOME");
-            var baseDir = !string.IsNullOrEmpty(home)
-                ? Path.Combine(home, "site", "data")
-                : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-            csvDirectory = Path.Combine(baseDir, "CHIRP", "resources");
-            csvFile = Path.Combine(csvDirectory, "csv_db.csv");
+        public TestDatabase()
+        {
+            csvDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CHIRP", "resources");
+            csvFile = Path.Combine(csvDirectory, "test_db.csv");
 
             csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -63,12 +58,13 @@ namespace SimpleDB
             {
                 using (var csv = new CsvReader(reader, csvConfig))
                 {
-                    if(limit == null)
+                    if (limit == null)
                     {
                         return csv.GetRecords<T>().ToList();
-                    } else
+                    }
+                    else
                     {
-                      return csv.GetRecords<T>().Take(limit.Value).ToList();
+                        return csv.GetRecords<T>().Take(limit.Value).ToList();
                     }
                 }
             }
