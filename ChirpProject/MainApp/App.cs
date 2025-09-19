@@ -21,7 +21,7 @@ namespace ChirpProject.MainApp
     public class App
     {
         private HttpClient client;
-        private string WebAPIUrl = "http://localhost:5147/";
+        private string WebAPIUrl = "https://bdsagroup21chirpremotedb.azurewebsites.net/";
         public App()
         {
             client = new HttpClient();
