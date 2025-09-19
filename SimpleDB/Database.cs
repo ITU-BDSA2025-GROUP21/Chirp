@@ -13,7 +13,13 @@ namespace SimpleDB
         private readonly CsvConfiguration csvConfig;
 
         public CSVDatabase() {
-            csvDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CHIRP", "resources");
+
+            var home = Environment.GetEnvironmentVariable("HOME");
+            var baseDir = !string.IsNullOrEmpty(home)
+                ? Path.Combine(home, "site", "data")
+                : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            csvDirectory = Path.Combine(baseDir, "CHIRP", "resources");
             csvFile = Path.Combine(csvDirectory, "csv_db.csv");
 
             csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
