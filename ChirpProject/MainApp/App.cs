@@ -2,10 +2,13 @@
 using CsvHelper.Configuration;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChirpProject.MainApp
 {
-    internal record Cheep
+    public record Cheep
     {
         public Cheep(string Author, string Message, long Timestamp)
         {
@@ -27,12 +30,14 @@ namespace ChirpProject.MainApp
             client = new HttpClient();
         }
 
-        //Old code for previous test environment. Outcommented for testers.
-        /*public App(bool test)
+        // Constructor overload for dependency injection (tests can inject a fake HttpClient)
+        public App(HttpClient httpClient, string webApiUrl = null)
         {
-            if (test == false) database = new CSVDatabase<Cheep>();
-            else database = new TestDatabase<Cheep>();
-        }*/
+            client = httpClient ?? new HttpClient();
+            if (!string.IsNullOrEmpty(webApiUrl)) WebAPIUrl = webApiUrl;
+        }
+
+   
 
         public void StartProgram()
         {
@@ -98,28 +103,29 @@ namespace ChirpProject.MainApp
             }
         }
 
-        private async Task<IEnumerable<Cheep>> GetCheepAsyncJson(int? limit = null)
+        // MADE PUBLIC and return List<Cheep> (keeps async). Tests will call this.
+        public async Task<List<Cheep>> GetCheepAsyncJson(int? limit = null)
         {
             string URI = WebAPIUrl + "cheeps";
             if (limit != null) URI += "?limit=" + limit;
 
             HttpResponseMessage response = await client.GetAsync(URI);
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(HandleResponse(response));
-                return null;
+                return new List<Cheep>();
             }
 
             IEnumerable<Cheep> cheeps = await response.Content.ReadFromJsonAsync<IEnumerable<Cheep>>();
 
-            if(cheeps == null)
+            if (cheeps == null)
             {
                 Console.WriteLine("Returned JSON from WebAPI is not in correct format.");
+                return new List<Cheep>();
             }
 
-            return cheeps;
-
+            return cheeps.ToList();
         }
 
 
