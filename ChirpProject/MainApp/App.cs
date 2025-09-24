@@ -41,17 +41,7 @@ namespace ChirpProject.MainApp
 
         public void StartProgram()
         {
-            string helpMessage = @"
-            Welcome to Cheep!
-            Commands:
-            * Cheep [message]: Send a cheep
-            * Read: <limit (optional> Read the cheeps. If you give it a limit, it will give the first [limit] cheeps.
-            * Help: Get this message again.
-            * Exit: Exit the program
-            ";
-
-            Console.WriteLine(helpMessage);
-
+            UserInterface.sendHelpMessage();
 
             string[] input = new string[] { string.Empty };
 
@@ -77,14 +67,14 @@ namespace ChirpProject.MainApp
                         IterateCheeps(limit);
                         break;
                     case "help":
-                        Console.WriteLine(helpMessage);
+                        UserInterface.sendHelpMessage();
                         break;
                     case "exit":
-                        Console.WriteLine("Exiting the program. Goodbye (T_T)");
+                        UserInterface.sendExitMessage();
                         break;
                     default:
-                        Console.WriteLine("The command was not recognized.");
-                        Console.WriteLine(helpMessage);
+                        UserInterface.sendDefaultMessage();
+                        UserInterface.sendHelpMessage();
                         break;
                 }
             }
@@ -133,33 +123,12 @@ namespace ChirpProject.MainApp
         {
             if (string.IsNullOrWhiteSpace(message))
             {
-                Console.WriteLine("No message detected. Please write your message like \"cheep [message]\"");
+                UserInterface.sendCheepErrorMessage();
                 return;
             }
 
-            Cheep cheep = new Cheep(Environment.UserName, message, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-
-            string result = PostCheepAsyncJson(cheep).GetAwaiter().GetResult();
-
-            Console.WriteLine(result);
-        }
-
-        private async Task<string> PostCheepAsyncJson(Cheep cheep)
-        {
-            HttpResponseMessage response = await client.PostAsJsonAsync(WebAPIUrl + "cheep", cheep);
-            return HandleResponse(response);
-        }
-
-        private string HandleResponse(HttpResponseMessage response)
-        {
-            if (response.IsSuccessStatusCode)
-            {
-                return response.ReasonPhrase;
-            }
-            else
-            {
-                return $"Error: {response.StatusCode}, {response.ReasonPhrase}";
-            }
+            database.Store(new Cheep(message));
+            UserInterface.sendCheepMessage();
         }
     }
 }
