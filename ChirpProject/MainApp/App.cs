@@ -30,17 +30,7 @@ namespace ChirpProject.MainApp
 
         public void StartProgram()
         {
-            string helpMessage = @"
-            Welcome to Cheep!
-            Commands:
-            * Cheep [message]: Send a cheep
-            * Read: Read the cheeps
-            * Help: Get this message again.
-            * Exit: Exit the program
-            ";
-
-            Console.WriteLine(helpMessage);
-
+            UserInterface.sendHelpMessage();
 
             string[] input = new string[] { string.Empty };
 
@@ -60,14 +50,14 @@ namespace ChirpProject.MainApp
                         IterateCheeps();
                         break;
                     case "help":
-                        Console.WriteLine(helpMessage);
+                        UserInterface.sendHelpMessage();
                         break;
                     case "exit":
-                        Console.WriteLine("Exiting the program. Goodbye (T_T)");
+                        UserInterface.sendExitMessage();
                         break;
                     default:
-                        Console.WriteLine("The command was not recognized.");
-                        Console.WriteLine(helpMessage);
+                        UserInterface.sendDefaultMessage();
+                        UserInterface.sendHelpMessage();
                         break;
                 }
             }
@@ -89,11 +79,12 @@ namespace ChirpProject.MainApp
         {
             if (string.IsNullOrWhiteSpace(message))
             {
-                Console.WriteLine("No message detected. Please write your message like \"cheep [message]\"");
+                UserInterface.sendCheepErrorMessage();
                 return;
             }
 
             database.Store(new Cheep(message));
+            UserInterface.sendCheepMessage();
         }
     }
 }
