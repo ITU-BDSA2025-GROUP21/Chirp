@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChirpProject.MainApp
 {
+    //Cheep record that can be converted to JSON at some point.
     public record Cheep
     {
         public Cheep(string Author, string Message, long Timestamp)
