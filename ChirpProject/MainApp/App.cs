@@ -1,9 +1,10 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ChirpProject.MainApp
@@ -56,7 +57,16 @@ namespace ChirpProject.MainApp
                     case "cheep":
                         if (input.Length > 1)
                         {
-                            SendCheep(input[1]);
+                            string message = input[1];
+                            if(input.Length > 2)
+                            {
+                                for (int i = 2; i < input.Length; i++)
+                                {
+                                    message += " " + input[i];
+                                }
+                            }
+
+                            SendCheep(message);
                         }
                         break;
                     case "read":
@@ -104,7 +114,7 @@ namespace ChirpProject.MainApp
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine(HandleResponse(response));
+                Console.WriteLine(response.StatusCode);
                 return new List<Cheep>();
             }
 
@@ -120,7 +130,7 @@ namespace ChirpProject.MainApp
         }
 
 
-        public void SendCheep(string message)
+        public async void SendCheep(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -128,8 +138,12 @@ namespace ChirpProject.MainApp
                 return;
             }
 
-            database.Store(new Cheep(message));
-            UserInterface.sendCheepMessage();
+            string URI = WebAPIUrl + "cheep";
+
+            Cheep cheep = new Cheep(Environment.UserName, message, DateTimeOffset.Now.ToUnixTimeSeconds());
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(URI, cheep);
+
         }
     }
 }
