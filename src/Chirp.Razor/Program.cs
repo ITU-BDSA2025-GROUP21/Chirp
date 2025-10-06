@@ -4,8 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<ICheepService, CheepService>();
-
+builder.Services.AddSingleton<Chirp.Razor.DBFacade.DBFacade>();
+builder.Services.AddScoped<ICheepService, CheepService>();
 
 var app = builder.Build();
 
@@ -25,7 +25,3 @@ app.UseRouting();
 app.MapRazorPages();
 
 app.Run();
-
-var facade = new DBFacade();
-var input = Console.ReadLine();
-facade.processCommand(input);
