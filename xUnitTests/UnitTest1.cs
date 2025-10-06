@@ -1,9 +1,10 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using Xunit;
-using Microsoft.Data.Sqlite;
 using Chirp.Razor.DBFacade;
+using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Xunit;
+using Xunit.Abstractions;
 using static System.Environment;
 
 namespace XunitTests
@@ -12,9 +13,13 @@ namespace XunitTests
     {
         private readonly string dbPath;
         private readonly string connectionString;
+        private readonly ITestOutputHelper _output;
 
-        public UnitTest1()
+
+        public UnitTest1(ITestOutputHelper output)
         {
+            _output = output;
+
             // unique file per test class instance
             dbPath = Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db");
 
@@ -77,7 +82,7 @@ namespace XunitTests
         public void GetCheeps_OrderedDescending()
         {
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db")); 
             SeedTestData();
 
             var cheeps = db.GetCheeps();
@@ -94,7 +99,7 @@ namespace XunitTests
         {
             int amount = 5;
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             SeedTestData(amount);
 
             var cheeps = db.GetCheeps();
@@ -108,7 +113,7 @@ namespace XunitTests
             int totalMessages = 64;
             int pageSize = 32;
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             SeedTestData(totalMessages);
             var firstPage = db.GetCheeps(page: 1);
             var secondPage = db.GetCheeps(page: 2);
@@ -121,7 +126,7 @@ namespace XunitTests
         public void GetCheepsFromAuthor_FilteringWorks()
         {
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             SeedTestData();
             var aliceCheeps = db.GetCheepsFromAuthor("alice");
             var bobCheeps = db.GetCheepsFromAuthor("bob");
@@ -135,7 +140,7 @@ namespace XunitTests
         public void GetCheepsFromAuthor_decendingWorks()
         {
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             SeedTestData();
             var aliceCheeps = db.GetCheepsFromAuthor("alice");
             Assert.Equal("second message", aliceCheeps[0].Message);
@@ -147,7 +152,7 @@ namespace XunitTests
             int totalMessages = 64;
             int pageSize = 32;
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             SeedTestData(totalMessages);
             var aliceFirstPage = db.GetCheepsFromAuthor("alice", page: 1);
             var aliceSecondPage = db.GetCheepsFromAuthor("alice", page: 2);
@@ -159,9 +164,32 @@ namespace XunitTests
         public void getCheeps_from_empty_database()
         {
             var db = new DBFacade();
-            db.initDB();
+            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
             var cheeps = db.GetCheeps();
             Assert.Empty(cheeps);
+        }
+
+        [Fact]
+        public void sqldump_import_works()
+        {
+            var db = new DBFacade();
+            var dumpFile = Path.Combine(AppContext.BaseDirectory);
+
+            dumpFile = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
+
+            dumpFile = Path.Combine(dumpFile, "resources", "dump.sql");
+
+            _output.WriteLine($"Looking for dump file at: {dumpFile}");
+
+
+
+            Assert.True(File.Exists(dumpFile), $"Not found: {dumpFile}");
+
+
+            db.ImportDataDump(dumpFile);
+            var cheeps = db.GetCheeps();
+            Assert.True(File.Exists(dumpFile));
+            Assert.Equal(32, cheeps.Count);
         }
     }
 }

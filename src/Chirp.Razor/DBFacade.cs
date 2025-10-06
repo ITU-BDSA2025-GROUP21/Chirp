@@ -85,7 +85,7 @@ namespace Chirp.Razor.DBFacade
             return connectionString;
         }
 
-        private void ImportDataDump(string dataDump)
+        public void ImportDataDump(string dataDump)
         {
             if (string.IsNullOrWhiteSpace(dataDump) || !File.Exists(dataDump))
             {
