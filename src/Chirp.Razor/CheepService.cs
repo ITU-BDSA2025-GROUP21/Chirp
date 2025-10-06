@@ -1,3 +1,5 @@
+using Chirp.Razor.DBFacade;
+
 public record CheepViewModel(string Author, string Message, string Timestamp);
 
 public interface ICheepService
@@ -8,9 +10,9 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
-    private readonly Chirp.Razor.DBFacade.DBFacade _dbFacade; //Database-Dependency
+    private readonly DBFacade _dbFacade; //Database-Dependency
 
-    public CheepService(Chirp.Razor.DBFacade.DBFacade dbFacade) //Constructor til Database-Dependency
+    public CheepService(DBFacade dbFacade) //Constructor til Database-Dependency
     {
         _dbFacade = dbFacade;
     }

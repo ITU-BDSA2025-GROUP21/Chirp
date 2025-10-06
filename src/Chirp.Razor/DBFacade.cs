@@ -1,6 +1,9 @@
 using Microsoft.Data.Sqlite;
 using System;
+using System.Data;
 using System.IO;
+using System.Reflection.Metadata;
+using System.Security.Cryptography;
 
 namespace Chirp.Razor.DBFacade
 {
@@ -11,144 +14,202 @@ namespace Chirp.Razor.DBFacade
 
         public DBFacade()
         {
-            var dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-            if (string.IsNullOrEmpty(dbPath))
-            {
-                dbPath = Path.Combine(Path.GetTempPath(), "chirp.db");
-            }
-            
-            connectionString = $"Data Source={dbPath}";
-            initDB();
+            string dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
+
+            string dataDump = Environment.GetEnvironmentVariable("CHIRPDATADUMP");
+
+
+            connectionString = initDB(dbPath);
+
+            ImportDataDump(dataDump);
+
         }
 
-        public void initDB()
+        public string initDB(string dbPath)
         {
-            using (var conn = new SqliteConnection(connectionString))
-            {
-                conn.Open();
 
-                string createUser = @"
+            string tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
+
+
+            if (string.IsNullOrWhiteSpace(dbPath))
+            {
+                dbPath = tempPath;
+            }
+
+
+            if (!dbPath.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
+            {
+                string directory = Path.GetDirectoryName(dbPath);
+
+                if (string.IsNullOrEmpty(directory))
+                {
+                    dbPath = tempPath;
+                }
+                else
+                {
+                    dbPath = Path.Combine(directory, "chirp.db");
+                }
+
+            }
+
+            string connectionString = $"Data Source={dbPath}";
+
+            string foreignKeyEnforcement = "PRAGMA foreign_keys = ON;";
+
+            string dropTable = @"
+                       DROP TABLE IF EXISTS message;
+                       DROP TABLE IF EXISTS user;";
+
+            string createUser = @"
                     CREATE TABLE IF NOT EXISTS user (
                     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username STRING NOT NULL,
                     email STRING NOT NULL,
-                    pw_hash STRING NOT NULL
+                    pw_hash STRING NOT NULL,
+                    UNIQUE (username, email)
                     );";
 
-                string createMessage = @"
+            string createMessage = @"
                     CREATE TABLE IF NOT EXISTS message (
                     message_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     author_id INTEGER NOT NULL,
                     text STRING NOT NULL,
-                    pub_date INTEGER
+                    pub_date INTEGER NOT NULL,
+                    UNIQUE (author_id, text, pub_date),
+                    FOREIGN KEY (author_id) REFERENCES user(user_id)
                     );";
 
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = createUser;
-                    cmd.ExecuteNonQuery();
-                    cmd.CommandText = createMessage;
-                    cmd.ExecuteNonQuery();
-                }
-            }
+
+            ExecuteNonQuery(connectionString, foreignKeyEnforcement, dropTable, createUser, createMessage);
+
+            return connectionString;
         }
 
-        public void ImportSqlDump(string dumpPath)
+        private void ImportDataDump(string dataDump)
         {
-            if (string.IsNullOrEmpty(dumpPath) || !File.Exists(dumpPath))
+            if (string.IsNullOrWhiteSpace(dataDump) || !File.Exists(dataDump))
             {
-                throw new FileNotFoundException($"SQL dump file '{dumpPath}' does not exist.");
+                return;
             }
 
-            string sql = File.ReadAllText(dumpPath);
+            string sql = File.ReadAllText(dataDump);
 
-            using var conn = new SqliteConnection(connectionString);
-            conn.Open();
+            ExecuteNonQuery(connectionString, sql);
 
-            using var trans = conn.BeginTransaction();
-            using var cmd = conn.CreateCommand();
-            cmd.Transaction = trans;
-            cmd.CommandText = sql;
-
-            try
-            {
-                cmd.ExecuteNonQuery();
-                trans.Commit();
-            }
-            catch (Exception ex)
-            {
-                trans.Rollback();
-                throw new InvalidOperationException($"Failed to import SQL dump: {ex.Message}", ex);
-            }
         }
 
 
         public List<CheepViewModel> GetCheeps(int page = 1)
         {
-            var cheeps = new List<CheepViewModel>();
-            
-            using var conn = new SqliteConnection(connectionString);
-            conn.Open();
-
             var offset = (page - 1) * PageSize;
-            var sql = @"
-                SELECT u.username, m.text, m.pub_date 
+
+            var query = @"
+                SELECT 
+                    u.username, 
+                    m.text,
+                    m.pub_date
                 FROM message m 
-                JOIN user u ON m.author_id = u.user_id 
+                JOIN user u 
+                    ON m.author_id = u.user_id 
                 ORDER BY m.pub_date DESC 
                 LIMIT @pageSize OFFSET @offset";
 
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.AddWithValue("@pageSize", PageSize);
-            cmd.Parameters.AddWithValue("@offset", offset);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                var author = reader.GetString(0);
-                var message = reader.GetString(1);
-                var timestamp = UnixTimeStampToDateTimeString(reader.GetInt64(2));
-                
-                cheeps.Add(new CheepViewModel(author, message, timestamp));
-            }
+            parameters.Add("@pageSize", PageSize);
+            parameters.Add("@offset", offset);
 
-            return cheeps;
+            return GetCheepsFromDB(connectionString, query, parameters);
+
         }
 
         public List<CheepViewModel> GetCheepsFromAuthor(string author, int page = 1)
         {
             var cheeps = new List<CheepViewModel>();
-            
-            using var conn = new SqliteConnection(connectionString);
-            conn.Open();
 
             var offset = (page - 1) * PageSize;
-            var sql = @"
-                SELECT u.username, m.text, m.pub_date 
+            var query = @"
+                SELECT 
+                    u.username, 
+                    m.text, 
+                    m.pub_date
                 FROM message m 
-                JOIN user u ON m.author_id = u.user_id 
+                JOIN user u 
+                    ON m.author_id = u.user_id 
                 WHERE u.username = @author 
                 ORDER BY m.pub_date DESC 
                 LIMIT @pageSize OFFSET @offset";
 
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.AddWithValue("@author", author);
-            cmd.Parameters.AddWithValue("@pageSize", PageSize);
-            cmd.Parameters.AddWithValue("@offset", offset);
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            parameters.Add("@author", author);
+            parameters.Add("@pageSize", PageSize);
+            parameters.Add("@offset", offset);
+
+            return GetCheepsFromDB(connectionString, query, parameters);
+
+        }
+
+        private List<CheepViewModel> GetCheepsFromDB(string connectionString, string query, Dictionary<string, object> parameters)
+        {
+
+            List<CheepViewModel> cheeps = new List<CheepViewModel>();
+
+            using (SqliteDataReader reader = ExecuteReader(connectionString, query, parameters))
             {
-                var authorName = reader.GetString(0);
-                var message = reader.GetString(1);
-                var timestamp = UnixTimeStampToDateTimeString(reader.GetInt64(2));
-                
-                cheeps.Add(new CheepViewModel(authorName, message, timestamp));
+                while (reader.Read())
+                {
+                    var authorName = reader.GetString(0);
+                    var message = reader.GetString(1);
+                    var timestamp = UnixTimeStampToDateTimeString(reader.GetInt64(2));
+
+                    cheeps.Add(new CheepViewModel(authorName, message, timestamp));
+                }
             }
 
             return cheeps;
+        }
+
+        private SqliteDataReader ExecuteReader(string connectionString, string query, Dictionary<string, object>? parameters = null)
+        {
+            var conn = new SqliteConnection(connectionString);
+            conn.Open();
+
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = query;
+
+            if (parameters != null)
+            {
+                foreach (var kvp in parameters)
+                {
+                    cmd.Parameters.AddWithValue(kvp.Key, kvp.Value ?? DBNull.Value);
+                }
+            }
+
+            var reader = cmd.ExecuteReader();
+
+            return reader;
+        }
+
+
+        private void ExecuteNonQuery(string connectionString, params string[] queries)
+        {
+
+            using (var conn = new SqliteConnection(connectionString))
+            {
+                conn.Open();
+
+                using (SqliteCommand cmd = conn.CreateCommand())
+                {
+                    foreach (string query in queries)
+                    {
+                        cmd.CommandText = query;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+            }
+
         }
 
         private static string UnixTimeStampToDateTimeString(long unixTimeStamp)
