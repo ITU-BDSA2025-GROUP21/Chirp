@@ -148,7 +148,6 @@ namespace Chirp.Razor.DBFacade
 
         private List<CheepViewModel> GetCheepsFromDB(string connectionString, string query, Dictionary<string, object> parameters)
         {
-
             List<CheepViewModel> cheeps = new List<CheepViewModel>();
 
             using (SqliteDataReader reader = ExecuteReader(connectionString, query, parameters))
