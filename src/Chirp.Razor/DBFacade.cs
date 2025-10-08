@@ -22,7 +22,6 @@ namespace Chirp.Razor.DBFacade
             connectionString = initDB(dbPath);
 
             ImportDataDump(dataDump);
-
         }
 
         public string initDB(string dbPath)
