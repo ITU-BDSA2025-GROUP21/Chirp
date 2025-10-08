@@ -189,7 +189,6 @@ namespace Chirp.Razor.DBFacade
 
         private void ExecuteNonQuery(string connectionString, params string[] queries)
         {
-
             using (var conn = new SqliteConnection(connectionString))
             {
                 conn.Open();
