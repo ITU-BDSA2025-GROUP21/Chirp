@@ -66,7 +66,6 @@ jobs:
           target_commitish: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   release:
     name: RELEASE
     needs: prep-release
@@ -79,21 +78,40 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
   
-      - name: Echo context
+      - name: Echo context and list repo
+        shell: bash
         run: |
           echo "event: ${{ github.event_name }}"
           echo "ref_name: ${{ github.ref_name }}"
-          echo "sha: ${{ github.sha }}"
-          echo "TAG (if set): ${{ env.TAG }}"
+          echo "TAG: ${{ env.TAG || '' }}"
           echo "matrix.os: ${{ matrix.os }}"
           echo "workspace: $GITHUB_WORKSPACE"
-          ls -la
+          find . -maxdepth 3 -type f -name "*.csproj" -print
   
-      - name: Verify project path exists
+      - name: Locate project
+        id: locate
+        shell: bash
         run: |
-          test -f "src/Chirp.CLI/Chirp.CLI.csproj" || { echo "::error file=src/Chirp.CLI/Chirp.CLI.csproj::Not found"; exit 66; }
-          echo "Found Chirp.CLI.csproj"
+          set -euo pipefail
+          # Prefer something named Chirp.CLI / Chirp.Cli
+          CANDIDATE=$(git ls-files '**/*.csproj' | grep -Ei 'Chirp\.CL[Ii]\.csproj$' | head -n1 || true)
+          if [ -z "${CANDIDATE:-}" ]; then
+            # Fallback: pick first project whose OutputType is Exe
+            while IFS= read -r p; do
+              if grep -Eq '<OutputType>\s*Exe\s*</OutputType>' "$p"; then
+                CANDIDATE="$p"; break
+              fi
+            done < <(git ls-files '**/*.csproj')
+          fi
+          if [ -z "${CANDIDATE:-}" ]; then
+            echo "::error::No .csproj found (or none with OutputType Exe)."
+            exit 66
+          fi
+          echo "PROJECT=$CANDIDATE" | tee -a "$GITHUB_ENV"
+          echo "Project detected: $CANDIDATE"
   
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -122,10 +140,10 @@ jobs:
   
           rm -rf "$OUT" "$OUT.zip" || true
   
-          dotnet restore "src/Chirp.CLI/Chirp.CLI.csproj"
-          dotnet build "src/Chirp.CLI/Chirp.CLI.csproj" -c Release --no-restore
+          dotnet restore "$PROJECT"
+          dotnet build "$PROJECT" -c Release --no-restore
   
-          dotnet publish "src/Chirp.CLI/Chirp.CLI.csproj" \
+          dotnet publish "$PROJECT" \
             -c Release \
             -r "$RID" \
             --self-contained false \
@@ -144,11 +162,10 @@ jobs:
           RID="${{ matrix.os }}"
           OUT="Chirp-${TAG}-${RID}"
   
-          7z a "$OUT.zip" "$OUT/." | tee zip.log
+          7z a "$OUT.zip" "$OUT/."
           if 7z l "$OUT.zip" | grep -Ei '\.pdb$' >/dev/null; then
             7z d "$OUT.zip" '*.pdb' || true
           fi
-  
           7z l "$OUT.zip" || true
           rm -rf "$OUT"
   
