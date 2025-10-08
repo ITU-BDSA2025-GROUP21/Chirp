@@ -92,7 +92,6 @@ namespace Chirp.Razor.DBFacade
             string sql = File.ReadAllText(dataDump);
 
             ExecuteNonQuery(connectionString, sql);
-
         }
 
 
