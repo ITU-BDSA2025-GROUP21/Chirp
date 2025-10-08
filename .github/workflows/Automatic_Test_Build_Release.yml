@@ -1,4 +1,4 @@
-name: AutomaticTesting
+name: Automatic_Test_Build_Deploy
 run-name: ${{ github.actor }} is running a build
 
 permissions:
