@@ -72,45 +72,86 @@ jobs:
     needs: prep-release
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false 
+      fail-fast: false
       matrix:
         os: [win-x64, linux-x64, osx-x64]
-
+  
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+  
+      - name: Echo context
+        run: |
+          echo "event: ${{ github.event_name }}"
+          echo "ref_name: ${{ github.ref_name }}"
+          echo "sha: ${{ github.sha }}"
+          echo "TAG (if set): ${{ env.TAG }}"
+          echo "matrix.os: ${{ matrix.os }}"
+          echo "workspace: $GITHUB_WORKSPACE"
+          ls -la
+  
+      - name: Verify project path exists
+        run: |
+          test -f "src/Chirp.CLI/Chirp.CLI.csproj" || { echo "::error file=src/Chirp.CLI/Chirp.CLI.csproj::Not found"; exit 66; }
+          echo "Found Chirp.CLI.csproj"
+  
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-
+  
+      - name: .NET info
+        run: |
+          dotnet --info
+          dotnet --list-sdks
+          dotnet --list-runtimes || true
+  
       - name: Install 7zip
         run: |
           sudo apt-get update
           sudo apt-get install -y p7zip-full
-
-      - name: Publish and Package
+  
+      - name: Publish
         shell: bash
         run: |
-          set -euo pipefail
-          release_name="Chirp-${{ env.TAG || github.ref_name }}-${{ matrix.os }}"
+          set -Eeuo pipefail
+          set -x
+          TAG="${{ env.TAG || github.ref_name }}"
+          RID="${{ matrix.os }}"
+          OUT="Chirp-${TAG}-${RID}"
+  
+          rm -rf "$OUT" "$OUT.zip" || true
+  
+          dotnet restore "src/Chirp.CLI/Chirp.CLI.csproj"
+          dotnet build "src/Chirp.CLI/Chirp.CLI.csproj" -c Release --no-restore
+  
           dotnet publish "src/Chirp.CLI/Chirp.CLI.csproj" \
             -c Release \
-            -r "${{ matrix.os }}" \
+            -r "$RID" \
             --self-contained false \
             -p:PublishSingleFile=true \
-            -o "${release_name}"
-
-          7z a "${release_name}.zip" "${release_name}/."
-
-          # Only try to delete PDBs if there actually are any in the archive
-          if 7z l "${release_name}.zip" | grep -qi '\.pdb$'; then
-            7z d "${release_name}.zip" "*.pdb" || true
+            -o "$OUT"
+  
+          echo "Published files:"
+          ls -la "$OUT"
+  
+      - name: Package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          set -x
+          TAG="${{ env.TAG || github.ref_name }}"
+          RID="${{ matrix.os }}"
+          OUT="Chirp-${TAG}-${RID}"
+  
+          7z a "$OUT.zip" "$OUT/." | tee zip.log
+          if 7z l "$OUT.zip" | grep -Ei '\.pdb$' >/dev/null; then
+            7z d "$OUT.zip" '*.pdb' || true
           fi
-
-          rm -r "${release_name}"
-
+  
+          7z l "$OUT.zip" || true
+          rm -rf "$OUT"
+  
       - name: Upload assets to release
         uses: softprops/action-gh-release@v2
         with:
