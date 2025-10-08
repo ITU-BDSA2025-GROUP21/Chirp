@@ -1,0 +1,111 @@
+name: AutomaticTesting
+run-name: ${{ github.actor }} is running a build
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to release (e.g., v1.2.3)"
+        required: true
+      prerelease:
+        description: "Mark release as prerelease?"
+        type: boolean
+        default: false
+
+env:
+  TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Test
+        run: dotnet test -c Release
+
+  prep-release:
+    name: Prep Release
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          prerelease: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || false }}
+          generate_release_notes: true
+          target_commitish: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    name: RELEASE
+    needs: prep-release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [win-x64, linux-x64, osx-x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full
+
+      - name: Publish and Package
+        shell: bash
+        run: |
+          release_name="Chirp-${{ env.TAG }}-${{ matrix.os }}"
+          dotnet publish "src/Chirp.CLI/Chirp.CLI.csproj" \
+            -c Release \
+            -r "${{ matrix.os }}" \
+            --self-contained false \
+            -p:PublishSingleFile=true \
+            -o "${release_name}"
+          7z a "${release_name}.zip" "${release_name}/."
+          7z d "${release_name}.zip" "*.pdb"
+          rm -r "${release_name}"
+
+      - name: Upload assets to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "Chirp-*.zip"
+          tag_name: ${{ env.TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
