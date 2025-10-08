@@ -201,7 +201,6 @@ namespace Chirp.Razor.DBFacade
                         cmd.ExecuteNonQuery();
                     }
                 }
-
             }
         }
 
