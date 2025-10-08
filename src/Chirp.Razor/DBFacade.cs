@@ -26,7 +26,6 @@ namespace Chirp.Razor.DBFacade
 
         public string initDB(string dbPath)
         {
-
             string tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
 
 
