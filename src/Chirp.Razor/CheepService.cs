@@ -26,5 +26,4 @@ public class CheepService : ICheepService
     {
         return _dbFacade.GetCheepsFromAuthor(author, page); //Kalder metoden i DBFacade
     }
-
 }
