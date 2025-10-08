@@ -203,7 +203,6 @@ namespace Chirp.Razor.DBFacade
                 }
 
             }
-
         }
 
         private static string UnixTimeStampToDateTimeString(long unixTimeStamp)
