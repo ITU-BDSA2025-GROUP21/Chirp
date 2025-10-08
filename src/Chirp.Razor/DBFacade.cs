@@ -143,7 +143,6 @@ namespace Chirp.Razor.DBFacade
             parameters.Add("@offset", offset);
 
             return GetCheepsFromDB(connectionString, query, parameters);
-
         }
 
         private List<CheepViewModel> GetCheepsFromDB(string connectionString, string query, Dictionary<string, object> parameters)
