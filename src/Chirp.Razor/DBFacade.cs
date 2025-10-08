@@ -47,7 +47,6 @@ namespace Chirp.Razor.DBFacade
                 {
                     dbPath = Path.Combine(directory, "chirp.db");
                 }
-
             }
 
             string connectionString = $"Data Source={dbPath}";
