@@ -72,8 +72,10 @@ jobs:
     needs: prep-release
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false 
       matrix:
         os: [win-x64, linux-x64, osx-x64]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -91,21 +93,28 @@ jobs:
       - name: Publish and Package
         shell: bash
         run: |
-          release_name="Chirp-${{ env.TAG }}-${{ matrix.os }}"
+          set -euo pipefail
+          release_name="Chirp-${{ env.TAG || github.ref_name }}-${{ matrix.os }}"
           dotnet publish "src/Chirp.CLI/Chirp.CLI.csproj" \
             -c Release \
             -r "${{ matrix.os }}" \
             --self-contained false \
             -p:PublishSingleFile=true \
             -o "${release_name}"
+
           7z a "${release_name}.zip" "${release_name}/."
-          7z d "${release_name}.zip" "*.pdb"
+
+          # Only try to delete PDBs if there actually are any in the archive
+          if 7z l "${release_name}.zip" | grep -qi '\.pdb$'; then
+            7z d "${release_name}.zip" "*.pdb" || true
+          fi
+
           rm -r "${release_name}"
 
       - name: Upload assets to release
         uses: softprops/action-gh-release@v2
         with:
           files: "Chirp-*.zip"
-          tag_name: ${{ env.TAG }}
+          tag_name: ${{ env.TAG || github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
