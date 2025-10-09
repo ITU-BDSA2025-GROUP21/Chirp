@@ -55,11 +55,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_79B760B9839D4F968BBF892D2861D936 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B49D2B1CEEF34B468F4597986849D1C6 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
+      - name: Deploy to Azure Web App (stable)
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'bdsagroup21chirprazor'
-          slot-name: 'Production'
-          package: .
+          app-name: bdsagroup21chirprazor
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./site 
+
           
