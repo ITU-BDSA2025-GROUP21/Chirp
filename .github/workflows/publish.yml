@@ -1,0 +1,98 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g., v1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, Test, and Release (ubuntu)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Resolve tag
+        id: resolve_tag
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # For manual runs, check out the specified tag; for tag-push runs, this is the pushed tag.
+          ref: ${{ steps.resolve_tag.outputs.tag }}
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Publish executables (single-file, framework-dependent)
+        shell: bash
+        env:
+          TAG: ${{ steps.resolve_tag.outputs.tag }}   # e.g., v1.2.3
+          PROJECT: src/App/App.csproj                 # <-- adjust if your Chirp project path differs
+          RIDS: "linux-x64 win-x64 osx-x64"
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          for rid in $RIDS; do
+            outdir="publish/$rid"
+            dotnet publish "$PROJECT" \
+              -c Release \
+              -r "$rid" \
+              -o "$outdir" \
+              --no-self-contained \
+              -p:PublishSingleFile=true \
+              -p:IncludeNativeLibrariesForSelfExtract=true \
+              -p:DebugType=None
+
+            # Find the produced executable and zip the folder contents
+            exe_path="$(find "$outdir" -maxdepth 1 -type f -executable -o -name '*.exe' | head -n 1)"
+            if [[ -z "${exe_path:-}" ]]; then
+              echo "No executable found for $rid" >&2
+              exit 1
+            fi
+
+            zip_name="Chirp-${TAG}-${rid}.zip"
+            (cd "$outdir" && zip -r "../../dist/${zip_name}" .)
+          done
+
+          echo "Created archives:"
+          ls -lah dist/
+
+      - name: Create GitHub Release & upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.resolve_tag.outputs.tag }}
+          name: "Chirp! ${{ steps.resolve_tag.outputs.tag }}"
+          files: dist/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
