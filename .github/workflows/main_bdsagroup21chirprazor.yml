@@ -70,7 +70,7 @@ jobs:
           ls -la site
       
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         with:
           app-name: bdsagroup21chirprazor
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
@@ -85,4 +85,5 @@ jobs:
           package: ./site 
 
           
+
 
