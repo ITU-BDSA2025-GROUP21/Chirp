@@ -28,25 +28,20 @@ namespace Chirp.Razor.DBFacade
         {
             string tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
 
-
             if (string.IsNullOrWhiteSpace(dbPath))
-            {
                 dbPath = tempPath;
-            }
-
 
             if (!dbPath.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
             {
-                string directory = Path.GetDirectoryName(dbPath);
+                var directory = Path.GetDirectoryName(dbPath);
+                dbPath = string.IsNullOrEmpty(directory) ? tempPath : Path.Combine(directory, "chirp.db");
+            }
 
-                if (string.IsNullOrEmpty(directory))
-                {
-                    dbPath = tempPath;
-                }
-                else
-                {
-                    dbPath = Path.Combine(directory, "chirp.db");
-                }
+            string dir = Path.GetDirectoryName(dbPath);
+
+            if (!string.IsNullOrEmpty(dir))
+            {
+                Directory.CreateDirectory(dir);
             }
 
             string connectionString = $"Data Source={dbPath}";
@@ -60,9 +55,9 @@ namespace Chirp.Razor.DBFacade
             string createUser = @"
                     CREATE TABLE IF NOT EXISTS user (
                     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username STRING NOT NULL,
-                    email STRING NOT NULL,
-                    pw_hash STRING NOT NULL,
+                    username TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    pw_hash TEXT NOT NULL,
                     UNIQUE (username, email)
                     );";
 
@@ -70,7 +65,7 @@ namespace Chirp.Razor.DBFacade
                     CREATE TABLE IF NOT EXISTS message (
                     message_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     author_id INTEGER NOT NULL,
-                    text STRING NOT NULL,
+                    text TEXT NOT NULL,
                     pub_date INTEGER NOT NULL,
                     UNIQUE (author_id, text, pub_date),
                     FOREIGN KEY (author_id) REFERENCES user(user_id)
@@ -180,7 +175,7 @@ namespace Chirp.Razor.DBFacade
                 }
             }
 
-            var reader = cmd.ExecuteReader();
+            var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             return reader;
         }
