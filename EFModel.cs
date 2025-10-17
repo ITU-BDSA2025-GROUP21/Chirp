@@ -9,11 +9,27 @@ public class CheepRepository : DbContext
 	public string dbPath { get; }
 
 
-	public CheepRepository()
+	public CheepRepository(string dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");)
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        dbPath = System.IO.Path.Join(path, "chirp.db");
+        string tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
+
+        if (string.IsNullOrWhiteSpace(dbPath))
+        {
+	        dbPath = tempPath;
+        }
+
+        if (!dbPath.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
+        {
+	        string directory = Path.GetDirectoryName(dbPath);
+	        if (string.IsNullOrEmpty(directory))
+	        {
+		        dbPath = tempPath;
+	        }
+	        else
+	        {
+		        dbPath = Path.Combine(directory, 'chirp.db');
+	        }
+        }
     }
 	
 }
@@ -25,7 +41,6 @@ public Author()
     public List<Cheep> cheeps { get; set; }
 
 }
-
 
 public Cheep()
 {
