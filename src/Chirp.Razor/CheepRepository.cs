@@ -42,16 +42,15 @@ namespace Chirp.Razor.Data
 
     public class Author()
     {
-    public string email { get; set; }
-    public string name { get; set; }
-    public List<Cheep> cheeps { get; set; }
-
+        public string email { get; set; } = null!;
+        public string name { get; set; } = null!;
+        public List<Cheep> cheeps { get; set; } = new List<Cheep>();
     }
 
     public class Cheep()
     {
-    public string text { get; set; }
-    public DateTime timestamp { get; set; }
-    public Author author { get; set; }
+        public Author author { get; set; } = null!;
+        public string text { get; set; } = null!;
+        public DateTime timestamp { get; set; }
     }
 }

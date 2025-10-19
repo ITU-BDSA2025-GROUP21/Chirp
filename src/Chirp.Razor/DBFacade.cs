@@ -11,159 +11,117 @@ namespace Chirp.Razor.DBFacade
 {
     public class DBFacade
     {
-        private readonly string connectionString;
         private const int PageSize = 32;
 
         private CheepRepository repository;
 
         public DBFacade()
         {
-            string dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
 
-            string dataDump = Environment.GetEnvironmentVariable("CHIRPDATADUMP");
-
-
-            connectionString = initDB(dbPath);
-
-            ImportDataDump(dataDump);
+            //string dataDump = Environment.GetEnvironmentVariable("CHIRPDATADUMP");
+            
+            repository = new CheepRepository();
+            
+            //ImportDataDump(dataDump);
         }
 
-        public string initDB(string dbPath)
+        public void AddCheep(Author a, String t)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
-
-
-            if (string.IsNullOrWhiteSpace(dbPath))
+            var cheep = new Cheep()
             {
-                dbPath = tempPath;
-            }
-
-
-            if (!dbPath.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
-            {
-                string directory = Path.GetDirectoryName(dbPath);
-
-                if (string.IsNullOrEmpty(directory))
-                {
-                    dbPath = tempPath;
-                }
-                else
-                {
-                    dbPath = Path.Combine(directory, "chirp.db");
-                }
-            }
-
-            string connectionString = $"Data Source={dbPath}";
-
-            string foreignKeyEnforcement = "PRAGMA foreign_keys = ON;";
-
-            string dropTable = @"
-                       DROP TABLE IF EXISTS message;
-                       DROP TABLE IF EXISTS user;";
-
-            string createUser = @"
-                    CREATE TABLE IF NOT EXISTS user (
-                    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username STRING NOT NULL,
-                    email STRING NOT NULL,
-                    pw_hash STRING NOT NULL,
-                    UNIQUE (username, email)
-                    );";
-
-            string createMessage = @"
-                    CREATE TABLE IF NOT EXISTS message (
-                    message_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    author_id INTEGER NOT NULL,
-                    text STRING NOT NULL,
-                    pub_date INTEGER NOT NULL,
-                    UNIQUE (author_id, text, pub_date),
-                    FOREIGN KEY (author_id) REFERENCES user(user_id)
-                    );";
-
-
-            ExecuteNonQuery(connectionString, foreignKeyEnforcement, dropTable, createUser, createMessage);
-
-            return connectionString;
+                author = a,
+                text = t,
+                timestamp = DateTime.Now
+            };
+            repository.Add(cheep);
         }
-
+        
         public void ImportDataDump(string dataDump)
         {
             if (string.IsNullOrWhiteSpace(dataDump) || !File.Exists(dataDump))
-            {
                 return;
-            }
 
             string sql = File.ReadAllText(dataDump);
 
-            ExecuteNonQuery(connectionString, sql);
-        }
+            using var context = new CheepRepository();
+            using var transaction = context.Database.BeginTransaction();
 
-
-        public List<CheepViewModel> GetCheeps(int page = 1)
-        {
-            var offset = (page - 1) * PageSize;
-
-            var query = @"
-                SELECT 
-                    u.username, 
-                    m.text,
-                    m.pub_date
-                FROM message m 
-                JOIN user u 
-                    ON m.author_id = u.user_id 
-                ORDER BY m.pub_date DESC 
-                LIMIT @pageSize OFFSET @offset";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-
-            parameters.Add("@pageSize", PageSize);
-            parameters.Add("@offset", offset);
-
-            return GetCheepsFromDB(connectionString, query, parameters);
-
-        }
-
-        public List<CheepViewModel> GetCheepsFromAuthor(string author, int page = 1)
-        {
-            var cheeps = new List<CheepViewModel>();
-
-            var offset = (page - 1) * PageSize;
-            var query = @"
-                SELECT 
-                    u.username, 
-                    m.text, 
-                    m.pub_date
-                FROM message m 
-                JOIN user u 
-                    ON m.author_id = u.user_id 
-                WHERE u.username = @author 
-                ORDER BY m.pub_date DESC 
-                LIMIT @pageSize OFFSET @offset";
-
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-
-            parameters.Add("@author", author);
-            parameters.Add("@pageSize", PageSize);
-            parameters.Add("@offset", offset);
-
-            return GetCheepsFromDB(connectionString, query, parameters);
-        }
-
-        private List<CheepViewModel> GetCheepsFromDB(string connectionString, string query, Dictionary<string, object> parameters)
-        {
-            List<CheepViewModel> cheeps = new List<CheepViewModel>();
-
-            using (SqliteDataReader reader = ExecuteReader(connectionString, query, parameters))
+            try
             {
-                while (reader.Read())
-                {
-                    var authorName = reader.GetString(0);
-                    var message = reader.GetString(1);
-                    var timestamp = UnixTimeStampToDateTimeString(reader.GetInt64(2));
+                var statements = sql.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
-                    cheeps.Add(new CheepViewModel(authorName, message, timestamp));
+                foreach (var statement in statements)
+                {
+                    var trimmed = statement.Trim();
+                    if (!string.IsNullOrEmpty(trimmed))
+                    {
+                        context.Database.ExecuteSqlRaw(trimmed);
+                    }
                 }
+
+                transaction.Commit();
             }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.WriteLine($"Error importing SQL dump: {ex.Message}");
+            }
+        }
+
+
+        public List<CheepViewModel> GetCheepPage(int page = 1)
+        {
+            int offset = (page - 1) * PageSize;
+
+            var cheeps = repository.cheeps
+                .Include(c => c.author)
+                .OrderByDescending(c => c.timestamp)
+                .Skip(offset)
+                .Take(PageSize)
+                .AsNoTracking()
+                .Select(c => new CheepViewModel(
+                    c.author.name,
+                    c.text,
+                    c.timestamp.ToString("MM/dd/yy H:mm:ss")
+                ))
+                .ToList();
+
+            return cheeps;
+        }
+
+        public List<CheepViewModel> GetCheepsFromAuthor(string authorName, int page = 1)
+        {
+            int offset = (page - 1) * PageSize;
+
+            var cheeps = repository.cheeps
+                .Include(c => c.author)
+                .Where(c => c.author.name == authorName)
+                .OrderByDescending(c => c.timestamp)
+                .Skip(offset)
+                .Take(PageSize)
+                .AsNoTracking()
+                .Select(c => new CheepViewModel(
+                    c.author.name,
+                    c.text,
+                    c.timestamp.ToString("MM/dd/yy H:mm:ss")
+                ))
+                .ToList();
+
+            return cheeps;
+        }
+
+        private List<CheepViewModel> GetCheeps()
+        {
+            var cheeps = repository.cheeps
+                .Include(c => c.author)
+                .OrderByDescending(c => c.timestamp)
+                .AsNoTracking()
+                .Select(c => new CheepViewModel(
+                    c.author.name,
+                    c.text,
+                    c.timestamp.ToString("MM/dd/yy H:mm:ss")
+                ))
+                .ToList();
 
             return cheeps;
         }
