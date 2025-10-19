@@ -125,51 +125,7 @@ namespace Chirp.Razor.DBFacade
 
             return cheeps;
         }
-
-        private SqliteDataReader ExecuteReader(string connectionString, string query, Dictionary<string, object>? parameters = null)
-        {
-            var conn = new SqliteConnection(connectionString);
-            conn.Open();
-
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = query;
-
-            if (parameters != null)
-            {
-                foreach (var kvp in parameters)
-                {
-                    cmd.Parameters.AddWithValue(kvp.Key, kvp.Value ?? DBNull.Value);
-                }
-            }
-
-            var reader = cmd.ExecuteReader();
-
-            return reader;
-        }
-
-
-        private void ExecuteNonQuery(string connectionString, params string[] queries)
-        {
-            using (var conn = new SqliteConnection(connectionString))
-            {
-                conn.Open();
-
-                using (SqliteCommand cmd = conn.CreateCommand())
-                {
-                    foreach (string query in queries)
-                    {
-                        cmd.CommandText = query;
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-        }
-
-        private static string UnixTimeStampToDateTimeString(long unixTimeStamp)
-        {
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp);
-            return dateTime.ToString("MM/dd/yy H:mm:ss");
-        }
+        
+        
     }
 }

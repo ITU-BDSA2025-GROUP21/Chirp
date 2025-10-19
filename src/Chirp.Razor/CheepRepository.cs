@@ -54,3 +54,4 @@ namespace Chirp.Razor.Data
         public DateTime timestamp { get; set; }
     }
 }
+
