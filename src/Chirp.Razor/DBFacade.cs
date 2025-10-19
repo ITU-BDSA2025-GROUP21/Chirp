@@ -3,7 +3,9 @@ using System;
 using System.Data;
 using System.IO;
 using System.Reflection.Metadata;
-using System.Security.Cryptography;
+using Chirp.Razor.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Chirp.Razor.DBFacade
 {
@@ -11,6 +13,8 @@ namespace Chirp.Razor.DBFacade
     {
         private readonly string connectionString;
         private const int PageSize = 32;
+
+        private CheepRepository repository;
 
         public DBFacade()
         {
