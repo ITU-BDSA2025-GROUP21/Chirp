@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite; // Add this if needed
 
@@ -6,8 +7,8 @@ namespace Chirp.Razor.Data
 {
     public class CheepRepository : DbContext
     {
-        public DbSet<Cheep> cheeps { get; set; }
-        public DbSet<Author> authors { get; set; }
+        public DbSet<Cheep> Cheeps { get; set; }
+        public DbSet<Author> Authors { get; set; }
         public string DbPath { get; }
 
         public CheepRepository(string? dbPath = null)
@@ -40,18 +41,21 @@ namespace Chirp.Razor.Data
 
     }
 
-    public class Author()
+    public class Author
     {
-        public string email { get; set; } = null!;
-        public string name { get; set; } = null!;
-        public List<Cheep> cheeps { get; set; } = new List<Cheep>();
+        public int AuthorId { get; set; }                 // PK from dump
+        public string Name { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public List<Cheep> Cheeps { get; set; } = new();
     }
 
-    public class Cheep()
+    public class Cheep
     {
-        public Author author { get; set; } = null!;
-        public string text { get; set; } = null!;
-        public DateTime timestamp { get; set; }
+        public int CheepId { get; set; }                  // PK from dump
+        public int AuthorId { get; set; }                 // FK -> Author.AuthorId
+        public Author Author { get; set; } = null!;
+        public string Text { get; set; } = null!;
+        public DateTime TimeStamp { get; set; }
     }
 }
 
