@@ -57,7 +57,6 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B96560B074224FB4BCFA8E206DC421E4 }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bdsagroup21chirprazor'
@@ -65,3 +64,4 @@ jobs:
           package: ./publish
 
           
+
