@@ -17,14 +17,19 @@ namespace Chirp.Razor.DBFacade
 
         public DBFacade()
         {
-
-            string dataDump = "dump.sql";
-            
             repository = new CheepRepository();
+
+            repository.Database.CloseConnection();
+
             repository.Database.EnsureDeleted();
             repository.Database.EnsureCreated();
-            
+
             DbInitializer.SeedDatabase(repository);
+        }
+
+        public void resetDB() {
+            repository.Database.CloseConnection();
+            repository.Database.EnsureDeleted();
         }
 
         public void AddCheep(Author a, String t)
@@ -45,7 +50,7 @@ namespace Chirp.Razor.DBFacade
 
             var cheeps = repository.Cheeps
                 .Include(c => c.Author)
-                .OrderByDescending(c => c.TimeStamp)
+                .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(PageSize)
                 .AsNoTracking()
@@ -65,11 +70,11 @@ namespace Chirp.Razor.DBFacade
 
             var cheeps = repository.Cheeps
                 .Include(c => c.Author)
+                .AsNoTracking()
                 .Where(c => c.Author.Name == authorName)
-                .OrderByDescending(c => c.TimeStamp)
+                .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(PageSize)
-                .AsNoTracking()
                 .Select(c => new CheepViewModel(
                     c.Author.Name,
                     c.Text,
@@ -80,12 +85,12 @@ namespace Chirp.Razor.DBFacade
             return cheeps;
         }
 
-        private List<CheepViewModel> GetCheeps()
+        public List<CheepViewModel> GetCheeps()
         {
             var cheeps = repository.Cheeps
                 .Include(c => c.Author)
-                .OrderByDescending(c => c.TimeStamp)
                 .AsNoTracking()
+                .OrderBy(c => c.TimeStamp)
                 .Select(c => new CheepViewModel(
                     c.Author.Name,
                     c.Text,
@@ -95,7 +100,5 @@ namespace Chirp.Razor.DBFacade
 
             return cheeps;
         }
-        
-        
     }
 }

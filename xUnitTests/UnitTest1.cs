@@ -5,16 +5,20 @@ using System.Collections.Generic;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
+using Chirp.Razor.Data;
 using static System.Environment;
+using System.Runtime.Serialization.Formatters;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Linq;
 
 namespace XunitTests
 {
-    /*
-    public class UnitTest1
+    public class UnitTest1 : IDisposable
     {
         private readonly string dbPath;
         private readonly string connectionString;
         private readonly ITestOutputHelper _output;
+        private readonly DBFacade db;
 
 
         public UnitTest1(ITestOutputHelper output)
@@ -28,94 +32,14 @@ namespace XunitTests
             Environment.SetEnvironmentVariable("CHIRPDBPATH", dbPath);
 
             connectionString = $"Data Source={dbPath}";
-        }
 
-
-        private void SeedTestData()
-        {
-            using var conn = new SqliteConnection(connectionString);
-            conn.Open();
-
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = @"
-                INSERT INTO user (username, email, pw_hash)
-                VALUES ('alice', 'alice@mail.com', 'pw'),
-                       ('bob', 'bob@mail.com', 'pw');
-
-                INSERT INTO message (author_id, text, pub_date)
-                VALUES 
-                    (1, 'hello world', strftime('%s','2024-01-01')),
-                    (2, 'hey from bob', strftime('%s','2024-01-02')),
-                    (1, 'second message', strftime('%s','2024-01-03'));
-            ";
-            cmd.ExecuteNonQuery();
-        }
-
-        private void SeedTestData(int messageCount)
-        {
-            using var conn = new SqliteConnection(connectionString);
-            conn.Open();
-
-            var cmd = conn.CreateCommand();
-
-            // Insert fixed users first
-            cmd.CommandText = @"
-                INSERT INTO user (username, email, pw_hash)
-                VALUES ('alice', 'alice@mail.com', 'pw'),
-                       ('bob', 'bob@mail.com', 'pw');
-            ";
-            cmd.ExecuteNonQuery();
-
-            // Insert variable number of messages
-            for (int i = 1; i <= messageCount; i++)
-            {
-                var authorId = (i % 2) + 1; // alternate between user 1 and 2
-                cmd.CommandText = $@"
-                    INSERT INTO message (author_id, text, pub_date)
-                    VALUES ({authorId}, 'test message #{i}', strftime('%s','now'));
-                ";
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-
-        [Fact]
-        public void GetCheeps_OrderedDescending()
-        {
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db")); 
-            SeedTestData();
-
-            var cheeps = db.GetCheepPage();
-
-            Assert.NotEmpty(cheeps);
-            Assert.Equal(3, cheeps.Count);
-            Assert.Equal("alice", cheeps[0].Author);
-            Assert.Equal("second message", cheeps[0].Message);
-            Assert.Equal("bob", cheeps[1].Author);
-        }
-
-        [Fact]
-        public void GetCheeps_ReturnRightAmount()
-        {
-            int amount = 5;
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            SeedTestData(amount);
-
-            var cheeps = db.GetCheepPage();
-
-            Assert.Equal(amount, cheeps.Count);
+            db = new DBFacade();
         }
 
         [Fact]
         public void GetCheeps_Pagination_Works()
         {
-            int totalMessages = 64;
             int pageSize = 32;
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            SeedTestData(totalMessages);
             var firstPage = db.GetCheepPage(page: 1);
             var secondPage = db.GetCheepPage(page: 2);
             Assert.Equal(pageSize, firstPage.Count);
@@ -123,75 +47,90 @@ namespace XunitTests
             Assert.NotEqual(firstPage[0].Message, secondPage[0].Message);
         }
 
+
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            SeedTestData();
-            var aliceCheeps = db.GetCheepsFromAuthor("alice");
-            var bobCheeps = db.GetCheepsFromAuthor("bob");
-            Assert.Equal(2, aliceCheeps.Count);
-            Assert.All(aliceCheeps, c => Assert.Equal("alice", c.Author));
-            Assert.Single(bobCheeps);
-            Assert.All(bobCheeps, c => Assert.Equal("bob", c.Author));
-        }
 
-        [Fact]
-        public void GetCheepsFromAuthor_decendingWorks()
-        {
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            SeedTestData();
-            var aliceCheeps = db.GetCheepsFromAuthor("alice");
-            Assert.Equal("second message", aliceCheeps[0].Message);
+            var helgeCheeps = db.GetCheepsFromAuthor("Helge");
+
+            var adrianCheeps = db.GetCheepsFromAuthor("Adrian");
+
+            var nathanCheeps = db.GetCheepsFromAuthor("Nathan Sirmon");
+
+            var johnnieCheeps = db.GetCheepsFromAuthor("Johnnie Calixto");
+
+            var jacqualineTwelfthPage = db.GetCheepsFromAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+
+            Assert.Single(helgeCheeps);
+            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
+
+            Assert.Single(adrianCheeps);
+            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author));
+
+            Assert.Equal(22, nathanCheeps.Count);
+            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author));
+
+            Assert.Equal(15, johnnieCheeps.Count);
+            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author));
+
+            Assert.Equal(7, jacqualineTwelfthPage.Count);
+            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author));
         }
 
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            int totalMessages = 64;
             int pageSize = 32;
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            SeedTestData(totalMessages);
-            var aliceFirstPage = db.GetCheepsFromAuthor("alice", page: 1);
-            var aliceSecondPage = db.GetCheepsFromAuthor("alice", page: 2);
-            Assert.Equal(pageSize, aliceFirstPage.Count); // half messages by alice
-            Assert.Empty(aliceSecondPage); // only 32 messages total, so page 2 should be empty
+            var luannaFirstPage = db.GetCheepsFromAuthor("Luanna Muro", page: 1);
+            var luannaSecondPage = db.GetCheepsFromAuthor("Luanna Muro", page: 2);
+            Assert.NotEmpty(luannaFirstPage);
+            Assert.Empty(luannaSecondPage);
         }
 
         [Fact]
-        public void getCheeps_from_empty_database()
+        public void testConsistency()
         {
-            var db = new DBFacade();
-            db.initDB(Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db"));
-            var cheeps = db.GetCheepPage();
-            Assert.Empty(cheeps);
+            var cheeps = db.GetCheeps();
+            var cheep = cheeps[0];
+
+            var controlCheep = new CheepViewModel(
+                "Helge",
+                "Hello, BDSA students!",
+                "08/01/23 12.16.48"
+                );
+
+            Assert.Equal(controlCheep, cheep);
         }
 
         [Fact]
-        public void sqldump_import_works()
+        public void testOrder()
+        { 
+            var cheeps = db.GetCheeps();
+            DateTime prevTime = DateTime.Parse("01/01/00 00.00.00");
+            var ordered = true;
+
+            foreach (CheepViewModel cheep in cheeps)
+            {
+                var time = cheep.Timestamp;
+                DateTime aT = DateTime.Parse(time);
+
+                if (aT >= prevTime)
+                {
+                    prevTime = aT;
+                } else {
+                    ordered = false;
+                    break;
+                }
+            }
+
+            Assert.True(ordered);
+        }
+
+
+        public void Dispose()
         {
-            var db = new DBFacade();
-            var dumpFile = Path.Combine(AppContext.BaseDirectory);
-
-            dumpFile = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-
-            dumpFile = Path.Combine(dumpFile, "resources", "dump.sql");
-
-            _output.WriteLine($"Looking for dump file at: {dumpFile}");
-
-
-
-            Assert.True(File.Exists(dumpFile), $"Not found: {dumpFile}");
-
-
-            db.ImportDataDump(dumpFile);
-            var cheeps = db.GetCheepPage();
-            Assert.True(File.Exists(dumpFile));
-            Assert.Equal(32, cheeps.Count);
+            db.resetDB();
         }
     }
-*/
 }
