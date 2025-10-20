@@ -2,7 +2,8 @@ name: Build and deploy ASP.Net Core app to Azure Web App - bdsagroup21chirprazor
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -14,25 +15,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Restore & Build
-        run: dotnet build src/Chirp.Razor/Chirp.Razor.csproj -c Release
+      - name: Build with dotnet
+        run: dotnet build src/Chirp.Razor/Chirp.Razor.csproj --configuration Release
 
-      - name: Publish
-        run: dotnet publish src/Chirp.Razor/Chirp.Razor.csproj -c Release -o ./publish
+      - name: dotnet publish
+        run: dotnet publish src/Chirp.Razor/Chirp.Razor.csproj --configuration Release --output ./publish
 
-      - name: Zip published app
-        run: cd publish && zip -r ../site.zip .
-
-      - name: Upload artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: site-zip
-          path: site.zip
+          name: publish-artifact
+          path: ./publish
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,32 +40,22 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: site-zip
-          path: .
+          name: publish-artifact
+          path: ./publish
 
-      - name: Azure login (OIDC)
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_60606DCFA78B495896C259B417204FA1 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FBB50B1433184273A5F1282BA555CC1A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B96560B074224FB4BCFA8E206DC421E4 }}
 
-      # Ensure build-during-deployment is OFF (idempotent)
-      - name: Disable Oryx build on app
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az webapp config appsettings set \
-              --name bdsagroup21chirprazor \
-              --resource-group noav_rg_9994 \
-              --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false ENABLE_ORYX_BUILD=false WEBSITE_RUN_FROM_PACKAGE=1
-
-      - name: Deploy to Azure Web App (zip)
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bdsagroup21chirprazor'
           slot-name: 'Production'
-          package: site.zip
+          package: ./publish
