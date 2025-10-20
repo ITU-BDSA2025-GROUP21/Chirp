@@ -16,24 +16,24 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          - uses: actions/checkout@v4
+    
+          - name: Set up .NET Core
+            uses: actions/setup-dotnet@v4
+            with:
+              dotnet-version: '8.x'
+    
+          - name: Build with dotnet
+            run: dotnet build src/Chirp.Razor/Chirp.Razor.csproj --configuration Release
+    
+          - name: dotnet publish
+            run: dotnet publish src/Chirp.Razor/Chirp.Razor.csproj --configuration Release --output ./publish
+    
+          - name: Upload artifact for deployment job
+            uses: actions/upload-artifact@v4
+            with:
+              name: publish-artifact
+              path: ./publish
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,7 +46,8 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: publish-artifact
+          path: ./publish
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -61,5 +62,6 @@ jobs:
         with:
           app-name: 'bdsagroup21chirprazor'
           slot-name: 'Production'
-          package: .
+          package: ./publish
+
           
