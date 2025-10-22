@@ -1,11 +1,6 @@
-using Microsoft.Data.Sqlite;
-using System;
-using System.Data;
-using System.IO;
-using System.Reflection.Metadata;
 using Chirp.Razor.Data;
+using Chirp.Razor.Repositories;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace Chirp.Razor.DBFacade
 {
@@ -13,92 +8,73 @@ namespace Chirp.Razor.DBFacade
     {
         private const int PageSize = 32;
 
-        private CheepRepository repository;
+        private readonly ICheepRepository _cheepRepository;
+        private readonly IAuthorRepository _authorRepository;
+        private readonly ChirpDBContext _context;
 
         public DBFacade()
         {
-            repository = new CheepRepository();
+            _context = new ChirpDBContext();
+            _cheepRepository = new CheepRepository(_context);
+            _authorRepository = new AuthorRepository(_context);
 
-            repository.Database.CloseConnection();
+            _context.Database.CloseConnection();
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
 
-            repository.Database.EnsureDeleted();
-            repository.Database.EnsureCreated();
-
-            DbInitializer.SeedDatabase(repository);
+            DbInitializer.SeedDatabase(_context);
         }
 
-        public void resetDB() {
-            repository.Database.CloseConnection();
-            repository.Database.EnsureDeleted();
-        }
-
-        public void AddCheep(Author a, String t)
+        public void ResetDB()
         {
-            var cheep = new Cheep()
+            _context.Database.CloseConnection();
+            _context.Database.EnsureDeleted();
+        }
+
+        public void AddCheep(Author author, string text)
+        {
+            var cheep = new Cheep
             {
-                Author = a,
-                Text = t,
+                Author = author,
+                Text = text,
                 TimeStamp = DateTime.Now
             };
-            repository.Add(cheep);
-            repository.SaveChanges();
+
+            _cheepRepository.Add(cheep);
+            _cheepRepository.Save();
         }
 
         public List<CheepViewModel> GetCheepPage(int page = 1)
         {
-            int offset = (page - 1) * PageSize;
-
-            var cheeps = repository.Cheeps
-                .Include(c => c.Author)
-                .OrderBy(c => c.TimeStamp)
-                .Skip(offset)
-                .Take(PageSize)
-                .AsNoTracking()
+            return _cheepRepository.GetAll(page, PageSize)
                 .Select(c => new CheepViewModel(
                     c.Author.Name,
                     c.Text,
                     c.TimeStamp.ToString("MM/dd/yy H:mm:ss")
                 ))
                 .ToList();
-
-            return cheeps;
         }
 
         public List<CheepViewModel> GetCheepsFromAuthor(string authorName, int page = 1)
         {
-            int offset = (page - 1) * PageSize;
-
-            var cheeps = repository.Cheeps
-                .Include(c => c.Author)
-                .AsNoTracking()
-                .Where(c => c.Author.Name == authorName)
-                .OrderBy(c => c.TimeStamp)
-                .Skip(offset)
-                .Take(PageSize)
+            return _cheepRepository.GetByAuthor(authorName, page, PageSize)
                 .Select(c => new CheepViewModel(
                     c.Author.Name,
                     c.Text,
                     c.TimeStamp.ToString("MM/dd/yy H:mm:ss")
                 ))
                 .ToList();
-
-            return cheeps;
         }
 
         public List<CheepViewModel> GetCheeps()
         {
-            var cheeps = repository.Cheeps
-                .Include(c => c.Author)
-                .AsNoTracking()
-                .OrderBy(c => c.TimeStamp)
+            return _cheepRepository.GetAll(1, int.MaxValue)
                 .Select(c => new CheepViewModel(
                     c.Author.Name,
                     c.Text,
                     c.TimeStamp.ToString("MM/dd/yy H:mm:ss")
                 ))
                 .ToList();
-
-            return cheeps;
         }
     }
 }

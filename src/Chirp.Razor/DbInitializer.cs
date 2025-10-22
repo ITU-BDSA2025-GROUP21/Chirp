@@ -3,7 +3,7 @@ using Chirp.Razor.Data;
 
 public static class DbInitializer
 {
-    public static void SeedDatabase(CheepRepository chirpContext)
+    public static void SeedDatabase(ChirpDBContext chirpContext)
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))
         {
