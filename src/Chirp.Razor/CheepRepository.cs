@@ -1,6 +1,7 @@
 ﻿// File: CheepRepository.cs
 using Chirp.Razor.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Chirp.Razor.Repositories
 {
@@ -26,12 +27,7 @@ namespace Chirp.Razor.Repositories
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(c => new CheepDTO
-                {
-                    Author = c.Author.Name,
-                    Message = c.Text,
-                    CreatedDate = c.TimeStamp.ToString("yyyy-MM-dd HH:mm")
-                })
+                .Select(createCheepDTO)
                 .ToList();
         }
 
@@ -44,14 +40,17 @@ namespace Chirp.Razor.Repositories
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(c => new CheepDTO
-                {
-                    Author = c.Author.Name,
-                    Message = c.Text,
-                    CreatedDate = c.TimeStamp.ToString("yyyy-MM-dd HH:mm")
-                })
+                .Select(createCheepDTO)
                 .ToList();
         }
+
+        private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
+            c => new CheepDTO
+            {
+                Author = c.Author.Name,
+                Message = c.Text,
+                CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+            };
 
         public void Save()
         {
