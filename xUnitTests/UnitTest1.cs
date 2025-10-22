@@ -51,7 +51,6 @@ namespace XunitTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-
             var helgeCheeps = db.GetCheepsFromAuthor("Helge");
 
             var adrianCheeps = db.GetCheepsFromAuthor("Adrian");
