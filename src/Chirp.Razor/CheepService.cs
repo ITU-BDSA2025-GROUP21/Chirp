@@ -19,7 +19,7 @@ public class CheepService : ICheepService
 
     public List<CheepViewModel> GetCheeps(int page = 1) //Pagination 
     {
-        return _dbFacade.GetCheeps(page); //Kalder metoden i DBFacade
+        return _dbFacade.GetCheepPage(page); //Kalder metoden i DBFacade
     }
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author, int page = 1) //Pagination
