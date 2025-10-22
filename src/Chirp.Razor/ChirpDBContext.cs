@@ -37,7 +37,6 @@ namespace Chirp.Razor.Data
         {
             optionsBuilder.UseSqlite($"Data Source={DbPath}");
         }
-
     }
 
     public class Author
