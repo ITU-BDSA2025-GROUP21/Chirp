@@ -18,28 +18,38 @@ namespace Chirp.Razor.Repositories
             _context.Cheeps.Add(cheep);
         }
 
-        public IEnumerable<Cheep> GetAll(int page = 1, int pageSize = 32)
+        public IEnumerable<CheepDTO> GetAll(int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
-                .Include(c => c.Author)
+                .AsNoTracking()
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .AsNoTracking()
+                .Select(c => new CheepDTO
+                {
+                    Author = c.Author.Name,
+                    Message = c.Text,
+                    CreatedDate = c.TimeStamp.ToString("yyyy-MM-dd HH:mm")
+                })
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
+        public IEnumerable<CheepDTO> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
-                .Include(c => c.Author)
+                .AsNoTracking()
                 .Where(c => c.Author.Name == authorName)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .AsNoTracking()
+                .Select(c => new CheepDTO
+                {
+                    Author = c.Author.Name,
+                    Message = c.Text,
+                    CreatedDate = c.TimeStamp.ToString("yyyy-MM-dd HH:mm")
+                })
                 .ToList();
         }
 

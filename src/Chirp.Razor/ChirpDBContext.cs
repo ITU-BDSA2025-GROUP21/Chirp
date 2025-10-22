@@ -7,36 +7,14 @@ namespace Chirp.Razor.Data
 {
     public class ChirpDBContext : DbContext
     {
+
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }
-        public string DbPath { get; }
 
-        public ChirpDBContext(string? dbPath = null)
+        public ChirpDBContext(DbContextOptions options) : base(options)
         {
-            var envPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-            var tempPath = Path.Combine(Path.GetTempPath(), "chirp.db");
-
-            // choose base path: parameter > env > temp
-            var chosen = !string.IsNullOrWhiteSpace(dbPath) ? dbPath
-                : !string.IsNullOrWhiteSpace(envPath) ? envPath
-                : tempPath;
-
-            // ensure it ends with .db and has a directory
-            if (!chosen.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
-            {
-                var directory = Path.GetDirectoryName(chosen);
-                chosen = string.IsNullOrEmpty(directory)
-                    ? tempPath
-                    : Path.Combine(directory, "chirp.db");
-            }
-
-            DbPath = chosen;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite($"Data Source={DbPath}");
-        }
     }
 
     public class Author
