@@ -87,7 +87,6 @@ namespace ChirpProject.MainApp
 
         public async void IterateCheeps(int? limit = null)
         {
-
             IEnumerable<Cheep> cheeps = await GetCheepAsyncJson(limit);
 
             foreach (Cheep cheep in cheeps)
