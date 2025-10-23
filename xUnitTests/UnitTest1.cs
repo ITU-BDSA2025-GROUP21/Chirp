@@ -1,65 +1,44 @@
-using Chirp.Razor.DBFacade;
-using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Xunit;
 using Xunit.Abstractions;
-using Chirp.Razor.Data;
-using static System.Environment;
-using System.Runtime.Serialization.Formatters;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
+using Chirp.Razor;
 
 namespace XunitTests
 {
-    public class UnitTest1 : IDisposable
+    public class UnitTest1 : IClassFixture<TestServices>
     {
-        private readonly string dbPath;
-        private readonly string connectionString;
         private readonly ITestOutputHelper _output;
-        private readonly DBFacade db;
+        private readonly ICheepService _cheepService;
 
 
-        public UnitTest1(ITestOutputHelper output)
+        public UnitTest1(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-
-            // unique file per test class instance
-            dbPath = Path.Combine(Path.GetTempPath(), $"chirp_{Guid.NewGuid():N}.db");
-
-            // tells app/DBFacade where to create/open the DB
-            Environment.SetEnvironmentVariable("CHIRPDBPATH", dbPath);
-
-            connectionString = $"Data Source={dbPath}";
-
-            db = new DBFacade();
+            _cheepService = testService.CheepService;
         }
 
         [Fact]
         public void GetCheeps_Pagination_Works()
         {
             int pageSize = 32;
-            var firstPage = db.GetCheepPage(page: 1);
-            var secondPage = db.GetCheepPage(page: 2);
-            Assert.Equal(pageSize, firstPage.Count);
-            Assert.Equal(pageSize, secondPage.Count);
-            Assert.NotEqual(firstPage[0].Message, secondPage[0].Message);
+            var firstPage = _cheepService.GetCheeps(page: 1);
+            var secondPage = _cheepService.GetCheeps(page: 2);
+            Assert.Equal(pageSize, firstPage.Count());
+            Assert.Equal(pageSize, secondPage.Count());
+            Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
         }
 
 
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = db.GetCheepsFromAuthor("Helge");
+            var helgeCheeps = _cheepService.GetCheepsFromAuthor("Helge");
 
-            var adrianCheeps = db.GetCheepsFromAuthor("Adrian");
+            var adrianCheeps = _cheepService.GetCheepsFromAuthor("Adrian");
 
-            var nathanCheeps = db.GetCheepsFromAuthor("Nathan Sirmon");
+            var nathanCheeps = _cheepService.GetCheepsFromAuthor("Nathan Sirmon");
 
-            var johnnieCheeps = db.GetCheepsFromAuthor("Johnnie Calixto");
+            var johnnieCheeps = _cheepService.GetCheepsFromAuthor("Johnnie Calixto");
 
-            var jacqualineTwelfthPage = db.GetCheepsFromAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
@@ -67,13 +46,13 @@ namespace XunitTests
             Assert.Single(adrianCheeps);
             Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author));
 
-            Assert.Equal(22, nathanCheeps.Count);
+            Assert.Equal(22, nathanCheeps.Count());
             Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author));
 
-            Assert.Equal(15, johnnieCheeps.Count);
+            Assert.Equal(15, johnnieCheeps.Count());
             Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author));
 
-            Assert.Equal(7, jacqualineTwelfthPage.Count);
+            Assert.Equal(7, jacqualineTwelfthPage.Count());
             Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author));
         }
 
@@ -81,8 +60,8 @@ namespace XunitTests
         public void GetCheepsFromAuthor_PaginationWorks()
         {
             int pageSize = 32;
-            var luannaFirstPage = db.GetCheepsFromAuthor("Luanna Muro", page: 1);
-            var luannaSecondPage = db.GetCheepsFromAuthor("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 1);
+            var luannaSecondPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -90,14 +69,14 @@ namespace XunitTests
         [Fact]
         public void testConsistency()
         {
-            var cheeps = db.GetCheeps();
-            var cheep = cheeps[0];
+            var cheeps = _cheepService.GetCheeps();
+            var cheep = cheeps.First();
 
-            var controlCheep = new CheepViewModel(
-                "Helge",
-                "Hello, BDSA students!",
-                "08/01/23 12.16.48"
-                );
+            var controlCheep = new CheepDTO { 
+                Author = "Helge",
+                Message = "Hello, BDSA students!",
+                CreatedDate = "01/08/2023 12:16"
+            };
 
             Assert.Equal(controlCheep, cheep);
         }
@@ -105,13 +84,13 @@ namespace XunitTests
         [Fact]
         public void testOrder()
         { 
-            var cheeps = db.GetCheeps();
-            DateTime prevTime = DateTime.Parse("01/01/00 00.00.00");
+            var cheeps = _cheepService.GetCheeps();
+            DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
 
-            foreach (CheepViewModel cheep in cheeps)
+            foreach (CheepDTO cheep in cheeps)
             {
-                var time = cheep.Timestamp;
+                var time = cheep.CreatedDate;
                 DateTime aT = DateTime.Parse(time);
 
                 if (aT >= prevTime)
@@ -124,12 +103,6 @@ namespace XunitTests
             }
 
             Assert.True(ordered);
-        }
-
-
-        public void Dispose()
-        {
-            db.resetDB();
         }
     }
 }

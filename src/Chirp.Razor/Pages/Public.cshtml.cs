@@ -6,7 +6,7 @@ namespace Chirp.Razor.Pages;
 public class PublicModel : PageModel
 {
     private readonly ICheepService _service;
-    public List<CheepViewModel> Cheeps { get; set; } = new(); // Tilføjet = new() for at fikse weird nullable warning
+    public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
 
     public PublicModel(ICheepService service)

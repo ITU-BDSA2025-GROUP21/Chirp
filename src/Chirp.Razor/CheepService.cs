@@ -1,29 +1,29 @@
-using Chirp.Razor.DBFacade;
-
-public record CheepViewModel(string Author, string Message, string Timestamp);
-
+using Chirp.Razor;
+using Chirp.Razor.Repositories;
 public interface ICheepService
 {
-    public List<CheepViewModel> GetCheeps(int page = 1); //Pagination
-    public List<CheepViewModel> GetCheepsFromAuthor(string author, int page = 1); //Pagination
+    public IEnumerable<CheepDTO> GetCheeps(int page = 1); //Pagination
+    public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1); //Pagination
 }
 
 public class CheepService : ICheepService
 {
-    private readonly DBFacade _dbFacade; //Database-Dependency
+    private const int PageSize = 32;
 
-    public CheepService(DBFacade dbFacade) //Constructor til Database-Dependency
+    private readonly ICheepRepository _cheepRepository;
+
+    public CheepService(ICheepRepository cheepRepository) 
     {
-        _dbFacade = dbFacade;
+        _cheepRepository = cheepRepository;
     }
 
-    public List<CheepViewModel> GetCheeps(int page = 1) //Pagination 
+    public IEnumerable<CheepDTO> GetCheeps(int page = 1) //Pagination 
     {
-        return _dbFacade.GetCheepPage(page); //Kalder metoden i DBFacade
+        return _cheepRepository.GetAll(page, PageSize);
     }
 
-    public List<CheepViewModel> GetCheepsFromAuthor(string author, int page = 1) //Pagination
+    public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1) //Pagination
     {
-        return _dbFacade.GetCheepsFromAuthor(author, page); //Kalder metoden i DBFacade
+        return _cheepRepository.GetByAuthor(author, page, PageSize);
     }
 }
