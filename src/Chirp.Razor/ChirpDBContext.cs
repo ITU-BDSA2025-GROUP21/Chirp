@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Sqlite; // Add this if needed
 namespace Chirp.Razor.Data
 {
     public class ChirpDBContext : DbContext
-    {
 
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }
