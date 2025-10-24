@@ -18,6 +18,8 @@ namespace Chirp.Razor.Data
 
     public class Author
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AuthorId { get; set; }                 // PK from dump
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
@@ -26,6 +28,8 @@ namespace Chirp.Razor.Data
 
     public class Cheep
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CheepId { get; set; }                  // PK from dump
         public int AuthorId { get; set; }                 // FK -> Author.AuthorId
         public Author Author { get; set; } = null!;

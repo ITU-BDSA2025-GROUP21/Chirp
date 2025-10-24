@@ -44,6 +44,46 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        public void CreateNewAuthor(string name, string email)
+        {
+            using (var context = new YourDbContext())
+            {
+                var author = new Author
+                {
+                    Name = name,
+                    Email = email,
+                    Cheeps = new List<Cheep>()
+                };
+
+                context.Authors.Add(author);
+                context.SaveChanges();
+            }
+        }
+
+        public Author FindAuthorByName(string name)
+        {
+            using (var context = new YourDbContext())
+            {
+                return context.Authors
+                            .FirstOrDefault(a => a.Name.ToLower() == name.ToLower());
+            }
+        }
+
+        public Author FindAuthorByEmail(string email)
+        {
+            using (var context = new YourDbContext())
+            {
+                return context.Authors
+                            .FirstOrDefault(a => a.Email.ToLower() == email.ToLower());
+
+            }
+        }
+
+        public void AddChirp(CheepDTO chirp)
+        {
+            
+        }
+
         private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
             c => new CheepDTO
             {
