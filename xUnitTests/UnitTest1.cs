@@ -1,5 +1,6 @@
+using Chirp.Core.DTO;
+using Chirp.Core.Services.Interfaces;
 using Xunit.Abstractions;
-using Chirp.Razor;
 
 namespace XunitTests
 {

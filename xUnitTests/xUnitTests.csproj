@@ -23,9 +23,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
-	  <ProjectReference Include="..\src\Chirp.Razor\Chirp.Razor.csproj" />
-	  <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
-	  <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+	<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+	<ProjectReference Include="..\src\Chirp.Web\Chirp.Web.csproj" />
+	<ProjectReference Include="..\src\Chirp.Core\Chirp.Core.csproj" />
+	<ProjectReference Include="..\src\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
 
 	  <None Update="resources\dump.sql">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
