@@ -1,5 +1,4 @@
-﻿// File: CheepRepository.cs
-using Chirp.Razor.Data;
+﻿using Chirp.Razor.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -80,9 +79,28 @@ namespace Chirp.Razor.Repositories
         }
 
         public void AddChirp(CheepDTO chirp)
-        {
-            
+            { 
+            var author = _context.Authors.FirstOrDefault(a => a.Name == chirp.Author);
+            if (author == null)
+            {
+                throw new InvalidOperationException($"No author found with name '{chirp.Author}'.");
+            }
+
+            if (!DateTime.TryParse(chirp.CreatedDate, out var parsedDate))
+            {
+                parsedDate = DateTime.Now;
+            }
+
+            var cheep = new Cheep
+            {
+                AuthorId = author.AuthorId,
+                Text = chirp.Message,
+                TimeStamp = parsedDate
+            };
+
+            _context.Cheeps.Add(cheep);
         }
+
 
         private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
             c => new CheepDTO
