@@ -41,12 +41,13 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public void CreateNewAuthor(string name, string email)
+        public void CreateNewAuthor(string name, string email, string password)
         {
             var author = new Author
             {
                 Name = name,
                 Email = email,
+                Password = password,
                 Cheeps = new List<Cheep>()
             };
 
@@ -55,22 +56,30 @@ namespace Chirp.Razor.Repositories
             
         }
 
-        public Author FindAuthorByName(string name)
+        public AuthorDTO? FindAuthorByName(string name)
         {
-            using (var context = new YourDbContext())
-            {
-                return context.Authors
-                            .FirstOrDefault(a => a.Name.ToLower() == name.ToLower());
-            }
+            return _context.Authors
+                .Where(a => a.Name.ToLower() == name.ToLower())
+                .Select(a => new AuthorDTO
+                {
+                    Name = a.Name,
+                    Email = a.Email,
+                    Password = a.Password
+                })
+                .FirstOrDefault();
         }
 
-        public Author FindAuthorByEmail(string email)
+        public AuthorDTO? FindAuthorByEmail(string email)
         {
-            using (var context = new YourDbContext())
-            {
-                return context.Authors
-                            .FirstOrDefault(a => a.Email.ToLower() == email.ToLower());
-            }
+            return _context.Authors
+                .Where(a => a.Email.ToLower() == email.ToLower())
+                .Select(a => new AuthorDTO
+                {
+                    Name = a.Name,
+                    Email = a.Email,
+                    Password = a.Password
+                })
+                .FirstOrDefault();
         }
 
         public void AddChirp(CheepDTO chirp)
