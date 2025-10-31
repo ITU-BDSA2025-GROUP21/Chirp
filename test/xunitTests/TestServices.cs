@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Chirp.Razor.Repositories;
-using Chirp.Core.Services.Interfaces;
+using Chirp.Core.Services;
 using Chirp.Infrastructure.Data;
 using Chirp.Core.Repositories;
 

@@ -1,6 +1,6 @@
 using Chirp.Core.DTO;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services.Interfaces;
+using Chirp.Core.Services;
 
 public class CheepService : ICheepService
 {
