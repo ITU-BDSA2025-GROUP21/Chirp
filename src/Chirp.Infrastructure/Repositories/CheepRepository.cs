@@ -41,6 +41,63 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        public void CreateNewAuthor(string name, string email)
+        {
+            var author = new Author
+            {
+                Name = name,
+                Email = email,
+                Cheeps = new List<Cheep>()
+            };
+
+            _context.Authors.Add(author);
+            _context.SaveChanges();
+            
+        }
+
+        public Author FindAuthorByName(string name)
+        {
+            using (var context = new YourDbContext())
+            {
+                return context.Authors
+                            .FirstOrDefault(a => a.Name.ToLower() == name.ToLower());
+            }
+        }
+
+        public Author FindAuthorByEmail(string email)
+        {
+            using (var context = new YourDbContext())
+            {
+                return context.Authors
+                            .FirstOrDefault(a => a.Email.ToLower() == email.ToLower());
+            }
+        }
+
+        public void AddChirp(CheepDTO chirp)
+            { 
+            var author = _context.Authors.FirstOrDefault(a => a.Name == chirp.Author);
+            if (author == null)
+            {
+                throw new InvalidOperationException($"No author found with name '{chirp.Author}'.");
+            }
+
+            if (!DateTime.TryParse(chirp.CreatedDate, out var parsedDate))
+            {
+                parsedDate = DateTime.Now;
+            }
+
+            var cheep = new Cheep
+            {
+                AuthorId = author.AuthorId,
+                Text = chirp.Message,
+                TimeStamp = parsedDate
+            };
+
+            _context.Cheeps.Add(cheep);
+            _context.SaveChanges();
+        }
+
+
         private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
             c => new CheepDTO
             {
