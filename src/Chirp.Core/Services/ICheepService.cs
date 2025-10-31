@@ -1,6 +1,6 @@
 ﻿using Chirp.Core.DTO;
 
-namespace Chirp.Core.Services.Interfaces
+namespace Chirp.Core.Services
 {
     public interface ICheepService
     {
