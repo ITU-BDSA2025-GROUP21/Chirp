@@ -43,18 +43,16 @@ namespace Chirp.Razor.Repositories
 
         public void CreateNewAuthor(string name, string email)
         {
-            using (var context = new YourDbContext())
+            var author = new Author
             {
-                var author = new Author
-                {
-                    Name = name,
-                    Email = email,
-                    Cheeps = new List<Cheep>()
-                };
+                Name = name,
+                Email = email,
+                Cheeps = new List<Cheep>()
+            };
 
-                context.Authors.Add(author);
-                context.SaveChanges();
-            }
+            _context.Authors.Add(author);
+            _context.SaveChanges();
+            
         }
 
         public Author FindAuthorByName(string name)
@@ -97,6 +95,7 @@ namespace Chirp.Razor.Repositories
             };
 
             _context.Cheeps.Add(cheep);
+            _context.SaveChanges();
         }
 
 
