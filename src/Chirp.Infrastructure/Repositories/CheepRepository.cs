@@ -70,7 +70,6 @@ namespace Chirp.Razor.Repositories
             {
                 return context.Authors
                             .FirstOrDefault(a => a.Email.ToLower() == email.ToLower());
-
             }
         }
 
