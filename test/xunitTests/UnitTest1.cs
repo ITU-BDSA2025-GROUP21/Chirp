@@ -60,7 +60,6 @@ namespace XunitTests
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            int pageSize = 32;
             var luannaFirstPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 1);
             var luannaSecondPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
