@@ -23,8 +23,7 @@
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
 	<ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj" />
 	<ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
+	   <Folder Include="Areas\Identity\Data\" />	  
 	  
 	
-  </ItemGroup>
-
-</Project>
+  </ItemGroup></Project>

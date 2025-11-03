@@ -31,10 +31,6 @@ namespace Chirp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("AuthorId");
 
                     b.ToTable("Authors");
