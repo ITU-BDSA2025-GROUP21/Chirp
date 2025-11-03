@@ -41,13 +41,12 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public void CreateNewAuthor(string name, string email, string password)
+        public void CreateNewAuthor(string name, string email)
         {
             var author = new Author
             {
                 Name = name,
                 Email = email,
-                Password = password,
                 Cheeps = new List<Cheep>()
             };
 
@@ -64,7 +63,6 @@ namespace Chirp.Razor.Repositories
                 {
                     Name = a.Name,
                     Email = a.Email,
-                    Password = a.Password
                 })
                 .FirstOrDefault();
         }
@@ -77,7 +75,6 @@ namespace Chirp.Razor.Repositories
                 {
                     Name = a.Name,
                     Email = a.Email,
-                    Password = a.Password
                 })
                 .FirstOrDefault();
         }

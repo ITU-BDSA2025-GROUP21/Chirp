@@ -1,4 +1,6 @@
-﻿namespace Chirp.Core.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Chirp.Core.DTO
 {
     public record CheepDTO
     {
