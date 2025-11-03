@@ -2,9 +2,14 @@ name: Build and deploy ASP.Net Core app to Azure Web App - bdsagroup21chirprazor
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g., v1.2.3)"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -59,4 +64,5 @@ jobs:
           app-name: 'bdsagroup21chirprazor'
           slot-name: 'Production'
           package: ./publish
+
 
