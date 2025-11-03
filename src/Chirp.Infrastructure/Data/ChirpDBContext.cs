@@ -11,8 +11,8 @@ namespace Chirp.Infrastructure.Data
 
         public ChirpDBContext(DbContextOptions options) : base(options)
         {
-        }
 
+        }
     }
 }
 
