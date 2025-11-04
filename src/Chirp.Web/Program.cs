@@ -14,11 +14,12 @@ builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 
 // Load database connection via configuration
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ChirpDBContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
 
 //ASP.NET Identity setup
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ChirpDBContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ChirpDBContext>().AddEntityFrameworkStores<ChirpDBContext>();
 
 var app = builder.Build();
 
