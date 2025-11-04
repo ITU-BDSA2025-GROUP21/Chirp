@@ -17,11 +17,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
 
         public DownloadPersonalDataModel(
-            UserManager<IdentityUser> userManager,
+            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
             _userManager = userManager;
@@ -65,3 +65,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+

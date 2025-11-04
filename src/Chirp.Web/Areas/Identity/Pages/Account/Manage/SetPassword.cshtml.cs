@@ -13,12 +13,12 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
 
         public SetPasswordModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
+            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -112,3 +112,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+

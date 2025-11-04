@@ -19,7 +19,7 @@ builder.Services.AddDbContext<ChirpDBContext>(options =>
 
 //ASP.NET Identity setup
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ChirpDBContext>().AddEntityFrameworkStores<ChirpDBContext>();
+    .AddEntityFrameworkStores<ChirpDBContext>();
 
 var app = builder.Build();
 

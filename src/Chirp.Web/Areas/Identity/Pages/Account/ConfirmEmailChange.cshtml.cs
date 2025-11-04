@@ -15,10 +15,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
 
-        public ConfirmEmailChangeModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public ConfirmEmailChangeModel(UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager, SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -67,3 +67,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         }
     }
 }
+

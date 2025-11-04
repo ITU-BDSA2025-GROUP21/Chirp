@@ -14,11 +14,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class GenerateRecoveryCodesModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
         private readonly ILogger<GenerateRecoveryCodesModel> _logger;
 
         public GenerateRecoveryCodesModel(
-            UserManager<IdentityUser> userManager,
+            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
             ILogger<GenerateRecoveryCodesModel> logger)
         {
             _userManager = userManager;
@@ -80,3 +80,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         }
     }
 }
+

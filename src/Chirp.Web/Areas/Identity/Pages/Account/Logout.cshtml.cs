@@ -14,10 +14,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
 
-        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager, ILogger<LogoutModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
@@ -40,3 +40,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         }
     }
 }
+

@@ -16,9 +16,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
 
-        public ConfirmEmailModel(UserManager<IdentityUser> userManager)
+        public ConfirmEmailModel(UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
@@ -49,3 +49,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         }
     }
 }
+

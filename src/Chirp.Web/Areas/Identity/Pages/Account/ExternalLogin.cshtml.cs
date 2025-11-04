@@ -23,17 +23,17 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IUserStore<IdentityUser> _userStore;
-        private readonly IUserEmailStore<IdentityUser> _emailStore;
+        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
+        private readonly IUserStore<Chirp.Infrastructure.Data.ApplicationUser> _userStore;
+        private readonly IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
+            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
+            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
+            IUserStore<Chirp.Infrastructure.Data.ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -197,11 +197,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private Chirp.Infrastructure.Data.ApplicationUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<Chirp.Infrastructure.Data.ApplicationUser>();
             }
             catch
             {
@@ -211,13 +211,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             }
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore()
+        private IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)_userStore;
+            return (IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser>)_userStore;
         }
     }
 }
+

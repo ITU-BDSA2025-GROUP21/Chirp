@@ -14,13 +14,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
         public LoginWithRecoveryCodeModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
+            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
             ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;
@@ -110,3 +110,4 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         }
     }
 }
+
