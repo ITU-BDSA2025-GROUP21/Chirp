@@ -72,10 +72,11 @@ namespace XunitTests
             var cheeps = _cheepService.GetCheeps();
             var cheep = cheeps.First();
 
-            var controlCheep = new CheepDTO { 
+            var controlCheep = new CheepDTO
+            {
                 Author = "Helge",
                 Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12:16"
+                CreatedDate = "01-08-2023 12:16"
             };
 
             Assert.Equal(controlCheep, cheep);

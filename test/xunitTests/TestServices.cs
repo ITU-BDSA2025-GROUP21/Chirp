@@ -5,6 +5,7 @@ using Chirp.Razor.Repositories;
 using Chirp.Core.Services;
 using Chirp.Infrastructure.Data;
 using Chirp.Core.Repositories;
+using Chirp.Infrastructure.Models;
 
 
 public class TestServices : IDisposable
@@ -13,6 +14,7 @@ public class TestServices : IDisposable
     private readonly SqliteConnection _conn;
 
     public ICheepService CheepService { get; }
+    public ICheepRepository CheepRepository { get; }
 
     public TestServices()
     {
@@ -37,6 +39,7 @@ public class TestServices : IDisposable
         }
 
         CheepService = _provider.GetRequiredService<ICheepService>();
+        CheepRepository = _provider.GetRequiredService<ICheepRepository>();
     }
 
     public void Dispose()
