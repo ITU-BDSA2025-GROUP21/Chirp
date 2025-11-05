@@ -19,10 +19,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<Chirp.Infrastructure.Models.Author> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;

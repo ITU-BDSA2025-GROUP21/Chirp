@@ -12,18 +12,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
+namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
-        private readonly IUserStore<Chirp.Infrastructure.Data.ApplicationUser> _userStore;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
+        private readonly IUserStore<Chirp.Infrastructure.Models.Author> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
-            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
-            IUserStore<Chirp.Infrastructure.Data.ApplicationUser> userStore)
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
+            IUserStore<Chirp.Infrastructure.Models.Author> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;

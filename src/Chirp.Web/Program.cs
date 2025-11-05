@@ -1,9 +1,9 @@
  using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Infrastructure.Data;
+using Chirp.Infrastructure.Models;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +19,7 @@ builder.Services.AddDbContext<ChirpDBContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
 
 //ASP.NET Identity setup
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ChirpDBContext>();
 
 builder.Services.AddAuthentication().AddGitHub(options =>

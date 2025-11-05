@@ -10,17 +10,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
+namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
 
         public ChangePasswordModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
-            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
             ILogger<ChangePasswordModel> logger)
         {
             _userManager = userManager;

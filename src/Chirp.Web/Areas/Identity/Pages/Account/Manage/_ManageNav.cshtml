@@ -1,4 +1,4 @@
-@inject SignInManager<Chirp.Infrastructure.Data.ApplicationUser> SignInManager
+@inject SignInManager<Chirp.Infrastructure.Models.Author> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

@@ -1,8 +1,8 @@
 @using Microsoft.AspNetCore.Identity
-@using Chirp.Infrastructure.Data
+@using Chirp.Infrastructure.Models
 
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

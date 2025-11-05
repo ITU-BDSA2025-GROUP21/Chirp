@@ -13,15 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
+namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
 
         public DownloadPersonalDataModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
             _userManager = userManager;
