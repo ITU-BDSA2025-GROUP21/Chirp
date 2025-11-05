@@ -10,10 +10,8 @@ using Xunit.Abstractions;
 
 namespace xIntegrationTests
 {
-
     public class IntegrationTest : IClassFixture<TestServices>
     {
-
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
         private readonly ICheepRepository _cheepRepository;
@@ -28,7 +26,6 @@ namespace xIntegrationTests
         [Fact]
         public void CreateCheepAndFilterAuthor()
         {
-
             var Author = new AuthorDTO()
             {
                 Name = "Testing Client",
