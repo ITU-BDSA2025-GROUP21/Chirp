@@ -15,7 +15,7 @@ namespace Chirp.Infrastructure.Data
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("ChirpDBConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<ChirpDBContext>();
             optionsBuilder.UseSqlite(connectionString);
