@@ -23,17 +23,17 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
-        private readonly IUserStore<Chirp.Infrastructure.Data.ApplicationUser> _userStore;
-        private readonly IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> _emailStore;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly IUserStore<Chirp.Infrastructure.Models.Author> _userStore;
+        private readonly IUserEmailStore<Chirp.Infrastructure.Models.Author> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
-            IUserStore<Chirp.Infrastructure.Data.ApplicationUser> userStore,
-            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            IUserStore<Chirp.Infrastructure.Models.Author> userStore,
+            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -70,6 +70,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+
+            [Required]
+            [StringLength(100)]
+            public string Name { get; set; } = default!;
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -116,6 +121,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.Name = Input.Name;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -154,11 +162,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private Chirp.Infrastructure.Data.ApplicationUser CreateUser()
+        private Chirp.Infrastructure.Models.Author CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<Chirp.Infrastructure.Data.ApplicationUser>();
+                return Activator.CreateInstance<Chirp.Infrastructure.Models.Author>();
             }
             catch
             {
@@ -168,13 +176,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             }
         }
 
-        private IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> GetEmailStore()
+        private IUserEmailStore<Chirp.Infrastructure.Models.Author> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser>)_userStore;
+            return (IUserEmailStore<Chirp.Infrastructure.Models.Author>)_userStore;
         }
     }
 }

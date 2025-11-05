@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Chirp.Infrastructure.Data
 {
-    public class ChirpDBContext : IdentityDbContext<ApplicationUser>
+    public class ChirpDBContext : IdentityDbContext<Author>
     {
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }

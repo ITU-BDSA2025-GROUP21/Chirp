@@ -1,10 +1,13 @@
-﻿namespace Chirp.Infrastructure.Models
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Chirp.Infrastructure.Models
 {
-    public class Author
+    public class Author : IdentityUser
     {
-        public int AuthorId { get; set; }                 // PK from dump
         public string Name { get; set; } = null!;
-        public string Email { get; set; } = null!;
+        
         public List<Cheep> Cheeps { get; set; } = new();
     }
 
