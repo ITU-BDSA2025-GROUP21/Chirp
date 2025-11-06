@@ -9,16 +9,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
+namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class TwoFactorAuthenticationModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
         private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
         public TwoFactorAuthenticationModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager, SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+            UserManager<Chirp.Infrastructure.Models.Author> userManager, SignInManager<Chirp.Infrastructure.Models.Author> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;

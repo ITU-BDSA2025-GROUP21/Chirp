@@ -23,17 +23,17 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Data.ApplicationUser> _signInManager;
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
-        private readonly IUserStore<Chirp.Infrastructure.Data.ApplicationUser> _userStore;
-        private readonly IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> _emailStore;
+        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly IUserStore<Chirp.Infrastructure.Models.Author> _userStore;
+        private readonly IUserEmailStore<Chirp.Infrastructure.Models.Author> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<Chirp.Infrastructure.Data.ApplicationUser> signInManager,
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
-            IUserStore<Chirp.Infrastructure.Data.ApplicationUser> userStore,
+            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            IUserStore<Chirp.Infrastructure.Models.Author> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -153,8 +153,16 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                var githubDisplayName =
+                    info.Principal.FindFirstValue("urn:github:name")
+                    ?? info.Principal.FindFirstValue("urn:github:login")
+                    ?? info.Principal.FindFirstValue(ClaimTypes.Name)
+                    ?? info.Principal.Identity?.Name;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.Name = githubDisplayName;
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -197,11 +205,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private Chirp.Infrastructure.Data.ApplicationUser CreateUser()
+        private Chirp.Infrastructure.Models.Author CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<Chirp.Infrastructure.Data.ApplicationUser>();
+                return Activator.CreateInstance<Chirp.Infrastructure.Models.Author>();
             }
             catch
             {
@@ -211,13 +219,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             }
         }
 
-        private IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser> GetEmailStore()
+        private IUserEmailStore<Chirp.Infrastructure.Models.Author> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<Chirp.Infrastructure.Data.ApplicationUser>)_userStore;
+            return (IUserEmailStore<Chirp.Infrastructure.Models.Author>)_userStore;
         }
     }
 }

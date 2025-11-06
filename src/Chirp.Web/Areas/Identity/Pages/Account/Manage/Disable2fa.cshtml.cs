@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
+namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class Disable2faModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Data.ApplicationUser> _userManager;
+        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
         private readonly ILogger<Disable2faModel> _logger;
 
         public Disable2faModel(
-            UserManager<Chirp.Infrastructure.Data.ApplicationUser> userManager,
+            UserManager<Chirp.Infrastructure.Models.Author> userManager,
             ILogger<Disable2faModel> logger)
         {
             _userManager = userManager;

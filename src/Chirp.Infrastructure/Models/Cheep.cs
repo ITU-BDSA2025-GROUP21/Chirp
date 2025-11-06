@@ -4,8 +4,8 @@ namespace Chirp.Infrastructure.Models
 {
     public class Cheep
     {
-        public int CheepId { get; set; }                  // PK from dump
-        public int AuthorId { get; set; }                 // FK -> Author.AuthorId
+        public int CheepId { get; set; }
+        public string AuthorId { get; set; } = null!;
         public Author Author { get; set; } = null!;
         [Required]
         [StringLength(160)]
