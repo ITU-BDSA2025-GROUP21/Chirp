@@ -40,7 +40,7 @@ namespace xIntegrationTests
                 CreatedDate = "2023-08-01 13:15:37",
             };
 
-            _cheepRepository.CreateNewAuthor(Author.Name, Author.Email, Author.Password);
+            _cheepRepository.CreateNewAuthor(Author.Name, Author.Email);
             _cheepRepository.AddChirp(Chirp);
 
             var cheeps = _cheepService.GetCheepsFromAuthor(Author.Name);

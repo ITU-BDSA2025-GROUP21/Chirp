@@ -94,7 +94,7 @@ namespace Chirp.Razor.Repositories
 
             var cheep = new Cheep
             {
-                AuthorId = author.AuthorId,
+                AuthorId = author.Id,
                 Text = chirp.Message,
                 TimeStamp = parsedDate
             };
