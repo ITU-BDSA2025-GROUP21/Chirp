@@ -70,7 +70,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-
             [Required]
             [StringLength(100)]
             public string Name { get; set; } = default!;
