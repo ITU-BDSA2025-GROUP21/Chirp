@@ -1,4 +1,4 @@
-name: .NET
+name: Automatic_Test_And_Build
 
 on:
   push:
