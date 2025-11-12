@@ -45,19 +45,13 @@ jobs:
           name: publish-artifact
           path: ./publish
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_60606DCFA78B495896C259B417204FA1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FBB50B1433184273A5F1282BA555CC1A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B96560B074224FB4BCFA8E206DC421E4 }}
-
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure Web App using publish profile
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bdsagroup21chirprazor'
-          slot-name: 'Production'
-          package: ./publish
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: './publish'
+
 
 
 
