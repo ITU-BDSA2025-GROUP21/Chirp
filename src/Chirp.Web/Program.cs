@@ -24,8 +24,8 @@ builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireCon
 
 builder.Services.AddAuthentication().AddGitHub(options =>
 {
-    options.ClientId = builder.Configuration["Authentication_GitHub_ClientId"]!;
-    options.ClientSecret = builder.Configuration["Authentication_GitHub_ClientSecret"]!;
+    options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
     options.Scope.Add("user:email");
 
     options.ClaimActions.MapJsonKey("urn:github:name", "name");
