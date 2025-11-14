@@ -7,6 +7,9 @@ namespace Chirp.Web.Pages.Controllers;
 
 public class PublicController : PageModel
 {
+    [BindProperty]
+    public string? Text { get; set; }
+    
     private readonly ICheepService _service;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
@@ -22,6 +25,28 @@ public class PublicController : PageModel
 
         CurrentPage = page;
         Cheeps = _service.GetCheeps(page);
+        return Page();
+    }
+    
+    public IActionResult OnPost([FromQuery] int page = 1)
+    {
+        if (page < 1) page = 1;
+
+        // Only create cheep if something was typed
+        if (!string.IsNullOrWhiteSpace(Text))
+        {
+            // Adjust to your service API – guessing something like this:
+            _service.MakeCheep(new CheepDTO
+            {
+                Author = User.Identity.Name,
+                Message = Text,
+                CreatedDate =  DateTime.Now.ToString()
+            });
+        }
+
+        CurrentPage = page;
+        Cheeps = _service.GetCheeps(page);
+
         return Page();
     }
 }

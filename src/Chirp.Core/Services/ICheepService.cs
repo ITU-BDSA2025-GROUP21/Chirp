@@ -6,5 +6,6 @@ namespace Chirp.Core.Services
     {
         public IEnumerable<CheepDTO> GetCheeps(int page = 1); 
         public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1); 
+        public void MakeCheep(CheepDTO cheep);
     }
 }

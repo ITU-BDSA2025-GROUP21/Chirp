@@ -1,6 +1,7 @@
 using Chirp.Core.DTO;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using NuGet.Protocol.Core.Types;
 
 public class CheepService : ICheepService
 {
@@ -21,5 +22,10 @@ public class CheepService : ICheepService
     public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1)
     {
         return _cheepRepository.GetByAuthor(author, page, PageSize);
+    }
+
+    public void MakeCheep(CheepDTO cheep)
+    {
+        _cheepRepository.AddChirp(cheep);
     }
 }

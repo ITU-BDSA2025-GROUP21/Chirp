@@ -92,13 +92,15 @@ namespace Chirp.Razor.Repositories
                 parsedDate = DateTime.Now;
             }
 
+            
             var cheep = new Cheep
             {
                 AuthorId = author.Id,
                 Text = chirp.Message,
                 TimeStamp = parsedDate
             };
-
+            
+            author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
