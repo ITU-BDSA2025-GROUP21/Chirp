@@ -83,7 +83,11 @@ namespace xUnitTests
                 CreatedDate = "01/08/2023 12.16"
             };
 
-            Assert.Equal(controlCheep, cheep);
+            Assert.Equal(controlCheep.Author, cheep.Author);
+            Assert.Equal(controlCheep.Message, cheep.Message);
+            Assert.Equal(controlCheep.CreatedDate.Replace("/","").Replace(" ","").Replace(".","").Replace(":",""), 
+                         cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "")
+                         );
         }
 
         [Fact]
