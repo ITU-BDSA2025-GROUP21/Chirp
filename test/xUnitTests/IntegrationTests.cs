@@ -8,14 +8,14 @@ using Chirp.Core.Repositories;
 
 namespace XunitTests
 {
-    public class UnitTest1 : IClassFixture<TestServices>
+    public class IntegrationTests : IClassFixture<TestServices>
     {
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
         private readonly ICheepRepository _cheepRepository;
 
 
-        public UnitTest1(ITestOutputHelper output, TestServices testService)
+        public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
             _cheepRepository = testService.CheepRepository;
