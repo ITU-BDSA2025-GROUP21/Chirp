@@ -16,11 +16,9 @@ builder.Services.AddScoped<ICheepService, CheepService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 
-// Load database connection via configuration
 builder.Services.AddDbContext<ChirpDBContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
 
-//ASP.NET Identity setup
 builder.Services.AddDefaultIdentity<Author>(
     options => { 
         options.SignIn.RequireConfirmedAccount = false; 
@@ -46,12 +44,9 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.SeedDatabase(ctx);
 }
 
-//
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
