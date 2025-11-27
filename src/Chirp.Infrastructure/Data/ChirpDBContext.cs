@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Chirp.Core.Models;
 
-namespace Chirp.Infrastructure.Data
+namespace Chirp.Core.Data
 {
     public class ChirpDBContext : IdentityDbContext<Author>
     {

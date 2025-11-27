@@ -1,7 +1,7 @@
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
-using Chirp.Infrastructure.Data;
+using Chirp.Core.Data;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;

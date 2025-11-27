@@ -3,7 +3,7 @@ using Chirp.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Chirp.Web.Views;
+namespace Chirp.Web.Pages.View;
 
 public class UserTimelineView : PageModel
 {

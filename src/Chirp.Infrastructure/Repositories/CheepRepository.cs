@@ -1,4 +1,4 @@
-﻿using Chirp.Infrastructure.Data;
+﻿using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Chirp.Core.Repositories;

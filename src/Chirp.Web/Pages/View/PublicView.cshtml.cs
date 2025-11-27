@@ -3,13 +3,14 @@ using Chirp.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Chirp.Web.Pages.Controllers;
+namespace Chirp.Web.Pages.View;
 
 public class PublicView : PageModel
 {
-    private readonly ICheepService _service;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public int CurrentPage { get; set; } //Tracker til pagination
+    public int CurrentPage { get; set; }
+
+    private readonly ICheepService _service;
 
     public PublicView(ICheepService service)
     {
@@ -24,4 +25,5 @@ public class PublicView : PageModel
         Cheeps = _service.GetCheeps(page);
         return Page();
     }
+
 }

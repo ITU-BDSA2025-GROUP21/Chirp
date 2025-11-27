@@ -1,4 +1,4 @@
-using Chirp.Infrastructure.Data;
+using Chirp.Core.Data;
 using Chirp.Core.Models;
 
 public static class DbInitializer
