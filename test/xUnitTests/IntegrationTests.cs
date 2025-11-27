@@ -1,10 +1,7 @@
 using Chirp.Core.DTO;
 using Chirp.Core.Services;
+using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
-using Chirp.Core.Repositories;
-{
-    
-}
 
 namespace XunitTests
 {
@@ -12,13 +9,12 @@ namespace XunitTests
     {
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
-        private readonly ICheepRepository _cheepRepository;
+        private readonly TestServices _testServices;
 
 
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepRepository = testService.CheepRepository;
             _cheepService = testService.CheepService;
         }
 
@@ -128,8 +124,11 @@ namespace XunitTests
                 CreatedDate = "2023-08-01 13:15:37",
             };
 
-            _cheepRepository.CreateNewAuthor(Author.Name, Author.Email);
-            _cheepRepository.AddChirp(Chirp);
+            DbContext dbContext = _testServices.GetDbContext();
+
+            dbContext.Set<AuthorDTO>().Add(Author);
+            dbContext.Set<CheepDTO>().Add(Chirp);
+            dbContext.SaveChanges();
 
             var cheeps = _cheepService.GetCheepsFromAuthor(Author.Name);
 

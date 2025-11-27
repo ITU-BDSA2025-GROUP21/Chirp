@@ -12,6 +12,7 @@ public class TestServices : IDisposable
 {
     private readonly ServiceProvider _provider;
     private readonly SqliteConnection _conn;
+    private readonly DbContext _dbContext;
 
     public ICheepService CheepService { get; }
     public ICheepRepository CheepRepository { get; }
@@ -35,11 +36,17 @@ public class TestServices : IDisposable
         {
             var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
             ctx.Database.EnsureCreated();
+            _dbContext = ctx;
             DbInitializer.SeedDatabase(ctx);
         }
 
         CheepService = _provider.GetRequiredService<ICheepService>();
         CheepRepository = _provider.GetRequiredService<ICheepRepository>();
+    }
+
+    public DbContext GetDbContext()
+    {
+        return _dbContext;
     }
 
     public void Dispose()
