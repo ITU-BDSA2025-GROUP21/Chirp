@@ -2,9 +2,8 @@ using Xunit.Abstractions;
 using Chirp.Core.DTO;
 using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Chirp.Infrastructure.Models;
-using Chirp.Infrastructure.Data;
 using System.Diagnostics;
+using Chirp.Core.Models;
 
 namespace xUnitTests
 {
@@ -28,7 +27,7 @@ namespace xUnitTests
             var secondPage = _cheepRepository.GetAll(page: 2);
             Assert.Equal(pageSize, firstPage.Count());
             Assert.Equal(pageSize, secondPage.Count());
-            Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
+            Assert.NotEqual(firstPage.First().Text, secondPage.First().Text);
         }
 
         [Fact]
@@ -45,19 +44,19 @@ namespace xUnitTests
             var jacqualineTwelfthPage = _cheepRepository.GetByAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
-            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
+            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author.Name));
 
             Assert.Single(adrianCheeps);
-            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author));
+            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author.Name));
 
             Assert.Equal(22, nathanCheeps.Count());
-            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author));
+            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author.Name));
 
             Assert.Equal(15, johnnieCheeps.Count());
-            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author));
+            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author.Name));
 
             Assert.Equal(7, jacqualineTwelfthPage.Count());
-            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author));
+            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author.Name));
         }
 
         [Fact]
@@ -82,10 +81,10 @@ namespace xUnitTests
                 CreatedDate = "01/08/2023 12:16"
             };
 
-            Assert.Equal(controlCheep.Author, cheep.Author);
-            Assert.Equal(controlCheep.Message, cheep.Message);
+            Assert.Equal(controlCheep.Author, cheep.Author.Name);
+            Assert.Equal(controlCheep.Message, cheep.Text);
             var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
-            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
             Assert.Equal(controlDate, cheepDate);
         }
 
@@ -96,10 +95,9 @@ namespace xUnitTests
             DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
 
-            foreach (CheepDTO cheep in cheeps)
+            foreach (Cheep cheep in cheeps)
             {
-                var time = cheep.CreatedDate;
-                DateTime aT = DateTime.Parse(time);
+                var aT = cheep.TimeStamp;
 
                 if (aT >= prevTime)
                 {
@@ -141,8 +139,8 @@ namespace xUnitTests
             var cheeps = _cheepRepository.GetByAuthor(Author.Name);
 
             Assert.Single(cheeps);
-            Assert.Equal(Author.Name, cheeps.First().Author);
-            Assert.Equal(Chirp.Text, cheeps.First().Message);
+            Assert.Equal(Author.Name, cheeps.First().Author.Name);
+            Assert.Equal(Chirp.Text, cheeps.First().Text);
         }
     }
 }
