@@ -21,6 +21,7 @@ namespace Chirp.Razor.Repositories
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
+                .Include(c => c.Author)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
@@ -32,6 +33,7 @@ namespace Chirp.Razor.Repositories
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
+                .Include(c => c.Author)
                 .Where(c => c.Author.Name == authorName)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
@@ -39,34 +41,11 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public Author? FindAuthorByName(string name)
-        {
-            return _context.Authors
-                .Where(a => a.Name.ToLower() == name.ToLower())
-                .FirstOrDefault();
-        }
-
-        public Author? FindAuthorByEmail(string email)
-        {
-            return _context.Authors
-                .Where(a => a.Email.ToLower() == email.ToLower())
-                .FirstOrDefault();
-        }
-
         public void AddChirp(Cheep cheep)
             { 
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
-
-
-        private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
-            c => new CheepDTO
-            {
-                Author = c.Author.Name,
-                Message = c.Text,
-                CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
-            };
 
         public void Save()
         {
