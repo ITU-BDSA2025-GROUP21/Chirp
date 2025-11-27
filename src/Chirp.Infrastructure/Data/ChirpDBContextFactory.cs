@@ -9,7 +9,7 @@ namespace Chirp.Core.Data
     {
         public ChirpDBContext CreateDbContext(string[] args)
         {
-            // Find konfigurationen
+            // Find configurationen
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Chirp.Web"))
                 .AddJsonFile("appsettings.json")
