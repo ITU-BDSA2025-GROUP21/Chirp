@@ -32,10 +32,8 @@ public class PublicController : PageModel
     {
         if (page < 1) page = 1;
 
-        // Only create cheep if something was typed
         if (!string.IsNullOrWhiteSpace(Text))
         {
-            // Adjust to your service API – guessing something like this:
             _service.MakeCheep(new CheepDTO
             {
                 Author = User.Identity.Name,
