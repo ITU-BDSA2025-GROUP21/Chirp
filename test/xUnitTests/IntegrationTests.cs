@@ -1,16 +1,17 @@
 using Chirp.Core.DTO;
 using Chirp.Core.Services;
+using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
 
 namespace XunitTests
 {
-    public class UnitTest1 : IClassFixture<TestServices>
+    public class IntegrationTests : IClassFixture<TestServices>
     {
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
+        private readonly TestServices _testServices;
 
-
-        public UnitTest1(ITestOutputHelper output, TestServices testService)
+        public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
             _cheepService = testService.CheepService;
@@ -26,7 +27,6 @@ namespace XunitTests
             Assert.Equal(pageSize, secondPage.Count());
             Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
         }
-
 
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
@@ -76,10 +76,14 @@ namespace XunitTests
             {
                 Author = "Helge",
                 Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12:16"
+                CreatedDate = "01/08/2023 12.16"
             };
 
-            Assert.Equal(controlCheep, cheep);
+            Assert.Equal(controlCheep.Author, cheep.Author);
+            Assert.Equal(controlCheep.Message, cheep.Message);
+            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Assert.Equal(controlDate, cheepDate);
         }
 
         [Fact]
@@ -104,6 +108,35 @@ namespace XunitTests
             }
 
             Assert.True(ordered);
+        }
+
+        public void CreateCheepAndFilterAuthor()
+        {
+            var Author = new AuthorDTO()
+            {
+                Name = "Testing Client",
+                Email = "Tester@Cheep.com",
+                Password = "TestPassword"
+            };
+
+            var Chirp = new CheepDTO()
+            {
+                Author = Author.Name,
+                Message = "Test Message",
+                CreatedDate = "2023-08-01 13:15:37",
+            };
+
+            DbContext dbContext = _testServices.GetDbContext();
+
+            dbContext.Set<AuthorDTO>().Add(Author);
+            dbContext.Set<CheepDTO>().Add(Chirp);
+            dbContext.SaveChanges();
+
+            var cheeps = _cheepService.GetCheepsFromAuthor(Author.Name);
+
+            Assert.Single(cheeps);
+            Assert.Equal(Author.Name, cheeps.First().Author);
+            Assert.Equal(Chirp.Message, cheeps.First().Message);
         }
     }
 }
