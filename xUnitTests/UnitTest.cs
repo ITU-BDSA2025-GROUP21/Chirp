@@ -33,15 +33,15 @@ namespace xUnitTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepRepository.GetCheepsFromAuthor("Helge");
+            var helgeCheeps = _cheepRepository.GetByAuthor("Helge");
 
-            var adrianCheeps = _cheepRepository.GetCheepsFromAuthor("Adrian");
+            var adrianCheeps = _cheepRepository.GetByAuthor("Adrian");
 
-            var nathanCheeps = _cheepRepository.GetCheepsFromAuthor("Nathan Sirmon");
+            var nathanCheeps = _cheepRepository.GetByAuthor("Nathan Sirmon");
 
-            var johnnieCheeps = _cheepRepository.GetCheepsFromAuthor("Johnnie Calixto");
+            var johnnieCheeps = _cheepRepository.GetByAuthor("Johnnie Calixto");
 
-            var jacqualineTwelfthPage = _cheepRepository.GetCheepsFromAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepRepository.GetByAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
@@ -62,8 +62,8 @@ namespace xUnitTests
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepRepository.GetCheepsFromAuthor("Luanna Muro", page: 1);
-            var luannaSecondPage = _cheepRepository.GetCheepsFromAuthor("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepRepository.GetByAuthor("Luanna Muro", page: 1);
+            var luannaSecondPage = _cheepRepository.GetByAuthor("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -71,7 +71,7 @@ namespace xUnitTests
         [Fact]
         public void testConsistency()
         {
-            var cheeps = _cheepRepository.GetCheeps();
+            var cheeps = _cheepRepository.GetAll();
             var cheep = cheeps.First();
 
             var controlCheep = new CheepDTO
@@ -87,7 +87,7 @@ namespace xUnitTests
         [Fact]
         public void testOrder()
         {
-            var cheeps = _cheepRepository.GetCheeps();
+            var cheeps = _cheepRepository.GetAll();
             DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
 
@@ -132,7 +132,7 @@ namespace xUnitTests
             dbContext.Set<CheepDTO>().Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepRepository.GetCheepsFromAuthor(Author.Name);
+            var cheeps = _cheepRepository.GetByAuthor(Author.Name);
 
             Assert.Single(cheeps);
             Assert.Equal(Author.Name, cheeps.First().Author);
