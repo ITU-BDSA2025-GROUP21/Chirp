@@ -1,9 +1,11 @@
 ﻿using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Chirp.Web.Pages.View;
+namespace Chirp.Web.Pages;
 
 public class PublicView : PageModel
 {
@@ -25,5 +27,8 @@ public class PublicView : PageModel
         Cheeps = _service.GetCheeps(page);
         return Page();
     }
+
+
+
 
 }

@@ -1,8 +1,6 @@
 ﻿using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Chirp.Core.Repositories;
-using Chirp.Core.DTO;
 using Chirp.Core.Models;
 
 namespace Chirp.Razor.Repositories
