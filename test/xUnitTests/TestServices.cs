@@ -7,7 +7,6 @@ using Chirp.Infrastructure.Data;
 using Chirp.Core.Repositories;
 using Chirp.Infrastructure.Models;
 
-
 public class TestServices : IDisposable
 {
     private readonly ServiceProvider _provider;

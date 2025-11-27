@@ -14,7 +14,6 @@ namespace xUnitTests
         private readonly ICheepRepository _cheepRepository;
         private readonly TestServices _testServices;
 
-
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;

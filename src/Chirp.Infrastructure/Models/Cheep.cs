@@ -14,5 +14,4 @@ namespace Chirp.Infrastructure.Models
         public string Text { get; set; } = null!;
         public DateTime TimeStamp { get; set; }
     }
-
 }

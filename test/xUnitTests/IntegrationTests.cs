@@ -11,7 +11,6 @@ namespace XunitTests
         private readonly ICheepService _cheepService;
         private readonly TestServices _testServices;
 
-
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
@@ -28,7 +27,6 @@ namespace XunitTests
             Assert.Equal(pageSize, secondPage.Count());
             Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
         }
-
 
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
