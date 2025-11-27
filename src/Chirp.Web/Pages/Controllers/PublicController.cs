@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Web.Pages.Controllers;
 
-public class PublicController : PageModel
+public class PublicView : PageModel
 {
     private readonly ICheepService _service;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
 
-    public PublicController(ICheepService service)
+    public PublicView(ICheepService service)
     {
         _service = service;
     }
