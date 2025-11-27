@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
+using Chirp.Core.DTO;
 
 namespace Chirp.Razor.Repositories
 {
@@ -39,8 +40,16 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public void AddChirp(Cheep cheep)
-            { 
+        public void AddCheep(string text, Author author) {
+
+            Cheep cheep = new Cheep
+            {
+                Author = author,
+                TimeStamp = DateTime.Now,
+                Text = text
+            };
+
+            author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }

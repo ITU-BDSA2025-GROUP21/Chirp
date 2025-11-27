@@ -25,6 +25,11 @@ public class CheepService : ICheepService
         return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
     }
 
+    public void AddCheeps(string text, Author author)
+    {
+        _cheepRepository.AddCheep(text, author);
+    }
+
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO
     {
