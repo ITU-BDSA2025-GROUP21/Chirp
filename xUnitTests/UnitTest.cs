@@ -4,6 +4,7 @@ using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Chirp.Infrastructure.Models;
 using Chirp.Infrastructure.Data;
+using System.Diagnostics;
 
 namespace xUnitTests
 {
@@ -80,14 +81,16 @@ namespace xUnitTests
             {
                 Author = "Helge",
                 Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12.16"
+                CreatedDate = "01/08/2023 12:16"
             };
 
             Assert.Equal(controlCheep.Author, cheep.Author);
             Assert.Equal(controlCheep.Message, cheep.Message);
-            Assert.Equal(controlCheep.CreatedDate.Replace("/","").Replace(" ","").Replace(".","").Replace(":",""), 
-                         cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "")
-                         );
+            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Debug.WriteLine($"Control Date: {controlDate}");
+            Debug.WriteLine($"Cheep Date: {cheepDate}");
+            Assert.Equal(controlDate, cheepDate);
         }
 
         [Fact]
