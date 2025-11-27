@@ -14,7 +14,6 @@ namespace xUnitTests
         private readonly ICheepRepository _cheepRepository;
         private readonly TestServices _testServices;
 
-
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
@@ -31,7 +30,6 @@ namespace xUnitTests
             Assert.Equal(pageSize, secondPage.Count());
             Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
         }
-
 
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
