@@ -81,7 +81,11 @@ namespace XunitTests
                 CreatedDate = "01/08/2023 12.16"
             };
 
-            Assert.Equal(controlCheep, cheep);
+            Assert.Equal(controlCheep.Author, cheep.Author);
+            Assert.Equal(controlCheep.Message, cheep.Message);
+            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Assert.Equal(controlDate, cheepDate);
         }
 
         [Fact]

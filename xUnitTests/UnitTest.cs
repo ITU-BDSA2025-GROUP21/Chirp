@@ -88,8 +88,6 @@ namespace xUnitTests
             Assert.Equal(controlCheep.Message, cheep.Message);
             var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
             var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
-            Debug.WriteLine($"Control Date: {controlDate}");
-            Debug.WriteLine($"Cheep Date: {cheepDate}");
             Assert.Equal(controlDate, cheepDate);
         }
 
