@@ -2,6 +2,8 @@ using Xunit.Abstractions;
 using Chirp.Core.DTO;
 using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Chirp.Infrastructure.Models;
+using Chirp.Infrastructure.Data;
 
 namespace xUnitTests
 {
@@ -112,31 +114,32 @@ namespace xUnitTests
 
         public void CreateCheepAndFilterAuthor()
         {
-            var Author = new AuthorDTO()
+            var Author = new Author()
             {
                 Name = "Testing Client",
-                Email = "Tester@Cheep.com",
-                Password = "TestPassword"
+                Cheeps = new List<Cheep>()
             };
 
-            var Chirp = new CheepDTO()
+            var Chirp = new Cheep()
             {
-                Author = Author.Name,
-                Message = "Test Message",
-                CreatedDate = "2023-08-01 13:15:37",
+                CheepId = 9999,
+                AuthorId = "Testing Client",
+                Author = Author,
+                Text = "Testing.",
+                TimeStamp = DateTime.Now
             };
 
             DbContext dbContext = _testServices.GetDbContext();
 
-            dbContext.Set<AuthorDTO>().Add(Author);
-            dbContext.Set<CheepDTO>().Add(Chirp);
+            dbContext.Set<Author>().Add(Author);
+            dbContext.Set<Cheep>().Add(Chirp);
             dbContext.SaveChanges();
 
             var cheeps = _cheepRepository.GetByAuthor(Author.Name);
 
             Assert.Single(cheeps);
             Assert.Equal(Author.Name, cheeps.First().Author);
-            Assert.Equal(Chirp.Message, cheeps.First().Message);
+            Assert.Equal(Chirp.Text, cheeps.First().Message);
         }
     }
 }
