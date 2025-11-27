@@ -16,7 +16,7 @@ namespace Chirp.Razor.Repositories
             _context = context;
         }
 
-        public IEnumerable<CheepDTO> GetAll(int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetAll(int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
@@ -24,11 +24,10 @@ namespace Chirp.Razor.Repositories
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(createCheepDTO)
                 .ToList();
         }
 
-        public IEnumerable<CheepDTO> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
@@ -37,51 +36,27 @@ namespace Chirp.Razor.Repositories
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(createCheepDTO)
                 .ToList();
         }
 
-        public void CreateNewAuthor(string name, string email)
-        {
-            var author = new Author
-            {
-                Name = name,
-                Email = email,
-                Cheeps = new List<Cheep>()
-            };
-
-            _context.Authors.Add(author);
-            _context.SaveChanges();
-            
-        }
-
-        public AuthorDTO? FindAuthorByName(string name)
+        public Author? FindAuthorByName(string name)
         {
             return _context.Authors
                 .Where(a => a.Name.ToLower() == name.ToLower())
-                .Select(a => new AuthorDTO
-                {
-                    Name = a.Name,
-                    Email = a.Email,
-                })
                 .FirstOrDefault();
         }
 
-        public AuthorDTO? FindAuthorByEmail(string email)
+        public Author? FindAuthorByEmail(string email)
         {
             return _context.Authors
                 .Where(a => a.Email.ToLower() == email.ToLower())
-                .Select(a => new AuthorDTO
-                {
-                    Name = a.Name,
-                    Email = a.Email,
-                })
                 .FirstOrDefault();
         }
 
         public void AddChirp(CheepDTO chirp)
             { 
             var author = _context.Authors.FirstOrDefault(a => a.Name == chirp.Author);
+
             if (author == null)
             {
                 throw new InvalidOperationException($"No author found with name '{chirp.Author}'.");
