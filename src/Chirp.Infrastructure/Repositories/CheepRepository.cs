@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Chirp.Core.Repositories;
 using Chirp.Core.DTO;
-using Chirp.Infrastructure.Models;
+using Chirp.Core.Models;
 
 namespace Chirp.Razor.Repositories
 {
@@ -53,27 +53,8 @@ namespace Chirp.Razor.Repositories
                 .FirstOrDefault();
         }
 
-        public void AddChirp(CheepDTO chirp)
+        public void AddChirp(Cheep cheep)
             { 
-            var author = _context.Authors.FirstOrDefault(a => a.Name == chirp.Author);
-
-            if (author == null)
-            {
-                throw new InvalidOperationException($"No author found with name '{chirp.Author}'.");
-            }
-
-            if (!DateTime.TryParse(chirp.CreatedDate, out var parsedDate))
-            {
-                parsedDate = DateTime.Now;
-            }
-
-            var cheep = new Cheep
-            {
-                AuthorId = author.Id,
-                Text = chirp.Message,
-                TimeStamp = parsedDate
-            };
-
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }

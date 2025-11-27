@@ -1,7 +1,7 @@
- using Chirp.Core.Repositories;
+using Chirp.Core.Models;
+using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Infrastructure.Data;
-using Chirp.Infrastructure.Models;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICheepService, CheepService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 

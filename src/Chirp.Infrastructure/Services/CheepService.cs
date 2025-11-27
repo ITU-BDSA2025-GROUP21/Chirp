@@ -17,21 +17,19 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheeps(int page = 1) 
     {
-        return _cheepRepository.GetAll(page, PageSize);
+        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO);
     }
 
     public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1)
-    {
-        return _cheepRepository.GetByAuthor(author, page, PageSize);
+    {   
+        return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
     }
 
-
-    private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
-        c => new CheepDTO
-        {
-            Author = c.Author.Name,
-            Message = c.Text,
-            CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
-        };
-
+    private static readonly Func<Cheep, CheepDTO> createCheepDTO =
+    c => new CheepDTO
+    {
+        Author = c.Author.Name,
+        Message = c.Text,
+        CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+    };
 }
