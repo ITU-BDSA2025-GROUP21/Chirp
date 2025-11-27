@@ -1,6 +1,8 @@
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using System.Linq.Expressions;
 
 public class CheepService : ICheepService
 {
@@ -22,4 +24,14 @@ public class CheepService : ICheepService
     {
         return _cheepRepository.GetByAuthor(author, page, PageSize);
     }
+
+
+    private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
+        c => new CheepDTO
+        {
+            Author = c.Author.Name,
+            Message = c.Text,
+            CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+        };
+
 }
