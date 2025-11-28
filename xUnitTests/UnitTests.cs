@@ -2,6 +2,7 @@ using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Xunit.Abstractions;
@@ -13,6 +14,7 @@ namespace xUnitTests
         private readonly ITestOutputHelper _output;
         private readonly ICheepRepository _cheepRepository;
         private readonly TestServices _testServices;
+        private IAuthorRepository _authorRepository;
 
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
@@ -150,13 +152,25 @@ namespace xUnitTests
         [Fact]
         public void testAuthorRepositoryGetByName()
         {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
 
+            var author = _authorRepository.FindAuthorByName("Helge");
+            var AName = author?.Name;
+            Assert.NotNull(author);
+            Assert.Equal(AName, "Helge");
         }
 
         [Fact]
         public void testAuthorRepositoryGetByEmail()
         {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
 
+            var Author = _authorRepository.FindAuthorByEmail("ropf@itu.dk");
+            var AEmail = Author?.Email;
+            Assert.NotNull(Author);
+            Assert.Equal(AEmail, "ropf@itu.dk");
         }
     }
         
