@@ -74,16 +74,19 @@ namespace xUnitTests
             var cheeps = _cheepRepository.GetAll();
             var cheep = cheeps.First();
 
-            var controlCheep = new CheepDTO
+            var controlCheep = new Cheep
             {
-                Author = "Helge",
-                Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12:16"
+                CheepId = 999999,
+                AuthorId = "Helge",
+                Author = new Author { Name = "Helge" },
+                Text = "Hello, BDSA students!",
+                TimeStamp = DateTime.Parse("01/08/2023 12:16:48")
             };
 
-            Assert.Equal(controlCheep.Author, cheep.Author.Name);
-            Assert.Equal(controlCheep.Message, cheep.Text);
-            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Assert.Equal(controlCheep.AuthorId, cheep.Author.Name);
+            Assert.Equal(controlCheep.Text, cheep.Text);
+            var controlDate = controlCheep.TimeStamp.ToString("ddMMyyyyHHmmss").Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Console.WriteLine("Control Date: " + controlDate);
             var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
             Assert.Equal(controlDate, cheepDate);
         }
