@@ -139,15 +139,15 @@ namespace XunitTests
 
             var dbContext = _testServices.ctx;
 
-            dbContext.DbSet<Author>.Add(author);
-            dbContext.DbSet<Cheep>.Add(Chirp);
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
             var cheeps = _cheepService.GetCheepsFromAuthor(author.Name);
 
             Assert.Single(cheeps);
             Assert.Equal(author.Name, cheeps.First().Author);
-            Assert.Equal(Chirp.Message, cheeps.First().Message);
+            Assert.Equal(Chirp.Text, cheeps.First().Message);
         }
 
         [Fact]
