@@ -166,8 +166,14 @@ namespace XunitTests
         [Fact]
         public void testAuthorServiceFindByEmail()
         {
-            Assert.True(true);
-            //Assert.NotNull(_authorService.FindAuthorByName("ropf@itu.dk"));
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var Author = _authorService.FindAuthorByEmail("ropf@itu.dk");
+            var AEmail = Author?.Email;
+            Assert.NotNull(Author);
+            Assert.Equal(AEmail, "ropf@itu.dk");
         }
     }
 }
