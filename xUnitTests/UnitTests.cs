@@ -116,6 +116,7 @@ namespace xUnitTests
             Assert.True(ordered);
         }
 
+        [Fact]
         public void CreateCheepAndFilterAuthor()
         {
             var Author = new Author()
@@ -145,5 +146,18 @@ namespace xUnitTests
             Assert.Equal(Author.Name, cheeps.First().Author.Name);
             Assert.Equal(Chirp.Text, cheeps.First().Text);
         }
+
+        [Fact]
+        public void testAuthorRepositoryGetByName()
+        {
+
+        }
+
+        [Fact]
+        public void testAuthorRepositoryGetByEmail()
+        {
+
+        }
     }
+        
 }

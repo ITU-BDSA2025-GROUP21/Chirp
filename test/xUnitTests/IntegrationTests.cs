@@ -88,7 +88,7 @@ namespace XunitTests
 
         [Fact]
         public void testOrder()
-        { 
+        {
             var cheeps = _cheepService.GetCheeps();
             DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
@@ -101,7 +101,9 @@ namespace XunitTests
                 if (aT >= prevTime)
                 {
                     prevTime = aT;
-                } else {
+                }
+                else
+                {
                     ordered = false;
                     break;
                 }
@@ -110,6 +112,7 @@ namespace XunitTests
             Assert.True(ordered);
         }
 
+        [Fact]
         public void CreateCheepAndFilterAuthor()
         {
             var Author = new AuthorDTO()
@@ -137,5 +140,23 @@ namespace XunitTests
             Assert.Equal(Author.Name, cheeps.First().Author);
             Assert.Equal(Chirp.Message, cheeps.First().Message);
         }
+
+            [Fact]
+            public void testAuthorServiceFindByName()
+            {
+
+            }
+
+            [Fact]
+            public void testAuthorServiceFindByEmail()
+            {
+
+            }
+
+            [Fact]
+            public void testAuthorServiceCreateDTO()
+            {
+            
+            }
+        }
     }
-}
