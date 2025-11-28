@@ -18,10 +18,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<Chirp.Infrastructure.Models.Author> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<Chirp.Core.Models.Author> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

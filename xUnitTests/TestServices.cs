@@ -1,12 +1,11 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Chirp.Razor.Repositories;
 using Chirp.Core.Services;
-using Chirp.Infrastructure.Data;
+using Chirp.Core.Data;
 using Chirp.Core.Repositories;
-using Chirp.Infrastructure.Models;
-
+using Chirp.Core.Models;
 
 public class TestServices : IDisposable
 {

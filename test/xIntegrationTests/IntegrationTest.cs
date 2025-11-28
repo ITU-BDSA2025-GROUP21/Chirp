@@ -1,10 +1,7 @@
 
-using Chirp.Core;
 using Chirp.Core.DTO;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
-using Chirp.Infrastructure;
-using Chirp.Infrastructure.Models;
 using Xunit.Abstractions;
 
 
@@ -30,7 +27,6 @@ namespace xIntegrationTests
             {
                 Name = "Testing Client",
                 Email = "Tester@Cheep.com",
-                Password = "TestPassword"
             };
 
             var Chirp = new CheepDTO()

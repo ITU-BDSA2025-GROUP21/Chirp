@@ -23,17 +23,17 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
-        private readonly IUserStore<Chirp.Infrastructure.Models.Author> _userStore;
-        private readonly IUserEmailStore<Chirp.Infrastructure.Models.Author> _emailStore;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
+        private readonly IUserStore<Chirp.Core.Models.Author> _userStore;
+        private readonly IUserEmailStore<Chirp.Core.Models.Author> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
-            IUserStore<Chirp.Infrastructure.Models.Author> userStore,
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
+            IUserStore<Chirp.Core.Models.Author> userStore,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -161,11 +161,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private Chirp.Infrastructure.Models.Author CreateUser()
+        private Chirp.Core.Models.Author CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<Chirp.Infrastructure.Models.Author>();
+                return Activator.CreateInstance<Chirp.Core.Models.Author>();
             }
             catch
             {
@@ -175,13 +175,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             }
         }
 
-        private IUserEmailStore<Chirp.Infrastructure.Models.Author> GetEmailStore()
+        private IUserEmailStore<Chirp.Core.Models.Author> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<Chirp.Infrastructure.Models.Author>)_userStore;
+            return (IUserEmailStore<Chirp.Core.Models.Author>)_userStore;
         }
     }
 }

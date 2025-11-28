@@ -13,11 +13,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class Disable2faModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly ILogger<Disable2faModel> _logger;
 
         public Disable2faModel(
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
             ILogger<Disable2faModel> logger)
         {
             _userManager = userManager;

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Core.Migrations
 {
     [DbContext(typeof(ChirpDBContext))]
-    [Migration("20251105193727_MadeNameNotNull")]
-    partial class MadeNameNotNull
+    [Migration("20251127135535_ChangedNAmeSpacesForModel")]
+    partial class ChangedNAmeSpacesForModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Chirp.Core.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Chirp.Infrastructure.Data.ApplicationUser", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Author", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -46,6 +46,7 @@ namespace Chirp.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -87,33 +88,15 @@ namespace Chirp.Core.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Chirp.Infrastructure.Models.Author", b =>
-                {
-                    b.Property<int>("AuthorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("AuthorId");
-
-                    b.ToTable("Authors");
-                });
-
-            modelBuilder.Entity("Chirp.Infrastructure.Models.Cheep", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Cheep", b =>
                 {
                     b.Property<int>("CheepId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -258,9 +241,9 @@ namespace Chirp.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Chirp.Infrastructure.Models.Cheep", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Cheep", b =>
                 {
-                    b.HasOne("Chirp.Infrastructure.Models.Author", "Author")
+                    b.HasOne("Chirp.Core.Models.Author", "Author")
                         .WithMany("Cheeps")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +263,7 @@ namespace Chirp.Core.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Chirp.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Chirp.Core.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -289,7 +272,7 @@ namespace Chirp.Core.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Chirp.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Chirp.Core.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -304,7 +287,7 @@ namespace Chirp.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Chirp.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Chirp.Core.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -313,14 +296,14 @@ namespace Chirp.Core.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Chirp.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Chirp.Core.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Chirp.Infrastructure.Models.Author", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Author", b =>
                 {
                     b.Navigation("Cheeps");
                 });

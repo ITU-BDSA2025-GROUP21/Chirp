@@ -116,7 +116,6 @@ namespace XunitTests
             {
                 Name = "Testing Client",
                 Email = "Tester@Cheep.com",
-                Password = "TestPassword"
             };
 
             var Chirp = new CheepDTO()

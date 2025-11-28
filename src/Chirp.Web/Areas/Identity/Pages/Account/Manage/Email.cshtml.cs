@@ -17,13 +17,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -73,7 +73,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(Chirp.Infrastructure.Models.Author user)
+        private async Task LoadAsync(Chirp.Core.Models.Author user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;

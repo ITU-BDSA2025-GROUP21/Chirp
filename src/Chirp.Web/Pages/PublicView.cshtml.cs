@@ -1,17 +1,21 @@
 ﻿using Chirp.Core.DTO;
+using Chirp.Core.Models;
+using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Chirp.Web.Pages.Controllers;
+namespace Chirp.Web.Pages;
 
-public class PublicController : PageModel
+public class PublicView : PageModel
 {
-    private readonly ICheepService _service;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public int CurrentPage { get; set; } //Tracker til pagination
+    public int CurrentPage { get; set; }
 
-    public PublicController(ICheepService service)
+    private readonly ICheepService _service;
+
+    public PublicView(ICheepService service)
     {
         _service = service;
     }
@@ -24,4 +28,8 @@ public class PublicController : PageModel
         Cheeps = _service.GetCheeps(page);
         return Page();
     }
+
+
+
+
 }
