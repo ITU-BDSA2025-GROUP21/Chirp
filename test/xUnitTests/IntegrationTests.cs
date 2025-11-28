@@ -154,8 +154,8 @@ namespace XunitTests
         public void testAuthorServiceFindByName()
         {
             var dbContext = _testServices.ctx;
-            _authorRepository = new AuthorRepository(dbContext);
-            _authorService = new AuthorService(_authorRepository);
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
 
             var Author = _authorService.FindAuthorByName("Helge");
             var AName = Author?.Name;
