@@ -1,9 +1,10 @@
-using Xunit.Abstractions;
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Repositories;
+using Chirp.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using Chirp.Core.Models;
+using Xunit.Abstractions;
 
 namespace xUnitTests
 {
@@ -16,7 +17,8 @@ namespace xUnitTests
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepRepository = testService.CheepRepository;
+            _cheepRepository = testService._cheepRepository;
+            _testServices = testService;
         }
 
         [Fact]
@@ -119,7 +121,7 @@ namespace xUnitTests
         [Fact]
         public void CreateCheepAndFilterAuthor()
         {
-            var Author = new Author()
+            var author = new Author()
             {
                 Name = "Testing Client",
                 Cheeps = new List<Cheep>()
@@ -127,23 +129,21 @@ namespace xUnitTests
 
             var Chirp = new Cheep()
             {
-                CheepId = 9999,
-                AuthorId = "Testing Client",
-                Author = Author,
-                Text = "Testing.",
-                TimeStamp = DateTime.Now
+                Author = author,
+                Text = "Test Message",
+                TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
             };
 
-            DbContext dbContext = _testServices.GetDbContext();
+            var dbContext = _testServices.ctx;
 
-            dbContext.Set<Author>().Add(Author);
-            dbContext.Set<Cheep>().Add(Chirp);
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepRepository.GetByAuthor(Author.Name);
+            var cheeps = _cheepRepository.GetByAuthor(author.Name);
 
             Assert.Single(cheeps);
-            Assert.Equal(Author.Name, cheeps.First().Author.Name);
+            Assert.Equal(author.Name, cheeps.First().Author.Name);
             Assert.Equal(Chirp.Text, cheeps.First().Text);
         }
 

@@ -6,15 +6,20 @@ using Chirp.Core.Services;
 using Chirp.Core.Data;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
+using Chirp.Infrastructure.Services;
+using System.Security.Policy;
 
 public class TestServices : IDisposable
 {
     private readonly ServiceProvider _provider;
     private readonly SqliteConnection _conn;
-    private readonly DbContext _dbContext;
+    private readonly IServiceScope _scope;
 
-    public ICheepService CheepService { get; }
-    public ICheepRepository CheepRepository { get; }
+    public ChirpDBContext ctx { get; }
+    public ICheepRepository _cheepRepository { get; }
+    public ICheepService _cheepService { get; }
+    public IAuthorRepository _authorRepository { get; }
+    public IAuthorService _authorService { get; }
 
     public TestServices()
     {
@@ -26,30 +31,28 @@ public class TestServices : IDisposable
         services.AddDbContext<ChirpDBContext>(o => o.UseSqlite(_conn));
 
         services.AddScoped<ICheepRepository, CheepRepository>();
-
         services.AddScoped<ICheepService, CheepService>();
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
+        services.AddScoped<IAuthorService, AuthorService>();
 
         _provider = services.BuildServiceProvider();
 
-        using (var scope = _provider.CreateScope())
-        {
-            var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
-            ctx.Database.EnsureCreated();
-            _dbContext = ctx;
-            DbInitializer.SeedDatabase(ctx);
-        }
+        _scope = _provider.CreateScope();
 
-        CheepService = _provider.GetRequiredService<ICheepService>();
-        CheepRepository = _provider.GetRequiredService<ICheepRepository>();
-    }
+        ctx = _scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+        ctx.Database.EnsureCreated();
+        DbInitializer.SeedDatabase(ctx);
 
-    public DbContext GetDbContext()
-    {
-        return _dbContext;
+        _cheepService = _scope.ServiceProvider.GetRequiredService<ICheepService>();
+        _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
+        _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();
+        _authorRepository = _scope.ServiceProvider.GetRequiredService<IAuthorRepository>();
+
     }
 
     public void Dispose()
     {
+        _scope.Dispose();
         _provider.Dispose();
         _conn.Close();
         _conn.Dispose();
