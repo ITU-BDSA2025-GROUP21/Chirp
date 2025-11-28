@@ -7,7 +7,6 @@ using Chirp.Core.Repositories;
 using Chirp.Razor.Repositories;
 using Chirp.Infrastructure.Services;
 
-
 namespace XunitTests
 {
     public class IntegrationTests : IClassFixture<TestServices>

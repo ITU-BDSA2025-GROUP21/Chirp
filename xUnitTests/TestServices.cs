@@ -47,7 +47,6 @@ public class TestServices : IDisposable
         _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
         _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();
         _authorRepository = _scope.ServiceProvider.GetRequiredService<IAuthorRepository>();
-
     }
 
     public void Dispose()
