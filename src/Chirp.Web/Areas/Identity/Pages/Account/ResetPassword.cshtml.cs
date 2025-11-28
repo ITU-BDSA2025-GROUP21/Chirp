@@ -16,9 +16,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
 
-        public ResetPasswordModel(UserManager<Chirp.Infrastructure.Models.Author> userManager)
+        public ResetPasswordModel(UserManager<Chirp.Core.Models.Author> userManager)
         {
             _userManager = userManager;
         }

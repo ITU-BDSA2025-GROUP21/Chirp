@@ -16,14 +16,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
-        private readonly IUserStore<Chirp.Infrastructure.Models.Author> _userStore;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
+        private readonly IUserStore<Chirp.Core.Models.Author> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
-            IUserStore<Chirp.Infrastructure.Models.Author> userStore)
+            UserManager<Chirp.Core.Models.Author> userManager,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
+            IUserStore<Chirp.Core.Models.Author> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;

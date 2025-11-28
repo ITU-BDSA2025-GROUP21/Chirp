@@ -14,13 +14,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
         public LoginWithRecoveryCodeModel(
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
             ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;

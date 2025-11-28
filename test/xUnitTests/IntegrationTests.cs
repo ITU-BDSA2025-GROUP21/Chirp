@@ -1,7 +1,11 @@
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
+using Chirp.Core.Repositories;
+using Chirp.Razor.Repositories;
+using Chirp.Infrastructure.Services;
 
 namespace XunitTests
 {
@@ -10,11 +14,15 @@ namespace XunitTests
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
         private readonly TestServices _testServices;
+        private IAuthorService _authorService;
+        private IAuthorRepository _authorRepository;
 
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepService = testService.CheepService;
+            _testServices = testService;
+            _cheepService = testService._cheepService;
+            _authorService = testService._authorService;
         }
 
         [Fact]
@@ -88,7 +96,7 @@ namespace XunitTests
 
         [Fact]
         public void testOrder()
-        { 
+        {
             var cheeps = _cheepService.GetCheeps();
             DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
@@ -101,7 +109,9 @@ namespace XunitTests
                 if (aT >= prevTime)
                 {
                     prevTime = aT;
-                } else {
+                }
+                else
+                {
                     ordered = false;
                     break;
                 }
@@ -110,33 +120,59 @@ namespace XunitTests
             Assert.True(ordered);
         }
 
+        [Fact]
         public void CreateCheepAndFilterAuthor()
         {
-            var Author = new AuthorDTO()
+            var author = new Author()
             {
                 Name = "Testing Client",
-                Email = "Tester@Cheep.com",
-                Password = "TestPassword"
+                Cheeps = new List<Cheep>()
             };
 
-            var Chirp = new CheepDTO()
+            var Chirp = new Cheep()
             {
-                Author = Author.Name,
-                Message = "Test Message",
-                CreatedDate = "2023-08-01 13:15:37",
+                Author = author,
+                Text = "Test Message",
+                TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
             };
 
-            DbContext dbContext = _testServices.GetDbContext();
+            var dbContext = _testServices.ctx;
 
-            dbContext.Set<AuthorDTO>().Add(Author);
-            dbContext.Set<CheepDTO>().Add(Chirp);
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepService.GetCheepsFromAuthor(Author.Name);
+            var cheeps = _cheepService.GetCheepsFromAuthor(author.Name);
 
             Assert.Single(cheeps);
-            Assert.Equal(Author.Name, cheeps.First().Author);
-            Assert.Equal(Chirp.Message, cheeps.First().Message);
+            Assert.Equal(author.Name, cheeps.First().Author);
+            Assert.Equal(Chirp.Text, cheeps.First().Message);
+        }
+
+        [Fact]
+        public void testAuthorServiceFindByName()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var Author = _authorService.FindAuthorByName("Helge");
+            var AName = Author?.Name;
+            Assert.NotNull(Author);
+            Assert.Equal(AName, "Helge");
+        }
+
+        [Fact]
+        public void testAuthorServiceFindByEmail()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var Author = _authorService.FindAuthorByEmail("ropf@itu.dk");
+            var AEmail = Author?.Email;
+            Assert.NotNull(Author);
+            Assert.Equal(AEmail, "ropf@itu.dk");
         }
     }
 }

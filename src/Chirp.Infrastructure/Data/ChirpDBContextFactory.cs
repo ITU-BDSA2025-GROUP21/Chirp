@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace Chirp.Infrastructure.Data
+namespace Chirp.Core.Data
 {
     public class ChirpDBContextFactory : IDesignTimeDbContextFactory<ChirpDBContext>
     {

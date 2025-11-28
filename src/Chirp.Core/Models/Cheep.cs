@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Chirp.Infrastructure.Models
+namespace Chirp.Core.Models
 {
     public class Cheep
     {
@@ -14,5 +14,4 @@ namespace Chirp.Infrastructure.Models
         public string Text { get; set; } = null!;
         public DateTime TimeStamp { get; set; }
     }
-
 }

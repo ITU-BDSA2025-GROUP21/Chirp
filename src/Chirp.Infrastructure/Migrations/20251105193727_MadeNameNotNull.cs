@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Chirp.Infrastructure.Migrations
+namespace Chirp.Core.Migrations
 {
     /// <inheritdoc />
     public partial class MadeNameNotNull : Migration
