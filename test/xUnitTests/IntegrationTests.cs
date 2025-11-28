@@ -1,7 +1,12 @@
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
+using Chirp.Core.Repositories;
+using Chirp.Razor.Repositories;
+using Chirp.Infrastructure.Services;
+
 
 namespace XunitTests
 {
@@ -10,11 +15,15 @@ namespace XunitTests
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
         private readonly TestServices _testServices;
+        private IAuthorService _authorService;
+        private IAuthorRepository _authorRepository;
 
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepService = testService.CheepService;
+            _testServices = testService;
+            _cheepService = testService._cheepService;
+            _authorService = testService._authorService;
         }
 
         [Fact]
@@ -115,48 +124,49 @@ namespace XunitTests
         [Fact]
         public void CreateCheepAndFilterAuthor()
         {
-            var Author = new AuthorDTO()
+            var author = new Author()
             {
                 Name = "Testing Client",
-                Email = "Tester@Cheep.com",
+                Cheeps = new List<Cheep>()
             };
 
-            var Chirp = new CheepDTO()
+            var Chirp = new Cheep()
             {
-                Author = Author.Name,
-                Message = "Test Message",
-                CreatedDate = "2023-08-01 13:15:37",
+                Author = author,
+                Text = "Test Message",
+                TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
             };
 
-            DbContext dbContext = _testServices.GetDbContext();
+            var dbContext = _testServices.ctx;
 
-            dbContext.Set<AuthorDTO>().Add(Author);
-            dbContext.Set<CheepDTO>().Add(Chirp);
+            dbContext.DbSet<Author>.Add(author);
+            dbContext.DbSet<Cheep>.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepService.GetCheepsFromAuthor(Author.Name);
+            var cheeps = _cheepService.GetCheepsFromAuthor(author.Name);
 
             Assert.Single(cheeps);
-            Assert.Equal(Author.Name, cheeps.First().Author);
+            Assert.Equal(author.Name, cheeps.First().Author);
             Assert.Equal(Chirp.Message, cheeps.First().Message);
         }
 
-            [Fact]
-            public void testAuthorServiceFindByName()
-            {
+        [Fact]
+        public void testAuthorServiceFindByName()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = new AuthorRepository(dbContext);
+            _authorService = new AuthorService(_authorRepository);
 
-            }
+            var Author = _authorService.FindAuthorByName("Helge");
+            var AName = Author?.Name;
+            Assert.NotNull(Author);
+            Assert.Equal(AName, "Helge");
+        }
 
-            [Fact]
-            public void testAuthorServiceFindByEmail()
-            {
-
-            }
-
-            [Fact]
-            public void testAuthorServiceCreateDTO()
-            {
-            
-            }
+        [Fact]
+        public void testAuthorServiceFindByEmail()
+        {
+            Assert.NotNull(_authorService.FindAuthorByName("ropf@itu.dk"));
         }
     }
+}
