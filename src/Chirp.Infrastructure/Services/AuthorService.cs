@@ -38,6 +38,5 @@ namespace Chirp.Infrastructure.Services
             };
         }
     }
-
 }
 
