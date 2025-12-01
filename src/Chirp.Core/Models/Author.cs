@@ -7,6 +7,8 @@ namespace Chirp.Core.Models
     public class Author : IdentityUser
     {
         public string Name { get; set; } = null!;
+
+        public DateTime CreationDate { get; set; } = DateTime.Now;
         
         public List<Cheep> Cheeps { get; set; } = new();
     }

@@ -1,4 +1,5 @@
-﻿using Chirp.Core.DTO;
+﻿using AspNetCoreGeneratedDocument;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +14,7 @@ public class InformationPageView : PageModel
 {
     private readonly IAuthorService _authorService;
 
-    private readonly ICheepService _cheepService;
-    public int AmountOfCheeps { get; set; } = 0;
-    public string AuthorName { get; set; } = string.Empty; 
-    public string AuthorEmail { get; set; } = string.Empty;
-    
+    private readonly ICheepService _cheepService;    
 
     public InformationPageView(ICheepService service, IAuthorService authorService)
     {
@@ -25,14 +22,52 @@ public class InformationPageView : PageModel
         _authorService = authorService;
     }
 
+    public async Task<IActionResult> OnPostForgetMe()
+    {
+        if (_authorService.SignIn(User))
+        {
+
+            AuthorDTO CurrentAuthor = _authorService.GetCurrentIdentityAuthor(User);
+
+            Console.WriteLine("I RAN");
+            await _cheepService.DeleteAllCheepsAsync(CurrentAuthor.Id);
+            await _authorService.DeleteAuthorByIdAsync(CurrentAuthor.Id);
+            await _authorService.SignOutAsync();
+        } else
+        {
+            Console.WriteLine("I AM NULL");
+        }
+
+            return RedirectToPage("/PublicView");
+    } 
+
     public ActionResult OnGet() //Pagination via query string
     {
 
         if(!_authorService.SignIn(User))
         {
-            return RedirectToPage("/");
+            return RedirectToPage("/PublicView");
+        }
+        return Page();
+    }
+
+    public int GetCurrentAuthorCheepCount()
+    {
+        if(!_authorService.SignIn(User))
+        {
+            return 0;
         }
 
-        return Page();
+        return _cheepService.GetCheepsFromAuthorEmail(_authorService.GetCurrentIdentityAuthor(User).Email).Count();
+    }
+
+    public AuthorDTO GetAuthorDTO()
+    {
+        if(!_authorService.SignIn(User))
+        {
+            return null;
+        }
+
+        return _authorService.GetCurrentIdentityAuthor(User);
     }
 }

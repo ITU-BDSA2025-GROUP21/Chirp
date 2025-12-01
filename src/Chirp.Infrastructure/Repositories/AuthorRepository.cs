@@ -1,6 +1,7 @@
 ﻿using Chirp.Core.Data;
-using Chirp.Core.Repositories;
 using Chirp.Core.Models;
+using Chirp.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor.Repositories
 {
@@ -25,6 +26,13 @@ namespace Chirp.Razor.Repositories
             return _context.Authors
                 .Where(a => a.Email.ToLower() == email.ToLower())
                 .FirstOrDefault();
+        }
+
+        public async Task DeleteAuthorByIdAsync(string authorId)
+        {
+            await _context.Authors
+                .Where(a => a.Id == authorId)
+                .ExecuteDeleteAsync();
         }
     }
 }

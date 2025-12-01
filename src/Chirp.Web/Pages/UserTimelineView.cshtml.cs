@@ -29,7 +29,7 @@ public class UserTimelineView : PageModel
         
         Author = author;
         CurrentPage = page;
-        Cheeps = _service.GetCheepsFromAuthor(author, page);
+        Cheeps = _service.GetCheepsFromAuthorEmail(author, page);
         return Page();
     }
 }

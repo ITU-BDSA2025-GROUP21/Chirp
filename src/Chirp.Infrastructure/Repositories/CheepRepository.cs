@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
-using Chirp.Core.DTO;
 
 namespace Chirp.Razor.Repositories
 {
@@ -40,22 +39,23 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public void AddCheep(string text, Author author) {
-
-            Cheep cheep = new Cheep
-            {
-                Author = author,
-                TimeStamp = DateTime.Now,
-                Text = text
-            };
-
-            author.Cheeps.Add(cheep);
-            _context.Cheeps.Add(cheep);
-            _context.SaveChanges();
+        public async Task DeleteAllCheepsAsync(string id)
+        {
+            await _context.Cheeps
+                .Where(c => c.AuthorId == id)
+                .ExecuteDeleteAsync();
         }
 
-        public void Save()
+        public void AddCheep(string text, string authorId)
         {
+            Cheep cheep = new Cheep
+            {
+                AuthorId = authorId,
+                Text = text,
+                TimeStamp = DateTime.Now
+            };
+
+            _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
     }

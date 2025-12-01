@@ -39,15 +39,15 @@ namespace XunitTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepService.GetCheepsFromAuthor("Helge");
+            var helgeCheeps = _cheepService.GetCheepsFromAuthorEmail("Helge");
 
-            var adrianCheeps = _cheepService.GetCheepsFromAuthor("Adrian");
+            var adrianCheeps = _cheepService.GetCheepsFromAuthorEmail("Adrian");
 
-            var nathanCheeps = _cheepService.GetCheepsFromAuthor("Nathan Sirmon");
+            var nathanCheeps = _cheepService.GetCheepsFromAuthorEmail("Nathan Sirmon");
 
-            var johnnieCheeps = _cheepService.GetCheepsFromAuthor("Johnnie Calixto");
+            var johnnieCheeps = _cheepService.GetCheepsFromAuthorEmail("Johnnie Calixto");
 
-            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorEmail("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
@@ -68,8 +68,8 @@ namespace XunitTests
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 1);
-            var luannaSecondPage = _cheepService.GetCheepsFromAuthor("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 1);
+            var luannaSecondPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -142,7 +142,7 @@ namespace XunitTests
             dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepService.GetCheepsFromAuthor(author.Name);
+            var cheeps = _cheepService.GetCheepsFromAuthorEmail(author.Name);
 
             Assert.Single(cheeps);
             Assert.Equal(author.Name, cheeps.First().Author);
