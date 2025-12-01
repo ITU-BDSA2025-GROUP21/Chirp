@@ -2,6 +2,7 @@ using Chirp.Core.Data;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Chirp.Infrastructure.Services;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICheepService, CheepService>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 
@@ -21,8 +24,9 @@ builder.Services.AddDbContext<ChirpDBContext>(options =>
 
 builder.Services.AddDefaultIdentity<Author>(
     options => { 
-        options.SignIn.RequireConfirmedAccount = false; 
-        options.User.RequireUniqueEmail = true; 
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+        options.User.RequireUniqueEmail = true;
     }).AddEntityFrameworkStores<ChirpDBContext>();
 
 builder.Services.AddAuthentication().AddGitHub(options =>
@@ -30,7 +34,6 @@ builder.Services.AddAuthentication().AddGitHub(options =>
     options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
     options.Scope.Add("user:email");
-
     options.ClaimActions.MapJsonKey("urn:github:name", "name");
 });
 
