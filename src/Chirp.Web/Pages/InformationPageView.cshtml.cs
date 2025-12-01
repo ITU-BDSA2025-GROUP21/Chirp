@@ -14,9 +14,10 @@ public class InformationPageView : PageModel
     private readonly IAuthorService _authorService;
 
     private readonly ICheepService _cheepService;
-    public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public int CurrentPage { get; set; } //Tracker til pagination
-    public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
+    public int AmountOfCheeps { get; set; } = 0;
+    public string AuthorName { get; set; } = string.Empty; 
+    public string AuthorEmail { get; set; } = string.Empty;
+    
 
     public InformationPageView(ICheepService service, IAuthorService authorService)
     {
