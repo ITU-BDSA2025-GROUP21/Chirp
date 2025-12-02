@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chirp.Web", "src\Chirp.Web\Chirp.Web.csproj", "{38A84DEA-96FE-41DD-8453-7DE9CBDAC982}"
 EndProject
@@ -16,10 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chirp.Core", "src\Chirp.Core\Chirp.Core.csproj", "{3D3F0D9B-5067-CE60-2D55-743A222468EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xIntegrationTests", "test\xIntegrationTests\xIntegrationTests.csproj", "{F86A89EE-4726-442C-8896-F498F0737512}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3D3F0D9B-5067-CE60-2D55-743A222468EC} = {3D3F0D9B-5067-CE60-2D55-743A222468EC}
-		{7F716B52-E0AB-18D4-76D2-19A4BAD22546} = {7F716B52-E0AB-18D4-76D2-19A4BAD22546}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,7 +93,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{38A84DEA-96FE-41DD-8453-7DE9CBDAC982} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{1868D0AD-A095-4497-8A8A-9496D6A6F7A7} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{7F716B52-E0AB-18D4-76D2-19A4BAD22546} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3D3F0D9B-5067-CE60-2D55-743A222468EC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F86A89EE-4726-442C-8896-F498F0737512} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
