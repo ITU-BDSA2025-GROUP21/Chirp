@@ -1,9 +1,8 @@
-﻿using Chirp.Infrastructure.Data;
+﻿using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Chirp.Core.Repositories;
+using Chirp.Core.Models;
 using Chirp.Core.DTO;
-using Chirp.Infrastructure.Models;
 
 namespace Chirp.Razor.Repositories
 {
@@ -16,39 +15,32 @@ namespace Chirp.Razor.Repositories
             _context = context;
         }
 
-        public IEnumerable<CheepDTO> GetAll(int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetAll(int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
+                .Include(c => c.Author)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(createCheepDTO)
                 .ToList();
         }
 
-        public IEnumerable<CheepDTO> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
+                .Include(c => c.Author)
                 .Where(c => c.Author.Name == authorName)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
-                .Select(createCheepDTO)
                 .ToList();
         }
 
-        public void CreateNewAuthor(string name, string email)
-        {
-            var author = new Author
-            {
-                Name = name,
-                Email = email,
-                Cheeps = new List<Cheep>()
-            };
+        public void AddCheep(string text, Author author) {
 
             _context.Authors.Add(author);
             _context.SaveChanges();
@@ -98,21 +90,19 @@ namespace Chirp.Razor.Repositories
                 AuthorId = author.Id,
                 Text = chirp.Message,
                 TimeStamp = parsedDate
+            Cheep cheep = new Cheep
+            {
+                Author = author,
+                TimeStamp = DateTime.Now,
+                Text = text
             };
+
+            author.Cheeps.Add(cheep);
             
             author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
-
-
-        private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
-            c => new CheepDTO
-            {
-                Author = c.Author.Name,
-                Message = c.Text,
-                CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
-            };
 
         public void Save()
         {

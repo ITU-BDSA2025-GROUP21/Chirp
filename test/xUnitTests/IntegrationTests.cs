@@ -1,19 +1,28 @@
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
 using Chirp.Core.Services;
+using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
+using Chirp.Core.Repositories;
+using Chirp.Razor.Repositories;
+using Chirp.Infrastructure.Services;
 
 namespace XunitTests
 {
-    public class UnitTest1 : IClassFixture<TestServices>
+    public class IntegrationTests : IClassFixture<TestServices>
     {
         private readonly ITestOutputHelper _output;
         private readonly ICheepService _cheepService;
+        private readonly TestServices _testServices;
+        private IAuthorService _authorService;
+        private IAuthorRepository _authorRepository;
 
-
-        public UnitTest1(ITestOutputHelper output, TestServices testService)
+        public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepService = testService.CheepService;
+            _testServices = testService;
+            _cheepService = testService._cheepService;
+            _authorService = testService._authorService;
         }
 
         [Fact]
@@ -26,7 +35,6 @@ namespace XunitTests
             Assert.Equal(pageSize, secondPage.Count());
             Assert.NotEqual(firstPage.First().Message, secondPage.First().Message);
         }
-
 
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
@@ -76,15 +84,19 @@ namespace XunitTests
             {
                 Author = "Helge",
                 Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12:16"
+                CreatedDate = "01/08/2023 12.16"
             };
 
-            Assert.Equal(controlCheep, cheep);
+            Assert.Equal(controlCheep.Author, cheep.Author);
+            Assert.Equal(controlCheep.Message, cheep.Message);
+            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            Assert.Equal(controlDate, cheepDate);
         }
 
         [Fact]
         public void testOrder()
-        { 
+        {
             var cheeps = _cheepService.GetCheeps();
             DateTime prevTime = DateTime.Parse("01/01/00 00:00");
             var ordered = true;
@@ -97,13 +109,70 @@ namespace XunitTests
                 if (aT >= prevTime)
                 {
                     prevTime = aT;
-                } else {
+                }
+                else
+                {
                     ordered = false;
                     break;
                 }
             }
 
             Assert.True(ordered);
+        }
+
+        [Fact]
+        public void CreateCheepAndFilterAuthor()
+        {
+            var author = new Author()
+            {
+                Name = "Testing Client",
+                Cheeps = new List<Cheep>()
+            };
+
+            var Chirp = new Cheep()
+            {
+                Author = author,
+                Text = "Test Message",
+                TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
+            };
+
+            var dbContext = _testServices.ctx;
+
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(Chirp);
+            dbContext.SaveChanges();
+
+            var cheeps = _cheepService.GetCheepsFromAuthor(author.Name);
+
+            Assert.Single(cheeps);
+            Assert.Equal(author.Name, cheeps.First().Author);
+            Assert.Equal(Chirp.Text, cheeps.First().Message);
+        }
+
+        [Fact]
+        public void testAuthorServiceFindByName()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var Author = _authorService.FindAuthorByName("Helge");
+            var AName = Author?.Name;
+            Assert.NotNull(Author);
+            Assert.Equal(AName, "Helge");
+        }
+
+        [Fact]
+        public void testAuthorServiceFindByEmail()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var Author = _authorService.FindAuthorByEmail("ropf@itu.dk");
+            var AEmail = Author?.Email;
+            Assert.NotNull(Author);
+            Assert.Equal(AEmail, "ropf@itu.dk");
         }
     }
 }

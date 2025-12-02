@@ -42,7 +42,7 @@ public class TestServices : IDisposable
         ctx = _scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
         ctx.Database.EnsureCreated();
         DbInitializer.SeedDatabase(ctx);
-        
+
         _cheepService = _scope.ServiceProvider.GetRequiredService<ICheepService>();
         _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
         _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();

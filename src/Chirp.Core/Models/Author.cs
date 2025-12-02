@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Chirp.Infrastructure.Models
+namespace Chirp.Core.Models
 {
     public class Author : IdentityUser
     {

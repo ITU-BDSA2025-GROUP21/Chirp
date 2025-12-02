@@ -16,13 +16,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;

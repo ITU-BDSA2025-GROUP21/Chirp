@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace Chirp.Infrastructure.Data
+namespace Chirp.Core.Data
 {
     public class ChirpDBContextFactory : IDesignTimeDbContextFactory<ChirpDBContext>
     {
         public ChirpDBContext CreateDbContext(string[] args)
         {
-            // Find konfigurationen
+            // Find configurationen
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Chirp.Web"))
                 .AddJsonFile("appsettings.json")

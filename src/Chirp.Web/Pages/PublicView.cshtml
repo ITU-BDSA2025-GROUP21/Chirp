@@ -1,14 +1,23 @@
-﻿@page "/{author}"
-@model Chirp.Web.Pages.Controllers.UserTimelineController
+﻿@page "/"
+@model Chirp.Web.Pages.PublicView
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("author");
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
-
+    <h2> Public Timeline </h2>
+    
+    @* @if (User.Identity != null && User.Identity.IsAuthenticated) *@
+    
+        <div class="cheepbox">
+            <h3>What's on your mind?</h3> @* @(User.Identity.Name) *@
+            <form method="post" asp-controller="Public" asp-action="Index">
+                <input style="float: left" type="text" asp-for="Text" />
+                <input type="submit" value="Share" />
+            </form>
+        </div>
+    
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
@@ -31,15 +40,16 @@
         <em>There are no cheeps so far.</em>
     }
     
-    <div class="pagination">
+    <div class="pagination"> 
+
         @if (Model.CurrentPage > 1)
         {
-            <a href="/@Model.Author?page=@(Model.CurrentPage - 1)">Previous</a>
+            <a href="/?page=@(Model.CurrentPage - 1)">Previous</a>
         }
         
         @if (Model.Cheeps.Count() == 32)
-        {
-            <a href="/@Model.Author?page=@(Model.CurrentPage + 1)">Next</a>
+        { 
+            <a href="/?page=@(Model.CurrentPage + 1)">Next</a>
         }
     </div>
 </div>

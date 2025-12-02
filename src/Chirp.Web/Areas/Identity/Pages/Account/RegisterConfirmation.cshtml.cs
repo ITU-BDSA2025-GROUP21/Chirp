@@ -17,10 +17,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly IEmailSender _sender;
 
-        public RegisterConfirmationModel(UserManager<Chirp.Infrastructure.Models.Author> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<Chirp.Core.Models.Author> userManager, IEmailSender sender)
         {
             _userManager = userManager;
             _sender = sender;

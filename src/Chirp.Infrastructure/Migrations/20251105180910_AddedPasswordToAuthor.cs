@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Chirp.Infrastructure.Migrations
+namespace Chirp.Core.Migrations
 {
     /// <inheritdoc />
     public partial class AddedPasswordToAuthor : Migration

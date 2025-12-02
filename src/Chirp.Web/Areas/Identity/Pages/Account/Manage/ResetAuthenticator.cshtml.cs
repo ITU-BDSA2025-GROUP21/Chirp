@@ -13,13 +13,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        private readonly UserManager<Chirp.Infrastructure.Models.Author> _userManager;
-        private readonly SignInManager<Chirp.Infrastructure.Models.Author> _signInManager;
+        private readonly UserManager<Chirp.Core.Models.Author> _userManager;
+        private readonly SignInManager<Chirp.Core.Models.Author> _signInManager;
         private readonly ILogger<ResetAuthenticatorModel> _logger;
 
         public ResetAuthenticatorModel(
-            UserManager<Chirp.Infrastructure.Models.Author> userManager,
-            SignInManager<Chirp.Infrastructure.Models.Author> signInManager,
+            UserManager<Chirp.Core.Models.Author> userManager,
+            SignInManager<Chirp.Core.Models.Author> signInManager,
             ILogger<ResetAuthenticatorModel> logger)
         {
             _userManager = userManager;
