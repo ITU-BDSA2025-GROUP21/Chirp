@@ -24,6 +24,31 @@ namespace Chirp.Infrastructure.Services
         }
 
 
+        public IEnumerable<AuthorDTO> GetFollowers(string name)
+        {
+            return null;
+        }
+
+        public IEnumerable<AuthorDTO> GetFollowing(string name)
+        {
+            return null;
+        } 
+
+        public bool IsFollowing(string followerName, string followeeName)
+        {
+            return false;
+        }
+
+        public bool FollowAuthor(string followerName, string followeeName)
+        {
+            return false;
+        }
+
+        public bool UnfollowAuthor(string followerName, string followeeName) 
+        {
+            return false;
+        }
+
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if(author == null)
@@ -35,6 +60,21 @@ namespace Chirp.Infrastructure.Services
             {
                 Name = author.Name,
                 Email = author.Email
+            };
+        }
+
+        private UserFollowDTO CreateUserFollowDTO(UserFollow userFollow)
+        {
+            if (userFollow == null)
+            {
+                return null;
+            }
+
+            return new UserFollowDTO
+            {
+                FollowerId = userFollow.FollowerId,
+                FolloweeId = userFollow.FolloweeId,
+                TimeStamp = userFollow.TimeStamp.ToString("dd/MM/yyyy HH:mm")
             };
         }
     }

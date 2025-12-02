@@ -13,5 +13,11 @@ namespace Chirp.Core.Services
         AuthorDTO? FindAuthorByEmail(string email);
         AuthorDTO? FindAuthorByName(string name);
 
+        IEnumerable<AuthorDTO> GetFollowers(string name);
+        IEnumerable<AuthorDTO> GetFollowing(string name);
+
+        bool IsFollowing(string followerName, string followeeName);
+        bool FollowAuthor(string followerName, string followeeName);
+        bool UnfollowAuthor(string followerName, string followeeName);
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Core.Migrations
 {
     [DbContext(typeof(ChirpDBContext))]
-    [Migration("20251201232920_AddUserFollows")]
+    [Migration("20251202103227_AddUserFollows")]
     partial class AddUserFollows
     {
         /// <inheritdoc />
