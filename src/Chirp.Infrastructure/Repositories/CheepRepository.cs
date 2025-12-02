@@ -1,8 +1,9 @@
 ﻿using Chirp.Core.Data;
-using Microsoft.EntityFrameworkCore;
-using Chirp.Core.Repositories;
-using Chirp.Core.Models;
 using Chirp.Core.DTO;
+using Chirp.Core.Models;
+using Chirp.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Chirp.Razor.Repositories
 {
@@ -72,7 +73,7 @@ namespace Chirp.Razor.Repositories
         }
 
         public void AddChirp(CheepDTO chirp)
-            { 
+        {
             var author = _context.Authors.FirstOrDefault(a => a.Name == chirp.Author);
             if (author == null)
             {
@@ -84,25 +85,27 @@ namespace Chirp.Razor.Repositories
                 parsedDate = DateTime.Now;
             }
 
-            
+
             var cheep = new Cheep
             {
                 AuthorId = author.Id,
                 Text = chirp.Message,
                 TimeStamp = parsedDate
-            Cheep cheep = new Cheep
-            {
-                Author = author,
-                TimeStamp = DateTime.Now,
-                Text = text
             };
 
-            author.Cheeps.Add(cheep);
-            
             author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
+
+
+        private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
+            c => new CheepDTO
+            {
+                Author = c.Author.Name,
+                Message = c.Text,
+                CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+            };
 
         public void Save()
         {
