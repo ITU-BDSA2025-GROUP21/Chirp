@@ -17,7 +17,7 @@ namespace Chirp.Core.Services
         IEnumerable<AuthorDTO> GetFollowing(string name);
 
         bool IsFollowing(string followerName, string followeeName);
-        bool FollowAuthor(string followerName, string followeeName);
-        bool UnfollowAuthor(string followerName, string followeeName);
+        void FollowAuthor(string followerName, string followeeName);
+        void UnfollowAuthor(string followerName, string followeeName);
     }
 }
