@@ -22,7 +22,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();

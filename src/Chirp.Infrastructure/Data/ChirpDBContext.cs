@@ -14,16 +14,6 @@ namespace Chirp.Core.Data
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Cheep>()
-                .Property(c => c.TimeStamp)
-                .HasConversion<long>()
-                .HasColumnType("INTEGER");
-        }
-
     }
 }
 
