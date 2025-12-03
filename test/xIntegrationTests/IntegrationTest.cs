@@ -1,8 +1,10 @@
 using Chirp.Core.DTO;
 using Chirp.Core.Models;
-using Chirp.Core.Services;
-using Xunit.Abstractions;
 using Chirp.Core.Repositories;
+using Chirp.Core.Services;
+using System.Diagnostics;
+using System.Globalization;
+using Xunit.Abstractions;
 
 namespace XintegrationTests
 {
@@ -74,20 +76,41 @@ namespace XintegrationTests
         [Fact]
         public void testConsistency()
         {
-            var cheeps = _cheepService.GetCheeps();
-            var cheep = cheeps.First();
-
-            var controlCheep = new CheepDTO
+            var author = new Author()
             {
-                Author = "Helge",
-                Message = "Hello, BDSA students!",
-                CreatedDate = "01/08/2023 12.16"
+                Name = "ConsistencyAuthor",
+                Email = "consMail",
+                Cheeps = new List<Cheep>(),
+                Id = "consistency",
             };
 
-            Assert.Equal(controlCheep.Author, cheep.Author);
-            Assert.Equal(controlCheep.Message, cheep.Message);
-            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
-            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheep = new Cheep()
+            {
+                AuthorId = author.Id,
+                Text = "Consistent Message",
+                TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var controlCheep = new Cheep
+            {
+                Author = author,
+                Text = "Consistent Message",
+                TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
+            };
+
+            var testCheep = _testServices._cheepService.GetCheepsFromAuthorEmail("consMail").First();
+
+
+
+            Assert.Equal(testCheep.Author, controlCheep.Author.Name);
+            Assert.Equal(testCheep.Message, controlCheep.Text);
+            var controlDate = controlCheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
             Assert.Equal(controlDate, cheepDate);
         }
 
@@ -95,15 +118,20 @@ namespace XintegrationTests
         public void testOrder()
         {
             var cheeps = _cheepService.GetCheeps();
-            DateTime prevTime = DateTime.Parse("01/01/00 00:00");
+            DateTime prevTime = DateTime.ParseExact("01/01/3000 00.00", "dd/MM/yyyy HH.mm", CultureInfo.InvariantCulture);
             var ordered = true;
+
+            
 
             foreach (CheepDTO cheep in cheeps)
             {
                 var time = cheep.CreatedDate;
-                DateTime aT = DateTime.Parse(time);
+                DateTime aT = DateTime.ParseExact(time, "dd/MM/yyyy HH.mm", CultureInfo.InvariantCulture);
 
-                if (aT >= prevTime)
+                Debug.WriteLine("Prev Time >>> " + prevTime);
+                Debug.WriteLine("Actual Time >>> " + aT);
+
+                if (aT <= prevTime)
                 {
                     prevTime = aT;
                 }

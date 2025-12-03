@@ -18,7 +18,7 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheeps(int page = 1) 
     {
-        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO).ToList();
     }
 
     public IEnumerable<CheepDTO> GetCheepsFromAuthorEmail(string author, int page = 1)
