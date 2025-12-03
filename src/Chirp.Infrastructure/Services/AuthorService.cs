@@ -60,7 +60,6 @@ namespace Chirp.Infrastructure.Services
                 Email = author.Email,
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
-
         }
 
         public AuthorDTO? FindAuthorByEmail(string email)

@@ -26,7 +26,6 @@ public class InformationPageView : PageModel
     {
         if (_authorService.SignIn(User))
         {
-
             AuthorDTO CurrentAuthor = _authorService.GetCurrentIdentityAuthor(User);
 
             Console.WriteLine("I RAN");
@@ -43,7 +42,6 @@ public class InformationPageView : PageModel
 
     public ActionResult OnGet() //Pagination via query string
     {
-
         if(!_authorService.SignIn(User))
         {
             return RedirectToPage("/PublicView");
