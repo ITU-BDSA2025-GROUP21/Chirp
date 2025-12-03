@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 
 namespace Chirp.Core.Repositories
@@ -9,7 +9,6 @@ namespace Chirp.Core.Repositories
         public Author? FindAuthorByEmail(string email);
 
         Task DeleteAuthorByIdAsync(string authorId);
-
 
         IEnumerable<Author> GetFollowers(Author author);  
         IEnumerable<Author> GetFollowing(Author author);

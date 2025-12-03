@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
@@ -30,8 +30,6 @@ namespace Chirp.Infrastructure.Services
         public AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user)
         {
             return CreateAuthorDTO(_userManager.GetUserAsync(user).Result);
-
-
         }
 
         public bool SignIn(ClaimsPrincipal user)
@@ -46,7 +44,6 @@ namespace Chirp.Infrastructure.Services
         {
             await _signInManager.SignOutAsync();
         }
-
 
         private AuthorDTO? CreateAuthorDTO(Author author)
         {

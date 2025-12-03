@@ -1,8 +1,7 @@
-﻿using Chirp.Core.Data;
+using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
-
 
 namespace Chirp.Razor.Repositories
 {
@@ -40,7 +39,6 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-
         public async Task DeleteAllCheepsAsync(string id)
         {
             await _context.Cheeps
@@ -67,7 +65,6 @@ namespace Chirp.Razor.Repositories
                 AuthorId = authorId,
                 Text = text,
                 TimeStamp = DateTime.Now
-
             };
 
             _context.Cheeps.Add(cheep);
