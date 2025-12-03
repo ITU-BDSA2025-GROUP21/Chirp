@@ -1,10 +1,7 @@
 ﻿using Chirp.Core.Data;
 using Chirp.Core.Models;
-<<<<<<< HEAD
 using Chirp.Core.Repositories;
-=======
 using Chirp.Core.DTO;
->>>>>>> main
 using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor.Repositories
@@ -32,13 +29,12 @@ namespace Chirp.Razor.Repositories
                 .FirstOrDefault();
         }
 
-<<<<<<< HEAD
         public async Task DeleteAuthorByIdAsync(string authorId)
         {
             await _context.Authors
                 .Where(a => a.Id == authorId)
                 .ExecuteDeleteAsync();
-=======
+        }
 
         public IEnumerable<Author> GetFollowers(Author author) 
         {
@@ -96,7 +92,6 @@ namespace Chirp.Razor.Repositories
             _context.UserFollows.Remove(follow);
 
             _context.SaveChanges();
->>>>>>> main
         }
     }
 }
