@@ -5,6 +5,7 @@ using Chirp.Core.Services;
 using Chirp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Globalization;
 using Xunit.Abstractions;
 
 namespace xUnitTests
@@ -75,23 +76,39 @@ namespace xUnitTests
         [Fact]
         public void testConsistency()
         {
-            var cheeps = _cheepRepository.GetAll();
-            var cheep = cheeps.First();
+            var author = new Author()
+            {
+                Name = "ConsistencyAuthor",
+                Email = "consMail",
+                Cheeps = new List<Cheep>(),
+                Id = "consistency",
+            };
+
+            var cheep = new Cheep()
+            {
+                AuthorId = author.Id,
+                Text = "Consistent Message",
+                TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
 
             var controlCheep = new Cheep
             {
-                CheepId = 999999,
-                AuthorId = "Helge",
-                Author = new Author { Name = "Helge" },
-                Text = "Hello, BDSA students!",
-                TimeStamp = DateTime.Parse("01/08/2023 12:16:48")
+                Author = author,
+                Text = "Consistent Message",
+                TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
             };
 
-            Assert.Equal(controlCheep.AuthorId, cheep.Author.Name);
-            Assert.Equal(controlCheep.Text, cheep.Text);
-            var controlDate = controlCheep.TimeStamp.ToString("ddMMyyyyHHmmss").Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
-            Console.WriteLine("Control Date: " + controlDate);
-            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
+            var testCheep = _testServices._cheepRepository.GetByAuthorEmail("consMail").First();
+
+            Assert.Equal(testCheep.Author.Name, controlCheep.Author.Name);
+            Assert.Equal(testCheep.Text, controlCheep.Text);
+            var controlDate = controlCheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
             Assert.Equal(controlDate, cheepDate);
         }
 
@@ -99,14 +116,14 @@ namespace xUnitTests
         public void testOrder()
         {
             var cheeps = _cheepRepository.GetAll();
-            DateTime prevTime = DateTime.Parse("01/01/00 00:00");
+            DateTime prevTime = DateTime.ParseExact("01/01/3000 00.00", "dd/MM/yyyy HH.mm", CultureInfo.InvariantCulture);
             var ordered = true;
 
             foreach (Cheep cheep in cheeps)
             {
                 var aT = cheep.TimeStamp;
 
-                if (aT >= prevTime)
+                if (aT <= prevTime)
                 {
                     prevTime = aT;
                 }
@@ -116,7 +133,6 @@ namespace xUnitTests
                     break;
                 }
             }
-
             Assert.True(ordered);
         }
 

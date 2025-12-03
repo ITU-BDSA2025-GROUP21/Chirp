@@ -105,8 +105,6 @@ namespace XintegrationTests
 
             var testCheep = _testServices._cheepService.GetCheepsFromAuthorEmail("consMail").First();
 
-
-
             Assert.Equal(testCheep.Author, controlCheep.Author.Name);
             Assert.Equal(testCheep.Message, controlCheep.Text);
             var controlDate = controlCheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
