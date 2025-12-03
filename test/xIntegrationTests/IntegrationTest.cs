@@ -116,18 +116,15 @@ namespace XintegrationTests
         public void testOrder()
         {
             var cheeps = _cheepService.GetCheeps();
-            DateTime prevTime = DateTime.ParseExact("01/01/3000 00.00", "dd/MM/yyyy HH.mm", CultureInfo.InvariantCulture);
+            DateTime prevTime = DateTime.MaxValue;
             var ordered = true;
 
-            
+            var formats = new[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH.mm" };
 
             foreach (CheepDTO cheep in cheeps)
             {
                 var time = cheep.CreatedDate;
-                DateTime aT = DateTime.ParseExact(time, "dd/MM/yyyy HH.mm", CultureInfo.InvariantCulture);
-
-                Debug.WriteLine("Prev Time >>> " + prevTime);
-                Debug.WriteLine("Actual Time >>> " + aT);
+                DateTime aT = DateTime.ParseExact(time, formats, CultureInfo.InvariantCulture, DateTimeStyles.None);
 
                 if (aT <= prevTime)
                 {
