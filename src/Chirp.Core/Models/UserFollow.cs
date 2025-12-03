@@ -18,6 +18,5 @@ namespace Chirp.Core.Models
         public Author Followee { get; set; } = null!;
 
         public DateTime TimeStamp { get; set; }
-
     }
 }
