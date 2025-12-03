@@ -7,7 +7,7 @@ namespace Chirp.Core.Services
         public IEnumerable<CheepDTO> GetCheeps(int page = 1); 
         public IEnumerable<CheepDTO> GetCheepsFromAuthorId(string author, int page = 1);
 
-        void AddCheeps(string text, string authorId);
+        void AddCheep(string text, string authorId);
 
         Task DeleteAllCheepsAsync(string authorId);
         public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authorIds, int page = 1);

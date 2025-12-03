@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("author");
+    var routeName = Model.GetUserName(HttpContext.GetRouteValue("authorId").ToString());
 }
 
 <div>

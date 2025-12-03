@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using System.Linq.Expressions;
+using NuGet.Protocol.Core.Types;
 
 public class CheepService : ICheepService
 {
@@ -17,7 +18,7 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheeps(int page = 1) 
     {
-        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO).ToList();
     }
 
     public IEnumerable<CheepDTO> GetCheepsFromAuthorId(string authorId, int page = 1)
@@ -29,7 +30,7 @@ public class CheepService : ICheepService
         return _cheepRepository.GetByMultipleAuthors(authorIds, page, PageSize).Select(createCheepDTO);
     }
 
-    public void AddCheeps(string text, string authorId)
+    public void AddCheep(string text, string authorId)
     {
         _cheepRepository.AddCheep(text, authorId);
     }

@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Web.Pages;
-
-[Authorize]
 public class UserTimelineView : PageModel
 {
-
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
@@ -78,5 +75,10 @@ public class UserTimelineView : PageModel
         }
 
         return RedirectToPage();
+    }
+
+    public string GetUserName(string id)
+    {
+        return _authorService.FindAuthorById(id).Name;
     }
 }

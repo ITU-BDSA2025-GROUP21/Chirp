@@ -7,6 +7,7 @@ namespace Chirp.Core.Repositories
     {
         IEnumerable<Cheep> GetAll(int page = 1, int pageSize = 32);
         IEnumerable<Cheep> GetByAuthorId(string authorId, int page = 1, int pageSize = 32);
+
         public void AddCheep(string text, string authorId);
         Task DeleteAllCheepsAsync(string authorId);
 

@@ -10,9 +10,8 @@ namespace Chirp.Core.Services
 {
     public interface IAuthorService
     {
+        AuthorDTO? FindAuthorById(string name);
 
-        AuthorDTO? FindAuthorByEmail(string email);
-        AuthorDTO? FindAuthorByName(string name);
         AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user);
 
         bool SignIn(ClaimsPrincipal user);

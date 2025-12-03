@@ -27,7 +27,6 @@ public class InformationPageView : PageModel
     {
         if (_authorService.SignIn(User))
         {
-
             AuthorDTO CurrentAuthor = _authorService.GetCurrentIdentityAuthor(User);
 
             await _cheepService.DeleteAllCheepsAsync(CurrentAuthor.Id);

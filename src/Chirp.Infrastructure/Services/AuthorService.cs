@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
@@ -21,16 +21,9 @@ namespace Chirp.Infrastructure.Services
             _userManager = userManager;
         }
 
-        public AuthorDTO? FindAuthorByName(string name)
-        {
-            var author = _repo.FindAuthorByName(name);
-            return CreateAuthorDTO(author);
-        }
-
         public AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user)
         {
             return CreateAuthorDTO(_userManager.GetUserAsync(user).Result);
-
         }
 
         public bool SignIn(ClaimsPrincipal user)
@@ -66,7 +59,6 @@ namespace Chirp.Infrastructure.Services
             await _signInManager.SignOutAsync();
         }
 
-
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if (author == null)
@@ -79,12 +71,11 @@ namespace Chirp.Infrastructure.Services
                 Email = author.Email,
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
-
         }
 
-        public AuthorDTO? FindAuthorByEmail(string email)
+        public AuthorDTO? FindAuthorById(string authorId)
         {
-            var author = _repo.FindAuthorByEmail(email);
+            var author = _repo.FindAuthorById(authorId);
 
             if (author == null)
             {

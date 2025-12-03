@@ -1,4 +1,4 @@
-﻿using Chirp.Core.Data;
+using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
@@ -20,7 +20,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
@@ -38,7 +38,6 @@ namespace Chirp.Razor.Repositories
                 .Take(pageSize)
                 .ToList();
         }
-
 
         public async Task DeleteAllCheepsAsync(string id)
         {
