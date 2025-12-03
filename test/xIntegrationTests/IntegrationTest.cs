@@ -257,5 +257,39 @@ namespace XintegrationTests
             var deletedAuthorDTO = _authorService.FindAuthorByName("Delete Test");
             Assert.Null(deletedAuthorDTO);
         }
+
+        [Fact]
+        public void testCheepDeletion()
+        {
+            var author = new Author()
+            {
+                Name = "Cheep Delete Test",
+                Email = "cheepDelMail",
+                Cheeps = new List<Cheep>(),
+                Id = "CheepDeleteID",
+            };
+
+            var cheep = new Cheep()
+            {
+                AuthorId = author.Id,
+                Text = "Cheep Delete Test Message",
+                TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
+            };
+
+            var dbContext = _testServices.ctx;
+
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            //see that cheep exists
+            var cheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            Assert.Single(cheeps);
+
+            //delete cheeps and see that they are deleted
+            _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
+            var deletedCheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            Assert.Empty(deletedCheeps);
+        }
     }
 }
