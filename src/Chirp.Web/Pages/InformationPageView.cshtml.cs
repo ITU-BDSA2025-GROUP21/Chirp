@@ -42,7 +42,6 @@ public class InformationPageView : PageModel
 
     public ActionResult OnGet() //Pagination via query string
     {
-
         if(!_authorService.SignIn(User))
         {
             return RedirectToPage("/PublicView");
