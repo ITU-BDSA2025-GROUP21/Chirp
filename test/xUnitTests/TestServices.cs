@@ -1,19 +1,17 @@
+using Chirp.Core.Data;
+using Chirp.Core.Repositories;
+using Chirp.Core.Services;
+using Chirp.Infrastructure.Services;
+using Chirp.Razor.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Chirp.Razor.Repositories;
-using Chirp.Core.Services;
-using Chirp.Core.Data;
-using Chirp.Core.Repositories;
-using Chirp.Core.Models;
-using Chirp.Infrastructure.Services;
-using System.Security.Policy;
 
 public class TestServices : IDisposable
 {
-    private readonly ServiceProvider _provider;
     private readonly SqliteConnection _conn;
     private readonly IServiceScope _scope;
+    private readonly ServiceProvider _provider;
 
     public ChirpDBContext ctx { get; }
     public ICheepRepository _cheepRepository { get; }
@@ -42,7 +40,7 @@ public class TestServices : IDisposable
         ctx = _scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
         ctx.Database.EnsureCreated();
         DbInitializer.SeedDatabase(ctx);
-        
+
         _cheepService = _scope.ServiceProvider.GetRequiredService<ICheepService>();
         _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
         _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();
