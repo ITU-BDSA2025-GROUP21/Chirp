@@ -24,17 +24,12 @@ public class CheepService : ICheepService
     {   
         return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
     }
-
-<<<<<<< HEAD
-    public void AddCheeps(string text, string authorId)
-=======
     public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authors, int page = 1)
     {
         return _cheepRepository.GetByMultipleAuthors(authors, page, PageSize).Select(createCheepDTO);
     }
 
-    public void AddCheeps(string text, Author author)
->>>>>>> main
+    public void AddCheeps(string text, string authorId)
     {
         _cheepRepository.AddCheep(text, authorId);
     }

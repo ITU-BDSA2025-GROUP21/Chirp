@@ -2,14 +2,11 @@
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
-<<<<<<< HEAD
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Reflection.Metadata;
 using System.Security.Claims;
-=======
 using System.Linq;
->>>>>>> main
 
 namespace Chirp.Infrastructure.Services
 {
@@ -27,11 +24,7 @@ namespace Chirp.Infrastructure.Services
         public AuthorDTO? FindAuthorByName(string name)
         {
             var author = _repo.FindAuthorByName(name);
-
-<<<<<<< HEAD
-        public AuthorDTO? FindAuthorByEmail(string email)
-        {
-            return CreateAuthorDTO(_repo.FindAuthorByEmail(email));
+            return CreateAuthorDTO(author);
         }
 
         public AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user)
@@ -57,15 +50,9 @@ namespace Chirp.Infrastructure.Services
 
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
-            if(author == null)
-=======
             if (author == null)
->>>>>>> main
-            {
                 return null;
-            }
 
-<<<<<<< HEAD
             return new AuthorDTO
             {
                 Id = author.Id,
@@ -73,9 +60,7 @@ namespace Chirp.Infrastructure.Services
                 Email = author.Email,
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
-=======
-            return createAuthorDTO(author);
->>>>>>> main
+
         }
 
         public AuthorDTO? FindAuthorByEmail(string email)
@@ -87,7 +72,7 @@ namespace Chirp.Infrastructure.Services
                 return null;
             }
 
-            return createAuthorDTO(author);
+            return CreateAuthorDTO(author);
         }
 
         public IEnumerable<AuthorDTO> GetFollowers(string name)
@@ -99,7 +84,7 @@ namespace Chirp.Infrastructure.Services
                 return Enumerable.Empty<AuthorDTO>();
             }
 
-            return _repo.GetFollowers(author).Select(createAuthorDTO).ToList();
+            return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
         public IEnumerable<AuthorDTO> GetFollowing(string name)
@@ -111,7 +96,7 @@ namespace Chirp.Infrastructure.Services
                 return Enumerable.Empty<AuthorDTO>();
             }
 
-            return _repo.GetFollowing(author).Select(createAuthorDTO).ToList();
+            return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
         } 
 
         public bool IsFollowing(string followerName, string followeeName)
@@ -152,13 +137,6 @@ namespace Chirp.Infrastructure.Services
 
             _repo.UnfollowAuthor(follower, followee);
         }
-
-        private readonly Func<Author, AuthorDTO> createAuthorDTO =
-        author => new AuthorDTO
-        {
-            Name = author.Name,
-            Email = author.Email
-        };
 
         private readonly Func<UserFollow, UserFollowDTO> createUserFollowDTO =
         userFollow => new UserFollowDTO
