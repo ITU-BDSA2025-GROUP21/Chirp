@@ -227,16 +227,16 @@ namespace xUnitTests
             _authorRepository.FollowAuthor(authorHelge, authorAdrian);
 
             // Follow was not added
-            Assert.True(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian)); 
+            Assert.True(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian));
 
             _authorRepository.UnfollowAuthor(authorHelge, authorAdrian);
 
             // Follow did not get removed.
-            Assert.False(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian)); 
+            Assert.False(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian));
         }
 
         [Fact]
-        public void testGDRPDeletion()
+        public void testAuthorDeletion()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
@@ -244,12 +244,51 @@ namespace xUnitTests
             {
                 Name = "GDPR Test",
                 Email = "",
+                Cheeps = new List<Cheep>(),
+                Id = "GDPR-TEST-ID"
             };
 
-            string authorId = authorToDelete.Id;
+            dbContext.Authors.Add(authorToDelete);
+            dbContext.SaveChanges();
 
-            Debug.WriteLine(authorId);
-            Assert.True(true);
+            var testAuthor = _authorRepository.FindAuthorByName("GDPR Test");
+            Assert.NotNull(testAuthor);
+
+            _authorRepository.DeleteAuthorByIdAsync(authorToDelete.Id).Wait();
+            var deletedAuthor = _authorRepository.FindAuthorByName("GDPR Test");
+            Assert.Null(deletedAuthor);
+        }
+
+        [Fact]
+        public void testCheepDeletion()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            var author = new Author()
+            {
+                Name = "Cheep Deletion Test",
+                Email = "",
+                Cheeps = new List<Cheep>(),
+                Id = "CHEEP-DELETE-TEST-ID"
+            };
+
+            var Cheep = new Cheep()
+            {
+                AuthorId = author.Id,
+                Text = "This cheep will be deleted in a test.",
+                TimeStamp = DateTime.Now
+            };
+
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(Cheep);
+            dbContext.SaveChanges();
+
+            var cheepsBeforeDeletion = _cheepRepository.GetByAuthorEmail(author.Email);
+            Assert.Single(cheepsBeforeDeletion);
+
+            _cheepRepository.DeleteAllCheepsAsync(author.Id).Wait();
+            var cheepsAfterDeletion = _cheepRepository.GetByAuthorEmail(author.Email);
+            Assert.Empty(cheepsAfterDeletion);
         }
     }
 }
