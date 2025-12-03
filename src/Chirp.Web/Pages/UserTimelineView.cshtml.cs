@@ -2,7 +2,6 @@
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,8 +10,6 @@ namespace Chirp.Web.Pages;
 [Authorize]
 public class UserTimelineView : PageModel
 {
-    private readonly UserManager<Author> _userManager;
-
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
@@ -21,14 +18,13 @@ public class UserTimelineView : PageModel
     
     public string CurrentAuthorName { get; set; }
     public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
-
-    public UserTimelineView(ICheepService cheepService, IAuthorService authorService, UserManager<Author> userManager)
+    public UserTimelineView(ICheepService cheepService, IAuthorService authorService)
     {
         _cheepService = cheepService;
         _authorService = authorService;
-        _userManager = userManager;
     }
 
+<<<<<<< HEAD
     public ActionResult OnGet(string author, [FromQuery] int page = 1)
     {
         if (page < 1) page = 1;
@@ -40,6 +36,10 @@ public class UserTimelineView : PageModel
 
         AuthorDTO? currentAuthor = null;
 
+=======
+    public ActionResult OnGet(string authorEmail, [FromQuery] int page = 1) //Pagination via query string
+    {
+>>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
             currentAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
@@ -57,27 +57,48 @@ public class UserTimelineView : PageModel
             var following = _authorService.GetFollowing(currentAuthor.Name) 
                             ?? new List<AuthorDTO>();
 
+<<<<<<< HEAD
             var authors = following
                 .Select(a => a.Name)
                 .Append(currentAuthor.Name)
                 .ToList();
 
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(authors, page);
+=======
+            if (userAuthor != null && authorEmail == User.Identity.Name)
+            {
+                // Search for my followers and my own cheeps
+
+                var following = _authorService.GetFollowing(userAuthor.Name);
+
+                Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
+                    following.Select(a => a.Name)
+                    .Append(User.Identity.Name)
+                    .ToList(), page);
+            }
+            else
+            {
+                Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
+            }
+>>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
         }
         else
         {
-            Cheeps = _cheepService.GetCheepsFromAuthor(author, page);
+            Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
         }
 
         return Page();
     }
 
+<<<<<<< HEAD
 
     public async Task<Author?> GetCurrentAuthorAsync()
     {
         return await _userManager.GetUserAsync(User);
     }
 
+=======
+>>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
     public ActionResult OnPostToggleFollow(string followee)
     {
         // grab my current user.

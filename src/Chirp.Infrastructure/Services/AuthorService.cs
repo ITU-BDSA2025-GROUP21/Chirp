@@ -1,7 +1,11 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Reflection.Metadata;
+using System.Security.Claims;
 using System.Linq;
 
 namespace Chirp.Infrastructure.Services
@@ -9,21 +13,50 @@ namespace Chirp.Infrastructure.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _repo;
-
-        public AuthorService(IAuthorRepository repo) {
+        private readonly SignInManager<Author> _signInManager;
+        private readonly UserManager<Author> _userManager;
+        public AuthorService(IAuthorRepository repo, SignInManager<Author> signInManager, UserManager<Author> userManager) {
             _repo = repo;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         public AuthorDTO? FindAuthorByName(string name)
         {
             var author = _repo.FindAuthorByName(name);
+            return CreateAuthorDTO(author);
+        }
 
+        public AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user)
+        {
+            return CreateAuthorDTO(_userManager.GetUserAsync(user).Result);
+        }
+
+        public bool SignIn(ClaimsPrincipal user)
+        {
+            return _signInManager.IsSignedIn(user);
+        }
+
+        public Task DeleteAuthorByIdAsync(string authorId)
+            => _repo.DeleteAuthorByIdAsync(authorId);
+
+        public async Task SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        private AuthorDTO? CreateAuthorDTO(Author author)
+        {
             if (author == null)
-            {
                 return null;
-            }
 
-            return createAuthorDTO(author);
+            return new AuthorDTO
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Email = author.Email,
+                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
+            };
         }
 
         public AuthorDTO? FindAuthorByEmail(string email)
@@ -35,7 +68,7 @@ namespace Chirp.Infrastructure.Services
                 return null;
             }
 
-            return createAuthorDTO(author);
+            return CreateAuthorDTO(author);
         }
 
         public IEnumerable<AuthorDTO> GetFollowers(string name)
@@ -47,7 +80,7 @@ namespace Chirp.Infrastructure.Services
                 return Enumerable.Empty<AuthorDTO>();
             }
 
-            return _repo.GetFollowers(author).Select(createAuthorDTO).ToList();
+            return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
         public IEnumerable<AuthorDTO> GetFollowing(string name)
@@ -59,7 +92,7 @@ namespace Chirp.Infrastructure.Services
                 return Enumerable.Empty<AuthorDTO>();
             }
 
-            return _repo.GetFollowing(author).Select(createAuthorDTO).ToList();
+            return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
         } 
 
         public bool IsFollowing(string followerName, string followeeName)
@@ -100,13 +133,6 @@ namespace Chirp.Infrastructure.Services
 
             _repo.UnfollowAuthor(follower, followee);
         }
-
-        private readonly Func<Author, AuthorDTO> createAuthorDTO =
-        author => new AuthorDTO
-        {
-            Name = author.Name,
-            Email = author.Email
-        };
 
         private readonly Func<UserFollow, UserFollowDTO> createUserFollowDTO =
         userFollow => new UserFollowDTO
