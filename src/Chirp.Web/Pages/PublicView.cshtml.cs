@@ -35,10 +35,21 @@ public class PublicView : PageModel
         
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
-            Following = _authorService.GetFollowing(
-                _authorService.FindAuthorByEmail(User.Identity.Name).Name
-                );
+            var email = User.Identity.Name;
+            var author = _authorService.FindAuthorByEmail(email);
+
+            if (author != null)
+            {
+                Following = _authorService.GetFollowing(author.Name) ?? new List<AuthorDTO>();
+            }
+            else
+            {
+                // optional: log this, because it means you have a logged-in user
+                // whose email isn't in your Authors table
+                Following = new List<AuthorDTO>();
+            }
         }
+
 
         return Page();
     }
