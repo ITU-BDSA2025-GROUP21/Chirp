@@ -18,27 +18,26 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheeps(int page = 1) 
     {
-        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO).ToList();
     }
 
-    public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1)
+    public IEnumerable<CheepDTO> GetCheepsFromAuthorEmail(string author, int page = 1)
     {   
-        return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetByAuthorEmail(author, page, PageSize).Select(createCheepDTO);
     }
-
     public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authors, int page = 1)
     {
         return _cheepRepository.GetByMultipleAuthors(authors, page, PageSize).Select(createCheepDTO);
     }
 
-    public void AddCheeps(string text, Author author)
+    public void AddCheep(string text, string authorId)
     {
-        _cheepRepository.AddCheep(text, author);
+        _cheepRepository.AddCheep(text, authorId);
     }
 
-    public void MakeCheep(CheepDTO cheep)
+    public Task DeleteAllCheepsAsync(string id)
     {
-        _cheepRepository.AddChirp(cheep);
+        return _cheepRepository.DeleteAllCheepsAsync(id);
     }
 
     private readonly Func<Cheep, CheepDTO> createCheepDTO =

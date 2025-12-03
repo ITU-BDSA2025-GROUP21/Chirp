@@ -47,14 +47,17 @@ public class PublicView : PageModel
     {
         if (page < 1) page = 1;
 
+        AuthorDTO? author = _authorService.GetCurrentIdentityAuthor(User);
+
+        if(author == null)
+        {
+            return Page();
+        }
+
+
         if (!string.IsNullOrWhiteSpace(Text))
         {
-            _cheepService.MakeCheep(new CheepDTO
-            {
-                Author = User.Identity.Name,
-                Message = Text,
-                CreatedDate =  DateTime.Now.ToString()
-            });
+            _cheepService.AddCheep(Text, author.Id);
         }
 
         CurrentPage = page;
@@ -85,5 +88,10 @@ public class PublicView : PageModel
         }
 
         return RedirectToPage();
+    }
+
+    public string GetUserName()
+    {
+        return _authorService.GetCurrentIdentityAuthor(User).Name;
     }
 }

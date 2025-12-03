@@ -1,0 +1,25 @@
+﻿@page "/information"
+@model Chirp.Web.Pages.InformationPageView
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+}
+
+<div>
+
+    <h2> @Model.GetAuthorDTO().Name Information </h2>
+    
+
+    <h3>Name: @Model.GetAuthorDTO().Name</h3>
+    <h3>Email: @Model.GetAuthorDTO().Email</h3>
+    <h3>Creation Date: @Model.GetAuthorDTO().CreationDate</h3>
+    <h3>Total Cheeps sent: @Model.GetCurrentAuthorCheepCount()</h3>
+    <form method="post">
+        <button asp-page-handler="ForgetMe"
+                onclick="return confirm('Are you sure you want to delete everything?');">
+            Forget Me
+        </button>
+    </form>
+    
+   
+</div>

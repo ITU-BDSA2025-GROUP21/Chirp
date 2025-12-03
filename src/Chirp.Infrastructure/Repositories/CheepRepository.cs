@@ -1,9 +1,7 @@
-﻿using Chirp.Core.Data;
-using Chirp.Core.DTO;
-using Chirp.Core.Models;
-using Chirp.Core.Repositories;
+using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+using Chirp.Core.Repositories;
+using Chirp.Core.Models;
 
 namespace Chirp.Razor.Repositories
 {
@@ -28,19 +26,25 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByAuthor(string authorEmail, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthorEmail(string authorEmail, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => c.Author.Email.ToLower() == authorEmail.ToLower())
-                .OrderByDescending(c => c.TimeStamp)
+                .Where(c => c.Author.Email == authorEmail)
+                .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
         }
 
+        public async Task DeleteAllCheepsAsync(string id)
+        {
+            await _context.Cheeps
+                .Where(c => c.AuthorId == id)
+                .ExecuteDeleteAsync();
+        }
         public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authors, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -54,74 +58,16 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public void AddCheep(string text, Author author) {
-
-            _context.Authors.Add(author);
-            _context.SaveChanges();
-            
-        }
-
-        public AuthorDTO? FindAuthorByName(string email)
+        public void AddCheep(string text, string authorId)
         {
-            return _context.Authors
-                .Where(a => a.Email.ToLower() == email.ToLower())
-                .Select(a => new AuthorDTO
-                {
-                    Name = a.Name,
-                    Email = a.Email,
-                })
-                .FirstOrDefault();
-        }
-
-        public AuthorDTO? FindAuthorByEmail(string email)
-        {
-            return _context.Authors
-                .Where(a => a.Email.ToLower() == email.ToLower())
-                .Select(a => new AuthorDTO
-                {
-                    Name = a.Name,
-                    Email = a.Email,
-                })
-                .FirstOrDefault();
-        }
-
-        public void AddChirp(CheepDTO chirp)
-        {
-            var author = _context.Authors.FirstOrDefault(a => a.Email == chirp.Author);
-            if (author == null)
+            Cheep cheep = new Cheep
             {
-                throw new InvalidOperationException($"No author found with name '{chirp.Author}'.");
-            }
-
-            if (!DateTime.TryParse(chirp.CreatedDate, out var parsedDate))
-            {
-                parsedDate = DateTime.Now;
-            }
-
-
-            var cheep = new Cheep
-            {
-                AuthorId = author.Id,
-                Text = chirp.Message,
-                TimeStamp = parsedDate
+                AuthorId = authorId,
+                Text = text,
+                TimeStamp = DateTime.Now
             };
 
-            author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
-            _context.SaveChanges();
-        }
-
-
-        private readonly Expression<Func<Cheep, CheepDTO>> createCheepDTO =
-            c => new CheepDTO
-            {
-                Author = c.Author.Name,
-                Message = c.Text,
-                CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
-            };
-
-        public void Save()
-        {
             _context.SaveChanges();
         }
     }

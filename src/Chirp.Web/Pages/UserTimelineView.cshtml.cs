@@ -2,7 +2,6 @@
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,36 +10,20 @@ namespace Chirp.Web.Pages;
 [Authorize]
 public class UserTimelineView : PageModel
 {
-    private readonly UserManager<Author> _userManager;
-
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
     public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
-
-    public UserTimelineView(ICheepService cheepService, IAuthorService authorService, UserManager<Author> userManager)
+    public UserTimelineView(ICheepService cheepService, IAuthorService authorService)
     {
         _cheepService = cheepService;
         _authorService = authorService;
-        _userManager = userManager;
     }
 
-    public ActionResult OnGet(string author, [FromQuery] int page = 1) //Pagination via query string
+    public ActionResult OnGet(string authorEmail, [FromQuery] int page = 1) //Pagination via query string
     {
-        // Algorithm explained.
-        //  - User Authed as Page User
-        //      - Display Own Cheeps
-        //      - Display Following Cheeps
-        //  - Else
-        //      - Display Page Cheeps
-
-        if (page < 1) page = 1;
-
-        Author = author;
-        CurrentPage = page;
-
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
             Following = _authorService.GetFollowing(
@@ -52,7 +35,7 @@ public class UserTimelineView : PageModel
         {
             var userAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
 
-            if (userAuthor != null && author == User.Identity.Name)
+            if (userAuthor != null && authorEmail == User.Identity.Name)
             {
                 // Search for my followers and my own cheeps
 
@@ -62,23 +45,18 @@ public class UserTimelineView : PageModel
                     following.Select(a => a.Name)
                     .Append(User.Identity.Name)
                     .ToList(), page);
-            } 
+            }
             else
             {
-                Cheeps = _cheepService.GetCheepsFromAuthor(author, page);
+                Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
             }
-        } 
+        }
         else
         {
-            Cheeps = _cheepService.GetCheepsFromAuthor(author, page);
+            Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
         }
 
         return Page();
-    }
-
-    public async Task<Author?> GetCurrentAuthorAsync()
-    {
-        return await _userManager.GetUserAsync(User);
     }
 
     public ActionResult OnPostToggleFollow(string followee)
