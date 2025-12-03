@@ -10,6 +10,9 @@ namespace Chirp.Web.Pages;
 
 public class PublicView : PageModel
 {
+    [BindProperty]
+    public string? Text { get; set; }
+    
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
@@ -36,6 +39,26 @@ public class PublicView : PageModel
                 _authorService.FindAuthorByEmail(User.Identity.Name).Name
                 );
         }
+
+        return Page();
+    }
+    
+    public IActionResult OnPost([FromQuery] int page = 1)
+    {
+        if (page < 1) page = 1;
+
+        if (!string.IsNullOrWhiteSpace(Text))
+        {
+            _cheepService.MakeCheep(new CheepDTO
+            {
+                Author = User.Identity.Name,
+                Message = Text,
+                CreatedDate =  DateTime.Now.ToString()
+            });
+        }
+
+        CurrentPage = page;
+        Cheeps = _cheepService.GetCheeps(page);
 
         return Page();
     }

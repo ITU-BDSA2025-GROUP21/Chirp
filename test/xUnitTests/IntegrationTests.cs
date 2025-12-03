@@ -89,8 +89,8 @@ namespace XintegrationTests
 
             Assert.Equal(controlCheep.Author, cheep.Author);
             Assert.Equal(controlCheep.Message, cheep.Message);
-            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
-            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var controlDate = controlCheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
+            var cheepDate = cheep.CreatedDate.Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
             Assert.Equal(controlDate, cheepDate);
         }
 

@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using System.Linq.Expressions;
+using NuGet.Protocol.Core.Types;
 
 public class CheepService : ICheepService
 {
@@ -33,6 +34,11 @@ public class CheepService : ICheepService
     public void AddCheeps(string text, Author author)
     {
         _cheepRepository.AddCheep(text, author);
+    }
+
+    public void MakeCheep(CheepDTO cheep)
+    {
+        _cheepRepository.AddChirp(cheep);
     }
 
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
