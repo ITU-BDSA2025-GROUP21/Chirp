@@ -23,9 +23,9 @@ builder.Services.AddDbContext<ChirpDBContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
 
 builder.Services.AddDefaultIdentity<Author>(
-    options => { 
-        options.SignIn.RequireConfirmedAccount = false; 
-        options.User.RequireUniqueEmail = true; 
+    options => {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
     }).AddEntityFrameworkStores<ChirpDBContext>();
 
 builder.Services.AddAuthentication().AddGitHub(options =>
