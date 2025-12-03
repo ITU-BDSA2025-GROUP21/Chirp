@@ -9,7 +9,6 @@ namespace Chirp.Web.Pages;
 
 [Authorize]
 public class UserTimelineView : PageModel
-{
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
