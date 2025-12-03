@@ -23,7 +23,7 @@ public class PublicView : PageModel
         _authorService = authorService;
     }
 
-    public ActionResult OnGet([FromQuery] int page = 1) //Pagination via query string
+    public async Task<ActionResult> OnGet([FromQuery] int page = 1) //Pagination via query string
     {
         if (page < 1) page = 1; //Sikrer at page ikke er mindre end 1
 
@@ -32,33 +32,41 @@ public class PublicView : PageModel
         
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
-            Following = _authorService.GetFollowing(
-                _authorService.FindAuthorByEmail(User.Identity.Name).Name
-                );
+
+            Following = await _authorService.GetFollowing(User);
+
         }
 
         return Page();
     }
 
-    public ActionResult OnPostToggleFollow(string followee)
+    public async Task<ActionResult> OnPostToggleFollow(string followeeId)
     {
         // grab my current user.
-
-        if (User.Identity == null|| followee == null || !User.Identity.IsAuthenticated)
+        if (User.Identity == null || followeeId == null || !User.Identity.IsAuthenticated)
         {
+
+            Console.WriteLine($"followId null {followeeId == null}");
+            Console.WriteLine($"User.Identity null {User.Identity == null}");
+
+            if(User.Identity != null)
+            {
+                Console.WriteLine($"User.Identity.Authenticated {User.Identity.IsAuthenticated}");
+            }
             // throw some error idk.
             return RedirectToPage();
         }
 
-        var currentUser = _authorService.FindAuthorByEmail(User.Identity.Name);
 
-        if (!_authorService.IsFollowing(currentUser.Name, followee))
+
+        if (!(await _authorService.IsFollowing(User, followeeId)))
         {
-            _authorService.FollowAuthor(currentUser.Name, followee);
+            await _authorService.FollowAuthor(User, followeeId);
         } 
         else
         {
-            _authorService.UnfollowAuthor(currentUser.Name, followee);
+            Console.WriteLine("RUNNED AGAIN BITCH");
+            await _authorService.UnfollowAuthor(User, followeeId);
         }
 
         return RedirectToPage();

@@ -23,62 +23,58 @@ public class UserTimelineView : PageModel
         _authorService = authorService;
     }
 
-    public ActionResult OnGet(string authorEmail, [FromQuery] int page = 1) //Pagination via query string
+    public async Task<ActionResult> OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
     {
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            Following = _authorService.GetFollowing(
-                _authorService.FindAuthorByEmail(User.Identity.Name).Name
-                );
+            Following = await _authorService.GetFollowing(User);
         }
 
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            var userAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
+            var userAuthor = _authorService.GetCurrentIdentityAuthor(User);
 
-            if (userAuthor != null && authorEmail == User.Identity.Name)
+            if (userAuthor != null && authorId == userAuthor.Id)
             {
                 // Search for my followers and my own cheeps
 
-                var following = _authorService.GetFollowing(userAuthor.Name);
+                var following = await _authorService.GetFollowing(User);
 
                 Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
-                    following.Select(a => a.Name)
-                    .Append(User.Identity.Name)
+                    following.Select(a => a.Id)
+                    .Append(userAuthor.Id)
                     .ToList(), page);
             }
             else
             {
-                Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
+                Cheeps = _cheepService.GetCheepsFromAuthorId(authorId, page);
             }
         }
         else
         {
-            Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
+            Cheeps = _cheepService.GetCheepsFromAuthorId(authorId, page);
         }
 
         return Page();
     }
 
-    public ActionResult OnPostToggleFollow(string followee)
+    public async Task<ActionResult> OnPostToggleFollow(string followeeId)
     {
         // grab my current user.
 
-        if (User.Identity == null || followee == null || !User.Identity.IsAuthenticated)
+        if (User.Identity == null || followeeId == null || !User.Identity.IsAuthenticated)
         {
             // throw some error idk.
             return RedirectToPage();
         }
 
-        var currentUser = _authorService.FindAuthorByEmail(User.Identity.Name);
-
-        if (!_authorService.IsFollowing(currentUser.Name, followee))
+        if (!(await _authorService.IsFollowing(User, followeeId)))
         {
-            _authorService.FollowAuthor(currentUser.Name, followee);
+            await _authorService.FollowAuthor(User, followeeId);
         }
         else
         {
-            _authorService.UnfollowAuthor(currentUser.Name, followee);
+            await _authorService.UnfollowAuthor(User, followeeId);
         }
 
         return RedirectToPage();

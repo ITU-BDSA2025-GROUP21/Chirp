@@ -14,7 +14,7 @@
             @if (authorService.SignIn(User))
             {
                 <div>
-                    <a href="/@(authorService.GetCurrentIdentityAuthor(User).Email)">my timeline</a> |
+                    <a href="/@(authorService.GetCurrentIdentityAuthor(User).Id)">my timeline</a> |
                     <a href="/">public timeline</a> |
                     <a href="/information">My information</a> |
                     <a id="logout" asp-area="Identity" asp-page="/Account/Logout">logout [@(authorService.GetCurrentIdentityAuthor(User).Name)]</a>

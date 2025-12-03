@@ -24,12 +24,12 @@
                     <p>
                         <strong>
                                 <div style="display:flex;justify-content:start;align-items:center;">
-                                <a href="/@cheep.Author">@cheep.Author</a>
+                                <a href="/@cheep.AuthorId">@cheep.Author</a>
 
                                 @if (User.Identity.IsAuthenticated)
-                                {   
+                                {
                                     <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                        <input type="hidden" name="followee" value="@cheep.Author"/>
+                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
                                         <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
                                     </form>
                                 }

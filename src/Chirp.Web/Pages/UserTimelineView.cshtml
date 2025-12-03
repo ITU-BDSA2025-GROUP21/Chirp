@@ -1,4 +1,4 @@
-﻿@page "/{author}"
+﻿@page "/{authorId}"
 @model Chirp.Web.Pages.UserTimelineView
 @{
     ViewData["Title"] = "Chirp!";
@@ -15,19 +15,19 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 bool IsFollowing = Model.Following.Any(
-                    a => a.Name == cheep.Author
+                    a => a.Id == cheep.AuthorId
                 );
 
                 <li>
                     <p>
                         <strong>
                                 <div style="display:flex;justify-content:start;align-items:center;">
-                                <a href="/@cheep.Author">@cheep.Author</a>
+                                <a href="/@cheep.AuthorId">@cheep.Author</a>
 
                         @if (User.Identity.IsAuthenticated)
                         {   
                                         <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                            <input type="hidden" name="followee" value="@cheep.Author"/>
+                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
                                             <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
                                         </form>
                         }
