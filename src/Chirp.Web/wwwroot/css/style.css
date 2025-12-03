@@ -157,11 +157,11 @@ ul.nav {
    ========================= */
 
 div.page div.body {
-    padding: 24px 24px 24px;
+    padding: 24px;
 }
 
 div.page h2 {
-    margin: 0 0 20px 0; /* adds space under nav */
+    margin: 0 0 20px; /* adds space under nav */
     color: #1c2c48;
     font-size: 26px;
 }
@@ -227,7 +227,7 @@ div.page div.cheepbox {
 }
 
     div.page div.cheepbox h3 {
-        margin: 0 0 8px 0;
+        margin: 0 0 8px;
         font-size: 1em;
         color: #1f2b3a;
     }
@@ -256,7 +256,7 @@ div.page div.cheepbox {
 
 div.message {
     list-style: none;
-    margin: 10px 10px 0 10px;
+    margin: 10px 10px 0;
     background: #e8f1ff;
     border: 1px solid #b8caff;
     border-radius: 8px;
