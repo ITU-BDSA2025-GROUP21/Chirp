@@ -1,4 +1,4 @@
-﻿@page "/{author}"
+﻿@page "/{authorEmail}"
 @model Chirp.Web.Pages.UserTimelineView
 @{
     ViewData["Title"] = "Chirp!";
@@ -7,7 +7,7 @@
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
+    <h2> @Model.CurrentAuthorName's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -17,7 +17,7 @@
                 bool IsFollowing = Model.Following.Any(
                     a => a.Name == cheep.Author
                 );
-
+                    
                 <li>
                     <p>
                         <strong>
