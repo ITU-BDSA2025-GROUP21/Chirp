@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
 
+
 namespace Chirp.Razor.Repositories
 {
     public class CheepRepository : ICheepRepository
@@ -20,7 +21,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
@@ -66,6 +67,7 @@ namespace Chirp.Razor.Repositories
                 AuthorId = authorId,
                 Text = text,
                 TimeStamp = DateTime.Now
+
             };
 
             _context.Cheeps.Add(cheep);

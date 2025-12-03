@@ -89,9 +89,9 @@ namespace xUnitTests
 
             Assert.Equal(controlCheep.AuthorId, cheep.Author.Name);
             Assert.Equal(controlCheep.Text, cheep.Text);
-            var controlDate = controlCheep.TimeStamp.ToString("ddMMyyyyHHmmss").Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var controlDate = controlCheep.TimeStamp.ToString("ddMMyyyyHHmmss").Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
             Console.WriteLine("Control Date: " + controlDate);
-            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "");
+            var cheepDate = cheep.TimeStamp.ToString().Replace("/", "").Replace(" ", "").Replace(".", "").Replace(":", "").Replace("-", "");
             Assert.Equal(controlDate, cheepDate);
         }
 
