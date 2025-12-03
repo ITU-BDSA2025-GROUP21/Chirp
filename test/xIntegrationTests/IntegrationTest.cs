@@ -232,5 +232,30 @@ namespace XintegrationTests
             // Follow did not get removed.
             Assert.False(_authorService.IsFollowing("Helge", "Adrian"));
         }
+
+        [Fact]
+        public void testAuthorDeletion()
+        {
+            var author = new Author()
+            {
+                Name = "Delete Test",
+                Email = "delMail",
+                Cheeps = new List<Cheep>(),
+                Id = "DeleteID",
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            //see that author exists
+            var authorDTO = _authorService.FindAuthorByName("Delete Test");
+            Assert.NotNull(authorDTO);
+
+            //delete author and see that it is deleted
+            _authorService.DeleteAuthorByIdAsync("DeleteID").Wait();
+            var deletedAuthorDTO = _authorService.FindAuthorByName("Delete Test");
+            Assert.Null(deletedAuthorDTO);
+        }
     }
 }
