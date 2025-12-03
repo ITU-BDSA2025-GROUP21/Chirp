@@ -29,7 +29,6 @@ public class UserTimelineView : PageModel
 
     public ActionResult OnGet(string author, [FromQuery] int page = 1) //Pagination via query string
     {
-
         // Algorithm explained.
         //  - User Authed as Page User
         //      - Display Own Cheeps
