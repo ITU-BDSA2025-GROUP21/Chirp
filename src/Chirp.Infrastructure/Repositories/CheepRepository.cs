@@ -26,13 +26,13 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthorEmail(string authorEmail, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => c.Author.Name == authorName)
+                .Where(c => c.Author.Email == authorEmail)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)

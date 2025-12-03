@@ -37,37 +37,37 @@ namespace xUnitTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepRepository.GetByAuthor("Helge");
+            var helgeCheeps = _cheepRepository.GetByAuthorEmail("ropf@itu.dk");
 
-            var adrianCheeps = _cheepRepository.GetByAuthor("Adrian");
+            var adrianCheeps = _cheepRepository.GetByAuthorEmail("adho@itu.dk");
 
-            var nathanCheeps = _cheepRepository.GetByAuthor("Nathan Sirmon");
+            var nathanCheeps = _cheepRepository.GetByAuthorEmail("Nathan+Sirmon@dtu.dk");
 
-            var johnnieCheeps = _cheepRepository.GetByAuthor("Johnnie Calixto");
+            var johnnieCheeps = _cheepRepository.GetByAuthorEmail("Johnnie+Calixto@itu.dk");
 
-            var jacqualineTwelfthPage = _cheepRepository.GetByAuthor("Jacqualine Gilcoine", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepRepository.GetByAuthorEmail("Jacqualine.Gilcoine@gmail.com", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
-            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author.Name));
+            Assert.All(helgeCheeps, c => Assert.Equal("ropf@itu.dk", c.Author.Email));
 
             Assert.Single(adrianCheeps);
-            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author.Name));
+            Assert.All(adrianCheeps, c => Assert.Equal("adho@itu.dk", c.Author.Email));
 
             Assert.Equal(22, nathanCheeps.Count());
-            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author.Name));
+            Assert.All(nathanCheeps, c => Assert.Equal("Nathan+Sirmon@dtu.dk", c.Author.Email));
 
             Assert.Equal(15, johnnieCheeps.Count());
-            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author.Name));
+            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie+Calixto@itu.dk", c.Author.Email));
 
             Assert.Equal(7, jacqualineTwelfthPage.Count());
-            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author.Name));
+            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine.Gilcoine@gmail.com", c.Author.Email));
         }
 
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepRepository.GetByAuthor("Luanna Muro", page: 1);
-            var luannaSecondPage = _cheepRepository.GetByAuthor("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepRepository.GetByAuthorEmail("Luanna Muro", page: 1);
+            var luannaSecondPage = _cheepRepository.GetByAuthorEmail("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -142,7 +142,7 @@ namespace xUnitTests
             dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepRepository.GetByAuthor(author.Name);
+            var cheeps = _cheepRepository.GetByAuthorEmail(author.Name);
 
             Assert.Single(cheeps);
             Assert.Equal(author.Name, cheeps.First().Author.Name);

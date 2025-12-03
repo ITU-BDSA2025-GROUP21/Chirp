@@ -22,7 +22,7 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheepsFromAuthorEmail(string author, int page = 1)
     {   
-        return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetByAuthorEmail(author, page, PageSize).Select(createCheepDTO);
     }
     public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authors, int page = 1)
     {

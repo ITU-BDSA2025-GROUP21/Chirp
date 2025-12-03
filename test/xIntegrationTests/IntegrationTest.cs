@@ -36,7 +36,7 @@ namespace XintegrationTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepService.GetCheepsFromAuthorEmail("ropf@itu.dk"); //change to email
+            var helgeCheeps = _cheepService.GetCheepsFromAuthorEmail("ropf@itu.dk");
 
             var adrianCheeps = _cheepService.GetCheepsFromAuthorEmail("adho@itu.dk");
 
@@ -46,27 +46,27 @@ namespace XintegrationTests
 
             var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorEmail("Jacqualine.Gilcoine@gmail.com", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
-            Assert.Single(helgeCheeps);
-            Assert.All(helgeCheeps, c => Assert.Equal("ropf@itu.dk", c.Author));
+            Assert.Single(helgeCheeps); 
+            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
 
             Assert.Single(adrianCheeps);
-            Assert.All(adrianCheeps, c => Assert.Equal("adho@itu.dk", c.Author));
+            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author));
 
             Assert.Equal(22, nathanCheeps.Count());
-            Assert.All(nathanCheeps, c => Assert.Equal("Nathan+Sirmon@dtu.dk", c.Author));
+            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author));
 
             Assert.Equal(15, johnnieCheeps.Count());
-            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie+Calixto@itu.dk", c.Author));
+            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author));
 
             Assert.Equal(7, jacqualineTwelfthPage.Count());
-            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine.Gilcoine@gmail.com", c.Author));
+            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author));
         }
 
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 1); //change to email
-            var luannaSecondPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepService.GetCheepsFromAuthorEmail("Luanna-Muro@ku.dk", page: 1); //change to email
+            var luannaSecondPage = _cheepService.GetCheepsFromAuthorEmail("Luanna-Muro@ku.dko", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -123,12 +123,14 @@ namespace XintegrationTests
             var author = new Author()
             {
                 Name = "Testing Client",
-                Cheeps = new List<Cheep>()
+                Email = "testEmail@test.test",
+                Cheeps = new List<Cheep>(),
+                Id = "1234567789"
             };
 
             var Chirp = new Cheep()
             {
-                Author = author,
+                AuthorId = author.Id,
                 Text = "Test Message",
                 TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
             };
@@ -141,7 +143,7 @@ namespace XintegrationTests
 
             var cheeps = _cheepService.GetCheepsFromAuthorEmail(author.Email);
 
-            Assert.Single(cheeps);
+            Assert.Single(cheeps); //is empty somehow
             Assert.Equal(author.Name, cheeps.First().Author);
             Assert.Equal(Chirp.Text, cheeps.First().Message);
         }
