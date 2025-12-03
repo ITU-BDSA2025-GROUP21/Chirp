@@ -14,13 +14,16 @@ public class PublicView : PageModel
     public string? Text { get; set; }
     
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
+    public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
 
-    private readonly ICheepService _service;
+    private readonly ICheepService _cheepService;
+    private readonly IAuthorService _authorService;
 
-    public PublicView(ICheepService service)
+    public PublicView(ICheepService cheepService, IAuthorService authorService)
     {
-        _service = service;
+        _cheepService = cheepService;
+        _authorService = authorService;
     }
 
     public ActionResult OnGet([FromQuery] int page = 1) //Pagination via query string
@@ -28,7 +31,15 @@ public class PublicView : PageModel
         if (page < 1) page = 1; //Sikrer at page ikke er mindre end 1
 
         CurrentPage = page;
-        Cheeps = _service.GetCheeps(page);
+        Cheeps = _cheepService.GetCheeps(page);
+        
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
+        {
+            Following = _authorService.GetFollowing(
+                _authorService.FindAuthorByEmail(User.Identity.Name).Name
+                );
+        }
+
         return Page();
     }
     
@@ -38,7 +49,7 @@ public class PublicView : PageModel
 
         if (!string.IsNullOrWhiteSpace(Text))
         {
-            _service.MakeCheep(new CheepDTO
+            _cheepService.MakeCheep(new CheepDTO
             {
                 Author = User.Identity.Name,
                 Message = Text,
@@ -47,8 +58,32 @@ public class PublicView : PageModel
         }
 
         CurrentPage = page;
-        Cheeps = _service.GetCheeps(page);
+        Cheeps = _cheepService.GetCheeps(page);
 
         return Page();
+    }
+
+    public ActionResult OnPostToggleFollow(string followee)
+    {
+        // grab my current user.
+
+        if (User.Identity == null|| followee == null || !User.Identity.IsAuthenticated)
+        {
+            // throw some error idk.
+            return RedirectToPage();
+        }
+
+        var currentUser = _authorService.FindAuthorByEmail(User.Identity.Name);
+
+        if (!_authorService.IsFollowing(currentUser.Name, followee))
+        {
+            _authorService.FollowAuthor(currentUser.Name, followee);
+        } 
+        else
+        {
+            _authorService.UnfollowAuthor(currentUser.Name, followee);
+        }
+
+        return RedirectToPage();
     }
 }

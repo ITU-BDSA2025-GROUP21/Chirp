@@ -7,7 +7,7 @@ using Chirp.Core.Repositories;
 using Chirp.Razor.Repositories;
 using Chirp.Infrastructure.Services;
 
-namespace XunitTests
+namespace XintegrationTests
 {
     public class IntegrationTests : IClassFixture<TestServices>
     {
@@ -150,6 +150,20 @@ namespace XunitTests
         }
 
         [Fact]
+        public void testCheepServiceCheepsFromMultipleAuthors()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" });
+
+            Assert.All(cheeps, c =>
+                Assert.Contains(c.Author, new[] { "Helge", "Adrian" })
+            );
+        }
+
+        [Fact]
         public void testAuthorServiceFindByName()
         {
             var dbContext = _testServices.ctx;
@@ -173,6 +187,52 @@ namespace XunitTests
             var AEmail = Author?.Email;
             Assert.NotNull(Author);
             Assert.Equal(AEmail, "ropf@itu.dk");
+        }
+
+        [Fact]
+        public void testAuthorServiceGetFollowersAndFollowing()
+        {
+            var dbContext = _testServices.ctx;
+            _authorService = _testServices._authorService;
+
+            var helgeDTO = _authorService.FindAuthorByName("Helge");
+            var adrianDTO = _authorService.FindAuthorByName("Adrian");
+
+            // make sure both authors exists
+            Assert.NotNull(helgeDTO);
+            Assert.NotNull(adrianDTO);
+
+            Assert.DoesNotContain(helgeDTO, _authorService.GetFollowers("Adrian"));
+            Assert.DoesNotContain(adrianDTO, _authorService.GetFollowing("Helge"));
+
+            _authorService.FollowAuthor("Helge", "Adrian");
+
+            Assert.Contains(helgeDTO, _authorService.GetFollowers("Adrian"));
+            Assert.Contains(adrianDTO, _authorService.GetFollowing("Helge"));
+        }
+
+        [Fact]
+        public void testAuthorServiceFollowLogic()
+        {
+            var dbContext = _testServices.ctx;
+            _authorService = _testServices._authorService;
+
+            var helgeDTO = _authorService.FindAuthorByName("Helge");
+            var adrianDTO = _authorService.FindAuthorByName("Adrian");
+
+            // make sure both authors exists
+            Assert.NotNull(helgeDTO);
+            Assert.NotNull(adrianDTO);
+
+            _authorService.FollowAuthor("Helge", "Adrian");
+
+            // Follow was not added
+            Assert.True(_authorService.IsFollowing("Helge", "Adrian"));
+
+            _authorService.UnfollowAuthor("Helge", "Adrian");
+
+            // Follow did not get removed.
+            Assert.False(_authorService.IsFollowing("Helge", "Adrian"));
         }
     }
 }

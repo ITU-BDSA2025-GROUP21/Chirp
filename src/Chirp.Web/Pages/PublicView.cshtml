@@ -20,13 +20,29 @@
     
     @if (Model.Cheeps.Any())
     {
+        
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
+                bool IsFollowing = Model.Following.Any(
+                    a => a.Name == cheep.Author
+                );
+
                 <li>
                     <p>
                         <strong>
-                            <a href="/@cheep.Author">@cheep.Author</a>
+                                <div style="display:flex;justify-content:start;align-items:center;">
+                                <a href="/@cheep.Author">@cheep.Author</a>
+
+                                @if (User.Identity.IsAuthenticated)
+                                {   
+                                    <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
+                                        <input type="hidden" name="followee" value="@cheep.Author"/>
+                                        <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
+                                    </form>
+                                }
+                            </div>
+
                         </strong>
                         @cheep.Message
                         <small>&mdash; @cheep.CreatedDate</small>
