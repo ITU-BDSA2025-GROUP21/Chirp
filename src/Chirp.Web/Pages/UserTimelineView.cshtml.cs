@@ -12,34 +12,32 @@ public class UserTimelineView : PageModel
 {
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
+
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
-    public int CurrentPage { get; set; } //Tracker til pagination
-    
-    public string CurrentAuthorName { get; set; }
-    public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
+    public int CurrentPage { get; set; }          // Tracker til pagination
+
+    public string CurrentAuthorName { get; set; } = string.Empty;
+    public string Author { get; set; } = string.Empty; // Tracker til author-navn
+
     public UserTimelineView(ICheepService cheepService, IAuthorService authorService)
     {
         _cheepService = cheepService;
         _authorService = authorService;
     }
 
-<<<<<<< HEAD
-    public ActionResult OnGet(string author, [FromQuery] int page = 1)
+    // /{authorEmail}?page=1
+    public ActionResult OnGet(string authorEmail, [FromQuery] int page = 1)
     {
         if (page < 1) page = 1;
 
-        Author = author;
+        Author = authorEmail;
         CurrentPage = page;
 
         Following = new List<AuthorDTO>();
-
         AuthorDTO? currentAuthor = null;
 
-=======
-    public ActionResult OnGet(string authorEmail, [FromQuery] int page = 1) //Pagination via query string
-    {
->>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
+        // Find nuværende logged-in author
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
             currentAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
@@ -47,69 +45,43 @@ public class UserTimelineView : PageModel
             if (currentAuthor != null)
             {
                 CurrentAuthorName = currentAuthor.Name;
-                Following = _authorService.GetFollowing(currentAuthor.Name) 
+                Following = _authorService.GetFollowing(currentAuthor.Name)
                             ?? new List<AuthorDTO>();
             }
         }
 
-        if (currentAuthor != null && author == User.Identity.Name)
+        // Hvis det er MIN egen timeline: vis mig + dem jeg følger
+        if (currentAuthor != null && authorEmail == User.Identity?.Name)
         {
-            var following = _authorService.GetFollowing(currentAuthor.Name) 
-                            ?? new List<AuthorDTO>();
-
-<<<<<<< HEAD
-            var authors = following
+            var authors = Following
                 .Select(a => a.Name)
                 .Append(currentAuthor.Name)
                 .ToList();
 
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(authors, page);
-=======
-            if (userAuthor != null && authorEmail == User.Identity.Name)
-            {
-                // Search for my followers and my own cheeps
-
-                var following = _authorService.GetFollowing(userAuthor.Name);
-
-                Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
-                    following.Select(a => a.Name)
-                    .Append(User.Identity.Name)
-                    .ToList(), page);
-            }
-            else
-            {
-                Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
-            }
->>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
         }
         else
         {
+            // Anden bruger: vis kun deres cheeps
             Cheeps = _cheepService.GetCheepsFromAuthorEmail(authorEmail, page);
         }
 
         return Page();
     }
 
-<<<<<<< HEAD
-
-    public async Task<Author?> GetCurrentAuthorAsync()
-    {
-        return await _userManager.GetUserAsync(User);
-    }
-
-=======
->>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
     public ActionResult OnPostToggleFollow(string followee)
     {
-        // grab my current user.
-
         if (User.Identity == null || followee == null || !User.Identity.IsAuthenticated)
         {
-            // throw some error idk.
             return RedirectToPage();
         }
 
         var currentUser = _authorService.FindAuthorByEmail(User.Identity.Name);
+
+        if (currentUser == null)
+        {
+            return RedirectToPage();
+        }
 
         if (!_authorService.IsFollowing(currentUser.Name, followee))
         {
