@@ -1,289 +1,372 @@
+/* =========================
+   Global
+   ========================= */
+
 body {
-  background: #eccaca;
-  font-family: 'Trebuchet MS', sans-serif;
-  font-size: 14px;
+    background: linear-gradient(135deg, #e8f0ff 0%, #f4f8ff 100%);
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 15px;
+    color: #1f2b3a;
+    margin: 0;
 }
 
 a {
-  color: #26776F;
+    color: #2767d8;
+    text-decoration: none;
+    font-weight: 600;
 }
 
-a:hover {
-  color: #333;
-}
+    a:hover {
+        color: #17408f;
+        text-decoration: underline;
+    }
+
+/* Inputs */
 
 input[type="email"],
 input[type="text"],
 input[type="tel"],
 input[type="password"] {
-    background: white;
-    border: 1px solid #e6c0bf;
-    padding: 2px;
-    font-family: 'Trebuchet MS', sans-serif;
+    background: #ffffff;
+    border: 1px solid #c7d6eb;
+    padding: 6px 8px;
+    font-family: inherit;
     font-size: 14px;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    color: #571010;
+    border-radius: 4px;
+    color: #1f2b3a;
 }
+
+/* Submit buttons */
 
 input[type="submit"] {
-  background: #571010;
-  border: 1px solid #3b0707;
-  padding: 1px 3px;
-  font-family: 'Trebuchet MS', sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  color: white;
+    background: linear-gradient(135deg, #3267d8 0%, #4d81f7 100%);
+    border: none;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
+
+    input[type="submit"]:hover {
+        background: linear-gradient(135deg, #2753b1 0%, #3e6ed4 100%);
+        transform: translateY(-1px);
+    }
+
+/* =========================
+   Page container & header
+   ========================= */
 
 div.page {
-  background: white;
-  border: 1px solid #cc6e6e;
-  width: 700px;
-  margin: 30px auto;
-}
-
-div.page > h1 {
-  background: #cc6e6e;
-  margin: 0;
-  padding: 10px 14px;
-  color: white;
-  letter-spacing: 1px;
-  text-shadow: 0 0 3px #772424;
-  font-weight: normal;
-  font-size: 80px;
-}
-
-div.page h1 img {
-  height: 1em;
-}
-
-div.page div.navigation {
-  background: #DEE9E8;
-  padding: 4px 10px;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #eee;
-  color: #888;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-}
-
-div.page div.navigation a {
-  color: #444;
-  font-weight: bold;
-}
-
-div.page div.navigation form {
-    display: contents;
-}
-
-div.page div.navigation form button {
-    padding: unset;
-    background: unset;
-    color: #444;
-    font-weight: bold;
-    display: inline-block;
-    font-size: unset;
-    cursor: pointer;
-    text-decoration: underline;
-    font-family: unset;
-    letter-spacing: unset;
-}
-
-div.page h2 {
-  margin: 0 0 15px 0;
-  color: #571010;
-  text-shadow: 0 1px 2px #ccc;
-}
-
-div.page div.body {
-  padding: 10px;
-}
-
-div.page div.footer {
-  background: #eee;
-  color: #888;
-  padding: 5px 10px;
-  font-size: 12px;
-}
-
-div.page div.followstatus {
-  border: 1px solid #ccc;
-  background: #E3EBEA;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  padding: 3px;
-  font-size: 13px;
-}
-
-div.page ul.cheeps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-div.page ul.cheeps li {
-  margin: 10px 0;
-  padding: 5px;
-  background: #F0FAF9;
-  border: 1px solid #DBF3F1;
-  border-radius: 2px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  min-height: 48px;
-}
-
-div.page ul.cheeps p {
-  margin: 0;
-}
-
-div.page ul.cheeps li img {
-  float: left;
-  padding: 0 10px 0 0;
-}
-
-div.page ul.cheeps li small {
-  font-size: 0.9em;
-  color: #888;
-}
-
-div.page div.cheepbox {
-  margin: 10px 0;
-  padding: 5px;
-  background: #F0FAF9;
-  border: 1px solid #e29494;
-  border-radius: 2px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-}
-
-div.page div.cheepbox h3 {
-  margin: 0;
-  font-size: 1em;
-  color: #7e2c2c;
-}
-
-div.page div.cheepbox p {
-  margin: 0;
-}
-
-div.page div.cheepbox input[type="text"] {
-  width: 585px;
-}
-
-div.page div.cheepbox input[type="submit"] {
-  width: 70px;
-  margin-left: 5px;
-}
-
-div.message {
-  list-style: none;
-  margin: 10px 10px 0 10px;
-
-  background: #f3b9b9;
-  border: 1px solid #ce8181;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  padding: 4px;
-  font-size: 13px;
-}
-
-ul.message li {
-  background: #f3b9b9;
-  border: 1px solid #ce8181;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  padding: 4px;
-  font-size: 13px;
-}
-
-div.error {
-  margin: 10px 0;
-  background: #FAE4E4;
-  border: 1px solid #DD6F6F;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  padding: 4px;
-  font-size: 13px;
-}
-
-div.topics {
-  width: 180px;
-  height: 250px;
-  background: #ffffff;
-  border: 1px solid #e29494;
-  border-radius: 2px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin-left: 460px;
-  padding: 10px;
-}
-
-ul.topic {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-li.topic {
-  margin: 10px 0;
-  padding: 5px;
-  background: #F0FAF9;
-  border: 1px solid #DBF3F1;
-  border-radius: 2px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  min-height: 20px;
-}
-
-form * {
-    margin: 2px 0;
-}
-
-button {
-    background-color: #cc6e6e;
+    background: #ffffff;
     border: none;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
+    width: 760px;
+    margin: 60px auto;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
-button:hover {
-    background-color: #8b4949;
-}
+    div.page > h1 {
+        background: linear-gradient(135deg, #3267d8 0%, #4b81f5 100%);
+        margin: 0;
+        padding: 28px 24px;
+        color: white;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        font-weight: 600;
+        font-size: 70px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    div.page h1 img {
+        height: 1em;
+    }
+
+    /* =========================
+   Top navigation
+   ========================= */
+
+    div.page div.navigation {
+        background: linear-gradient(90deg, #f3f6ff 0%, #f8faff 100%);
+        padding: 10px 18px;
+        border-top: 1px solid #d1dbf0;
+        border-bottom: 1px solid #d7dff0;
+        color: #4a5770;
+        font-size: 14px;
+    }
+
+        div.page div.navigation a {
+            color: #3267d8;
+            font-weight: 600;
+        }
+
+            div.page div.navigation a:hover {
+                color: #17408f;
+            }
+
+        div.page div.navigation form {
+            display: contents;
+        }
+
+            div.page div.navigation form button {
+                padding: 0;
+                background: none;
+                border: none;
+                color: #3267d8;
+                font-weight: 600;
+                display: inline-block;
+                font-size: inherit;
+                cursor: pointer;
+                text-decoration: underline;
+                font-family: inherit;
+            }
+
+/* Optional nav bar UL (kept from old CSS) */
 
 ul.nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #cc6e6e;
+    background-color: #3267d8;
 }
 
-ul.nav li {
-    float: left;
+    ul.nav li {
+        float: left;
+    }
+
+        ul.nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 8px 14px;
+            text-decoration: none;
+        }
+
+            ul.nav li a:hover {
+                background-color: #2753b1;
+            }
+
+/* =========================
+   Body area & headings
+   ========================= */
+
+div.page div.body {
+    padding: 24px 24px 24px;
 }
 
-ul.nav li a {
-    display: block;
+div.page h2 {
+    margin: 0 0 20px 0; /* adds space under nav */
+    color: #1c2c48;
+    font-size: 26px;
+}
+
+/* =========================
+   Follow status
+   ========================= */
+
+div.page div.followstatus {
+    border: 1px solid #cbd7e6;
+    background: #eaf1fb;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #1f2b3a;
+}
+
+/* =========================
+   Cheeps list
+   ========================= */
+
+div.page ul.cheeps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    div.page ul.cheeps li {
+        margin: 14px 0;
+        padding: 14px;
+        background: #f9fbff;
+        border: 1px solid #d8e4ff;
+        border-radius: 12px;
+        min-height: 48px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    div.page ul.cheeps p {
+        margin: 0;
+    }
+
+    div.page ul.cheeps li img {
+        float: left;
+        padding: 0 10px 0 0;
+    }
+
+    div.page ul.cheeps li small {
+        font-size: 0.9em;
+        color: #6e7f95;
+    }
+
+/* =========================
+   New cheep box
+   ========================= */
+
+div.page div.cheepbox {
+    margin: 20px 0;
+    padding: 16px;
+    background: #f6f9ff;
+    border: 1px solid #d8e4ff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+    div.page div.cheepbox h3 {
+        margin: 0 0 8px 0;
+        font-size: 1em;
+        color: #1f2b3a;
+    }
+
+    div.page div.cheepbox p {
+        margin: 0;
+    }
+
+    div.page div.cheepbox input[type="text"] {
+        width: 600px;
+        background: #ffffff;
+        border: 1px solid #c6d6f5;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 15px;
+    }
+
+    div.page div.cheepbox input[type="submit"] {
+        width: 90px;
+        margin-left: 8px;
+    }
+
+/* =========================
+   Messages / errors
+   ========================= */
+
+div.message {
+    list-style: none;
+    margin: 10px 10px 0 10px;
+    background: #e8f1ff;
+    border: 1px solid #b8caff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+ul.message li {
+    background: #e8f1ff;
+    border: 1px solid #b8caff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+div.error {
+    margin: 10px 0;
+    background: #ffe8e8;
+    border: 1px solid #ffb7b7;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+/* =========================
+   Topics popup
+   ========================= */
+
+div.topics {
+    width: 180px;
+    height: 250px;
+    background: #ffffff;
+    border: 1px solid #d6e6f5;
+    border-radius: 8px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 460px;
+    padding: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+ul.topic {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.topic {
+    margin: 10px 0;
+    padding: 8px;
+    background: #f6fbff;
+    border: 1px solid #d6e6f5;
+    border-radius: 8px;
+    min-height: 20px;
+}
+
+/* =========================
+   Footer
+   ========================= */
+
+div.page div.footer {
+    background: #f3f7ff;
+    color: #6d7894;
+    padding: 10px 20px;
+    font-size: 12px;
+}
+
+/* =========================
+   Forms & buttons
+   ========================= */
+
+form * {
+    margin: 2px 0;
+}
+
+/* Generic buttons */
+
+button {
+    background: linear-gradient(135deg, #3267d8 0%, #4d81f7 100%);
+    border: none;
     color: white;
+    padding: 8px 16px;
     text-align: center;
-    padding: 8px 8px;
-    text-decoration: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
-ul.nav li a:hover {
-    background-color: #8b4949;
+    button:hover {
+        background: linear-gradient(135deg, #2753b1 0%, #3e6ed4 100%);
+        transform: translateY(-1px);
+    }
+
+/* Optional tiny follow/unfollow buttons if you use them */
+
+.small-button {
+    background: #e7efff;
+    color: #3267d8;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #c7d5f5;
+    cursor: pointer;
 }
+
+    .small-button:hover {
+        background: #d8e7ff;
+    }
