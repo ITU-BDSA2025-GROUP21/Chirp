@@ -16,6 +16,8 @@ public class PublicView : PageModel
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
+    
+    public string? CurrentAuthorName { get; set; }
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
@@ -40,12 +42,11 @@ public class PublicView : PageModel
 
             if (author != null)
             {
-                Following = _authorService.GetFollowing(author.Name) ?? new List<AuthorDTO>();
+                CurrentAuthorName = author?.Name; 
+                Following = _authorService.GetFollowing(email) ?? new List<AuthorDTO>();
             }
             else
             {
-                // optional: log this, because it means you have a logged-in user
-                // whose email isn't in your Authors table
                 Following = new List<AuthorDTO>();
             }
         }

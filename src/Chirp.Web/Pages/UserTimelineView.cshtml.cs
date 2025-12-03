@@ -18,6 +18,8 @@ public class UserTimelineView : PageModel
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
+    
+    public string CurrentAuthorName { get; set; }
     public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
 
     public UserTimelineView(ICheepService cheepService, IAuthorService authorService, UserManager<Author> userManager)
@@ -27,47 +29,41 @@ public class UserTimelineView : PageModel
         _userManager = userManager;
     }
 
-    public ActionResult OnGet(string author, [FromQuery] int page = 1) //Pagination via query string
+    public ActionResult OnGet(string author, [FromQuery] int page = 1)
     {
-        // Algorithm explained.
-        //  - User Authed as Page User
-        //      - Display Own Cheeps
-        //      - Display Following Cheeps
-        //  - Else
-        //      - Display Page Cheeps
-
         if (page < 1) page = 1;
 
         Author = author;
         CurrentPage = page;
 
+        Following = new List<AuthorDTO>();
+
+        AuthorDTO? currentAuthor = null;
+
         if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
         {
-            Following = _authorService.GetFollowing(
-                _authorService.FindAuthorByEmail(User.Identity.Name).Name
-                );
+            currentAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
+
+            if (currentAuthor != null)
+            {
+                CurrentAuthorName = currentAuthor.Name;
+                Following = _authorService.GetFollowing(currentAuthor.Name) 
+                            ?? new List<AuthorDTO>();
+            }
         }
 
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
+        if (currentAuthor != null && author == User.Identity.Name)
         {
-            var userAuthor = _authorService.FindAuthorByEmail(User.Identity.Name);
+            var following = _authorService.GetFollowing(currentAuthor.Name) 
+                            ?? new List<AuthorDTO>();
 
-            if (userAuthor != null && author == User.Identity.Name)
-            {
-                // Search for my followers and my own cheeps
+            var authors = following
+                .Select(a => a.Name)
+                .Append(currentAuthor.Name)
+                .ToList();
 
-                var following = _authorService.GetFollowing(userAuthor.Name);
-
-                Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
-                    following.Select(a => a.Name)
-                    .Append(User.Identity.Name)
-                    .ToList(), page);
-            } 
-            else
-            {
-                Cheeps = _cheepService.GetCheepsFromAuthor(author, page);
-            }
-        } 
+            Cheeps = _cheepService.GetCheepsFromMultipleAuthors(authors, page);
+        }
         else
         {
             Cheeps = _cheepService.GetCheepsFromAuthor(author, page);
@@ -75,6 +71,7 @@ public class UserTimelineView : PageModel
 
         return Page();
     }
+
 
     public async Task<Author?> GetCurrentAuthorAsync()
     {
