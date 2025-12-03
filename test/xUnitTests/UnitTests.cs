@@ -149,6 +149,17 @@ namespace xUnitTests
             Assert.Equal(Chirp.Text, cheeps.First().Text);
         }
 
+
+        [Fact]
+        public void testCheepRepositoryCheepsFromMultipleAuthors()
+        {
+            var cheeps = _cheepRepository.GetByMultipleAuthors(new List<string>() { "Helge", "Adrian" });
+
+            Assert.All(cheeps, c =>
+                Assert.Contains(c.Author.Name, new[] { "Helge", "Adrian" })
+            );
+        }
+
         [Fact]
         public void testAuthorRepositoryGetByName()
         {
@@ -158,7 +169,7 @@ namespace xUnitTests
             var author = _authorRepository.FindAuthorByName("Helge");
             var AName = author?.Name;
             Assert.NotNull(author);
-            Assert.Equal(AName, "Helge");
+            Assert.Equal("Helge", AName);
         }
 
         [Fact]
@@ -170,7 +181,67 @@ namespace xUnitTests
             var Author = _authorRepository.FindAuthorByEmail("ropf@itu.dk");
             var AEmail = Author?.Email;
             Assert.NotNull(Author);
-            Assert.Equal(AEmail, "ropf@itu.dk");
+            Assert.Equal("ropf@itu.dk", AEmail);
+        }
+
+        [Fact]
+        public void testAuthorRepositoryGetFollowersAndFollowing()
+        {
+            // Tests the following:
+            // - FollowAuthor
+            // - GetFollowers
+            // - GetFollowing
+
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+
+            var authorHelge = _authorRepository.FindAuthorByName("Helge");
+            var authorAdrian = _authorRepository.FindAuthorByName("Adrian");
+
+            Assert.NotNull(authorHelge);
+            Assert.NotNull(authorAdrian);
+
+            Assert.Equal("Helge", authorHelge.Name);
+            Assert.Equal("Adrian", authorAdrian.Name);
+
+            Assert.DoesNotContain(authorHelge, _authorRepository.GetFollowers(authorAdrian));
+            Assert.DoesNotContain(authorAdrian, _authorRepository.GetFollowing(authorHelge));
+
+            _authorRepository.FollowAuthor(authorHelge, authorAdrian);
+
+            Assert.Contains(authorHelge, _authorRepository.GetFollowers(authorAdrian));
+            Assert.Contains(authorAdrian, _authorRepository.GetFollowing(authorHelge));
+        }
+
+        [Fact]
+        public void testAuthorRepositoryFollowLogic()
+        {
+            // Tests the following:
+            // - FollowAuthor
+            // - UnfollowAuthor
+            // - DoesAuthorFollow
+
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+
+            var authorHelge = _authorRepository.FindAuthorByName("Helge");
+            var authorAdrian = _authorRepository.FindAuthorByName("Adrian");
+
+            Assert.NotNull(authorHelge);
+            Assert.NotNull(authorAdrian);
+
+            Assert.Equal("Helge", authorHelge.Name);
+            Assert.Equal("Adrian", authorAdrian.Name);
+
+            _authorRepository.FollowAuthor(authorHelge, authorAdrian);
+
+            // Follow was not added
+            Assert.True(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian)); 
+
+            _authorRepository.UnfollowAuthor(authorHelge, authorAdrian);
+
+            // Follow did not get removed.
+            Assert.False(_authorRepository.DoesAuthorFollow(authorHelge, authorAdrian)); 
         }
 
         [Fact]

@@ -39,11 +39,39 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+<<<<<<< HEAD
         public async Task DeleteAllCheepsAsync(string id)
         {
             await _context.Cheeps
                 .Where(c => c.AuthorId == id)
                 .ExecuteDeleteAsync();
+=======
+        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authors, int page = 1, int pageSize = 32)
+        {
+            int offset = (page - 1) * pageSize;
+            return _context.Cheeps
+                .AsNoTracking()
+                .Include(c => c.Author)
+                .Where(c => authors.Contains(c.Author.Name))
+                .OrderBy(c => c.TimeStamp)
+                .Skip(offset)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public void AddCheep(string text, Author author) {
+
+            Cheep cheep = new Cheep
+            {
+                Author = author,
+                TimeStamp = DateTime.Now,
+                Text = text
+            };
+
+            author.Cheeps.Add(cheep);
+            _context.Cheeps.Add(cheep);
+            _context.SaveChanges();
+>>>>>>> main
         }
 
         public void AddCheep(string text, string authorId)

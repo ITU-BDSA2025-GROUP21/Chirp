@@ -20,5 +20,11 @@ namespace Chirp.Core.Services
         Task DeleteAuthorByIdAsync(string authorId);
         Task SignOutAsync();
 
+        IEnumerable<AuthorDTO> GetFollowers(string name);
+        IEnumerable<AuthorDTO> GetFollowing(string name);
+
+        bool IsFollowing(string followerName, string followeeName);
+        void FollowAuthor(string followerName, string followeeName);
+        void UnfollowAuthor(string followerName, string followeeName);
     }
 }

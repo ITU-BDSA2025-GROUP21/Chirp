@@ -13,9 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chirp.Infrastructure", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chirp.Core", "src\Chirp.Core\Chirp.Core.csproj", "{3D3F0D9B-5067-CE60-2D55-743A222468EC}"
 EndProject
+<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnitTests", "test\xUnitTests\xUnitTests.csproj", "{7BB03133-FD28-54A4-7DF7-81F29792647C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xIntegrationTests", "test\xIntegrationTests\xIntegrationTests.csproj", "{1136BAB6-CE4B-917C-EECB-C1E1822220D8}"
+=======
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnitTests", "xUnitTests\xUnitTests.csproj", "{547DA732-B3E6-41DF-A5C6-B47DC47FDB28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3D3F0D9B-5067-CE60-2D55-743A222468EC} = {3D3F0D9B-5067-CE60-2D55-743A222468EC}
+		{7F716B52-E0AB-18D4-76D2-19A4BAD22546} = {7F716B52-E0AB-18D4-76D2-19A4BAD22546}
+	EndProjectSection
+>>>>>>> main
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
