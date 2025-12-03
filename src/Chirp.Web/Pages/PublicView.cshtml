@@ -8,26 +8,17 @@
 <div>
     <h2> Public Timeline </h2>
     
-<<<<<<< HEAD
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div class="cheepbox">
             <h3>What's on your mind @Model.CurrentAuthorName ?</h3>
-=======
-    @if (User.Identity != null && User.Identity.IsAuthenticated) {
-        <div class="cheepbox">
-            <h3>What's on your mind @Model.GetUserName()?</h3>
->>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
             <form method="post" asp-controller="Public" asp-action="Index">
                 <input style="float: left" type="text" asp-for="Text"/>
                 <input type="submit" value="Share"/>
             </form>
         </div>
     }
-<<<<<<< HEAD
-=======
     
->>>>>>> d79a015e866d7725d8e69e712ea19d0784d970e7
     @if (Model.Cheeps.Any())
     {
         
