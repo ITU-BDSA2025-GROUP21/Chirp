@@ -167,7 +167,7 @@ namespace XintegrationTests
             var cheeps = _cheepService.GetCheepsFromAuthorId("1234567789");
 
             Assert.Single(cheeps); //is empty somehow
-            Assert.Equal(author.Name, cheeps.First().Author);
+            Assert.Equal(author.Id, cheeps.First().AuthorId);
             Assert.Equal(Chirp.Text, cheeps.First().Message);
         }
 
@@ -194,7 +194,7 @@ namespace XintegrationTests
             var Author = _authorService.FindAuthorById("10");
             var Aid = Author?.Id;
             Assert.NotNull(Author);
-            Assert.Equal(Aid, "ropf@itu.dk");
+            Assert.Equal(Aid, "10");
         }
 
         [Fact]
@@ -210,13 +210,13 @@ namespace XintegrationTests
             Assert.NotNull(helgeDTO);
             Assert.NotNull(adrianDTO);
 
-            Assert.DoesNotContain(helgeDTO, _authorService.GetFollowers("Adrian"));
-            Assert.DoesNotContain(adrianDTO, _authorService.GetFollowing("Helge"));
+            Assert.DoesNotContain(helgeDTO, _authorService.GetFollowers("12"));
+            Assert.DoesNotContain(adrianDTO, _authorService.GetFollowing("11"));
 
-            _authorService.FollowAuthor("Helge", "Adrian");
+            _authorService.FollowAuthor("11", "12");
 
-            Assert.Contains(helgeDTO, _authorService.GetFollowers("Adrian"));
-            Assert.Contains(adrianDTO, _authorService.GetFollowing("Helge"));
+            Assert.Contains(helgeDTO, _authorService.GetFollowers("12"));
+            Assert.Contains(adrianDTO, _authorService.GetFollowing("11"));
         }
 
         [Fact]
@@ -225,22 +225,22 @@ namespace XintegrationTests
             var dbContext = _testServices.ctx;
             _authorService = _testServices._authorService;
 
-            var helgeDTO = _authorService.FindAuthorByName("Helge");
-            var adrianDTO = _authorService.FindAuthorByName("Adrian");
+            var helgeDTO = _authorService.FindAuthorById("11");
+            var adrianDTO = _authorService.FindAuthorById("12");
 
             // make sure both authors exists
             Assert.NotNull(helgeDTO);
             Assert.NotNull(adrianDTO);
 
-            _authorService.FollowAuthor("Helge", "Adrian");
+            _authorService.FollowAuthor("11", "12");
 
             // Follow was not added
-            Assert.True(_authorService.IsFollowing("Helge", "Adrian"));
+            Assert.True(_authorService.IsFollowing("11", "12"));
 
-            _authorService.UnfollowAuthor("Helge", "Adrian");
+            _authorService.UnfollowAuthor("11", "12");
 
             // Follow did not get removed.
-            Assert.False(_authorService.IsFollowing("Helge", "Adrian"));
+            Assert.False(_authorService.IsFollowing("11", "12"));
         }
 
         [Fact]
@@ -259,12 +259,12 @@ namespace XintegrationTests
             dbContext.SaveChanges();
 
             //see that author exists
-            var authorDTO = _authorService.FindAuthorByName("Delete Test");
+            var authorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.NotNull(authorDTO);
 
             //delete author and see that it is deleted
             _authorService.DeleteAuthorByIdAsync("DeleteID").Wait();
-            var deletedAuthorDTO = _authorService.FindAuthorByName("Delete Test");
+            var deletedAuthorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.Null(deletedAuthorDTO);
         }
 
@@ -293,12 +293,12 @@ namespace XintegrationTests
             dbContext.SaveChanges();
 
             //see that cheep exists
-            var cheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            var cheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Single(cheeps);
 
             //delete cheeps and see that they are deleted
             _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
-            var deletedCheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            var deletedCheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Empty(deletedCheeps);
         }
     }

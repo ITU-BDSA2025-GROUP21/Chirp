@@ -10,44 +10,39 @@ public class UserTimelineView : PageModel
 {
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
+    private readonly IIdentityUserService _identityService;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
-    public string Author { get; set; } = string.Empty;  //Tracker til auhthor navn
-    public UserTimelineView(ICheepService cheepService, IAuthorService authorService)
+    public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+    public UserTimelineView(ICheepService cheepService, IAuthorService authorService, IIdentityUserService identityService)
     {
         _cheepService = cheepService;
         _authorService = authorService;
+        _identityService = identityService;
     }
 
     public async Task<ActionResult> OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
     {
-        if (User.Identity != null && User.Identity.IsAuthenticated)
+
+        Author = _authorService.FindAuthorById(authorId);
+
+        if (Author == null)
         {
-            Following = await _authorService.GetFollowing(User);
+            return Page();
         }
 
-        if (User.Identity != null && User.Identity.IsAuthenticated)
+        if (_identityService.IsSignedIn(User) && authorId == Author.Id)
         {
-            var userAuthor = _authorService.GetCurrentIdentityAuthor(User);
-
-            if (userAuthor != null && authorId == userAuthor.Id)
-            {
-                // Search for my followers and my own cheeps
-
-                var following = await _authorService.GetFollowing(User);
-
-                Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
-                    following.Select(a => a.Id)
-                    .Append(userAuthor.Id)
-                    .ToList(), page);
-            }
-            else
-            {
-                Cheeps = _cheepService.GetCheepsFromAuthorId(authorId, page);
-            }
+            Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
+                Following.Select(a => a.Id)
+                .Append(authorId)
+                .ToList(), page);
         }
-        else
+
+        Following = _authorService.GetFollowing(authorId);
+
+        if (!Cheeps.Any())
         {
             Cheeps = _cheepService.GetCheepsFromAuthorId(authorId, page);
         }
@@ -59,19 +54,22 @@ public class UserTimelineView : PageModel
     {
         // grab my current user.
 
-        if (User.Identity == null || followeeId == null || !User.Identity.IsAuthenticated)
+        if (!_identityService.IsSignedIn(User))
         {
             // throw some error idk.
             return RedirectToPage();
         }
 
-        if (!(await _authorService.IsFollowing(User, followeeId)))
+        var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+
+
+        if (!_authorService.IsFollowing(userAuthor.Id, followeeId))
         {
-            await _authorService.FollowAuthor(User, followeeId);
+            _authorService.FollowAuthor(userAuthor.Id, followeeId);
         }
         else
         {
-            await _authorService.UnfollowAuthor(User, followeeId);
+            _authorService.UnfollowAuthor(userAuthor.Id, followeeId);
         }
 
         return RedirectToPage();

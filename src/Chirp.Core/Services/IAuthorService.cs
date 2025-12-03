@@ -12,23 +12,18 @@ namespace Chirp.Core.Services
     {
         AuthorDTO? FindAuthorById(string name);
 
-        AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user);
-
-        bool SignIn(ClaimsPrincipal user);
-
         Task DeleteAuthorByIdAsync(string authorId);
-        Task SignOutAsync();
-        Task<IEnumerable<AuthorDTO>> GetFollowers(ClaimsPrincipal user);
+        IEnumerable<AuthorDTO> GetFollowers(string authorId);
 
-        Task<IEnumerable<AuthorDTO>> GetFollowing(ClaimsPrincipal user);
-        Task RemoveAllFollowers(ClaimsPrincipal user);
+        IEnumerable<AuthorDTO> GetFollowing(string authorId);
+        void RemoveAllFollowers(string authorId);
 
 
-        Task<bool> IsFollowing(ClaimsPrincipal followerUser, string followeeId);
+        bool IsFollowing(string authorId, string followeeId);
 
-        Task FollowAuthor(ClaimsPrincipal followerUser, string followeeId);
+        void FollowAuthor(string authorId, string followeeId);
 
-        Task UnfollowAuthor(ClaimsPrincipal followerUser, string followeeId);
+        void UnfollowAuthor(string authorId, string followeeId);
 
 
     }

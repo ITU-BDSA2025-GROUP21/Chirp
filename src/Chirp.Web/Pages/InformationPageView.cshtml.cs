@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using Chirp.Core.DTO;
+﻿using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,26 +12,29 @@ namespace Chirp.Web.Pages;
 public class InformationPageView : PageModel
 {
     private readonly IAuthorService _authorService;
-
     private readonly ICheepService _cheepService;
+    private readonly IIdentityUserService _identityService;
+    public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
 
-    public InformationPageView(ICheepService service, IAuthorService authorService)
+    public InformationPageView(ICheepService service, IAuthorService authorService, IIdentityUserService identityService)
     {
         _cheepService = service;
         _authorService = authorService;
+        _identityService = identityService;
     }
 
     public async Task<IActionResult> OnPostForgetMe()
     {
-        if (_authorService.SignIn(User))
+        if (_identityService.IsSignedIn(User))
         {
-            AuthorDTO CurrentAuthor = _authorService.GetCurrentIdentityAuthor(User);
+            AuthorDTO CurrentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
             await _cheepService.DeleteAllCheepsAsync(CurrentAuthor.Id);
-            await _authorService.RemoveAllFollowers(User);
+            _authorService.RemoveAllFollowers(CurrentAuthor.Id);
             await _authorService.DeleteAuthorByIdAsync(CurrentAuthor.Id);
-            await _authorService.SignOutAsync();
+            await _identityService.SignOutAsync();
         }
 
         return RedirectToPage("/PublicView");
@@ -41,27 +43,16 @@ public class InformationPageView : PageModel
     public async Task<ActionResult> OnGet()
     {
 
-        if (!_authorService.SignIn(User))
+        if (!_identityService.IsSignedIn(User))
         {
             return RedirectToPage("/PublicView");
         }
 
-        if (User.Identity != null && User.Identity.IsAuthenticated)
+        Author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        if (Author != null)
         {
-            Following = await _authorService.GetFollowing(User);
-        }
-
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var userAuthor = _authorService.GetCurrentIdentityAuthor(User);
-
-            if (userAuthor != null)
-            {
-                // Search for my followers and my own cheeps
-
-                var following = await _authorService.GetFollowing(User);
-
-            }
+            Following = _authorService.GetFollowing(Author.Id);
         }
         return Page();
     }
@@ -69,47 +60,55 @@ public class InformationPageView : PageModel
     public async Task<ActionResult> OnPostUnfollow(string followeeId)
     {
 
-        if (User.Identity == null || followeeId == null || !User.Identity.IsAuthenticated)
+        AuthorDTO currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+
+        if (currentAuthor == null)
         {
             // throw some error idk.
             return RedirectToPage();
         }
 
-        if ((await _authorService.IsFollowing(User, followeeId)))
+        if (_authorService.IsFollowing(currentAuthor.Id, followeeId))
         {
-            await _authorService.UnfollowAuthor(User, followeeId);
+            _authorService.UnfollowAuthor(currentAuthor.Id, followeeId);
         }
 
         return RedirectToPage();
     }
 
-    public int GetCurrentAuthorCheepCount()
+    public async Task<int> GetCurrentAuthorCheepCount()
     {
-        if (!_authorService.SignIn(User))
+        if (!_identityService.IsSignedIn(User))
         {
             return 0;
         }
 
-        return _cheepService.GetCheepsFromAuthorId(_authorService.GetCurrentIdentityAuthor(User).Email).Count();
+        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        return _cheepService.GetCheepsFromAuthorId(author.Id).Count();
     }
 
-    public AuthorDTO GetAuthorDTO()
+    public async Task<AuthorDTO> GetAuthorDTO()
     {
-        if (!_authorService.SignIn(User))
+        if (!_identityService.IsSignedIn(User))
         {
             return null;
         }
 
-        return _authorService.GetCurrentIdentityAuthor(User);
+        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        return author;
     }
 
     public async Task<IEnumerable<AuthorDTO>> GetFollowers()
     {
-        if (!_authorService.SignIn(User))
+        if (!_identityService.IsSignedIn(User))
         {
             return new List<AuthorDTO>();
         }
 
-        return await _authorService.GetFollowers(User);
+        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        return _authorService.GetFollowers(author.Id);
     }
 }

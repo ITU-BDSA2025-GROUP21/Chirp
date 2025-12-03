@@ -13,28 +13,14 @@ namespace Chirp.Infrastructure.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _repo;
-        private readonly SignInManager<Author> _signInManager;
-        private readonly UserManager<Author> _userManager;
-        public AuthorService(IAuthorRepository repo, SignInManager<Author> signInManager, UserManager<Author> userManager) {
+        public AuthorService(IAuthorRepository repo) {
             _repo = repo;
-            _signInManager = signInManager;
-            _userManager = userManager;
         }
 
-        public AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user)
-        {
-            return CreateAuthorDTO(_userManager.GetUserAsync(user).Result);
-        }
-
-        public bool SignIn(ClaimsPrincipal user)
-        {
-            return _signInManager.IsSignedIn(user);
-        }
-
-        public async Task RemoveAllFollowers(ClaimsPrincipal user)
+        public void RemoveAllFollowers(string authorId)
         {
 
-            var userAuthor = await _userManager.GetUserAsync(user);
+            var userAuthor = _repo.FindAuthorById(authorId);
 
             if(userAuthor == null)
             {
@@ -50,15 +36,10 @@ namespace Chirp.Infrastructure.Services
             }
         }
 
+        public async Task DeleteAuthorByIdAsync(string authorId)
+            => await _repo.DeleteAuthorByIdAsync(authorId);
 
-        public Task DeleteAuthorByIdAsync(string authorId)
-            => _repo.DeleteAuthorByIdAsync(authorId);
-
-        public async Task SignOutAsync()
-        {
-            await _signInManager.SignOutAsync();
-        }
-
+       
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if (author == null)
@@ -85,38 +66,27 @@ namespace Chirp.Infrastructure.Services
             return CreateAuthorDTO(author);
         }
 
-        public async Task<IEnumerable<AuthorDTO>> GetFollowers(ClaimsPrincipal user)
+        public IEnumerable<AuthorDTO> GetFollowers(string authorId)
         {
-            if(!_signInManager.IsSignedIn(user))
-            {
-                return Enumerable.Empty<AuthorDTO>();
-            }
+            Author author = _repo.FindAuthorById(authorId);
 
-            Author author = await _userManager.GetUserAsync(user);
+            if (author == null) return Enumerable.Empty<AuthorDTO>();
 
             return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
-        public async Task<IEnumerable<AuthorDTO>> GetFollowing(ClaimsPrincipal user)
+        public IEnumerable<AuthorDTO> GetFollowing(string authorId)
         {
-            if (!_signInManager.IsSignedIn(user))
-            {
-                return Enumerable.Empty<AuthorDTO>();
-            }
+            Author author = _repo.FindAuthorById(authorId);
 
-            Author author = await _userManager.GetUserAsync(user);
+            if (author == null) return Enumerable.Empty<AuthorDTO>();
 
             return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
         } 
 
-        public async Task<bool> IsFollowing(ClaimsPrincipal followerUser, string followeeId)
+        public bool IsFollowing(string authorId, string followeeId)
         {
-            if(!_signInManager.IsSignedIn(followerUser))
-            {
-                return false;
-            }
-
-            var follower = await _userManager.GetUserAsync(followerUser);
+            var follower = _repo.FindAuthorById(authorId);
             var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
@@ -127,14 +97,9 @@ namespace Chirp.Infrastructure.Services
             return _repo.DoesAuthorFollow(follower, followee);
         }
 
-        public async Task FollowAuthor(ClaimsPrincipal followerUser, string followeeId)
+        public void FollowAuthor(string authorId, string followeeId)
         {
-            if (!_signInManager.IsSignedIn(followerUser))
-            {
-                return;
-            }
-
-            var follower = await _userManager.GetUserAsync(followerUser);
+            var follower = _repo.FindAuthorById(authorId);
             var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
@@ -145,14 +110,9 @@ namespace Chirp.Infrastructure.Services
             _repo.FollowAuthor(follower, followee);
         }
 
-        public async Task UnfollowAuthor(ClaimsPrincipal followerUser, string followeeId)
+        public void UnfollowAuthor(string authorId, string followeeId)
         {
-            if (!_signInManager.IsSignedIn(followerUser))
-            {
-                return;
-            }
-
-            var follower = await _userManager.GetUserAsync(followerUser);
+            var follower = _repo.FindAuthorById(authorId);
             var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
