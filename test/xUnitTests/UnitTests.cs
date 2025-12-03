@@ -66,8 +66,8 @@ namespace xUnitTests
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepRepository.GetByAuthorEmail("Luanna Muro", page: 1);
-            var luannaSecondPage = _cheepRepository.GetByAuthorEmail("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepRepository.GetByAuthorEmail("Luanna-Muro@ku.dk", page: 1);
+            var luannaSecondPage = _cheepRepository.GetByAuthorEmail("Luanna-Muro@ku.dk", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -126,12 +126,14 @@ namespace xUnitTests
             var author = new Author()
             {
                 Name = "Testing Client",
-                Cheeps = new List<Cheep>()
+                Cheeps = new List<Cheep>(),
+                Email = "testEmail@test.test",
+                Id = "987654321"
             };
 
             var Chirp = new Cheep()
             {
-                Author = author,
+                AuthorId = author.Id,
                 Text = "Test Message",
                 TimeStamp = DateTime.Parse("2023-08-01 13:15:37")
             };
@@ -142,7 +144,7 @@ namespace xUnitTests
             dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepRepository.GetByAuthorEmail(author.Name);
+            var cheeps = _cheepRepository.GetByAuthorEmail(author.Email);
 
             Assert.Single(cheeps);
             Assert.Equal(author.Name, cheeps.First().Author.Name);
