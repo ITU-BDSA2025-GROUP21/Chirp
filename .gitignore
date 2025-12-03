@@ -61,3 +61,7 @@ src/Chirp.Infrastructure/.config/dotnet-tools.json
 src/Chirp.Web/Chirp.db
 src/Chirp.Web/memory
 src/Chirp.Web/Chirp.db
+src/Chirp.Web/Chirp.db-wal
+src/Chirp.Web/Chirp.db-shm
+src/Chirp.Web/Chirp.db
+*.db-wal

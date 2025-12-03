@@ -40,6 +40,19 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authors, int page = 1, int pageSize = 32)
+        {
+            int offset = (page - 1) * pageSize;
+            return _context.Cheeps
+                .AsNoTracking()
+                .Include(c => c.Author)
+                .Where(c => authors.Contains(c.Author.Name))
+                .OrderBy(c => c.TimeStamp)
+                .Skip(offset)
+                .Take(pageSize)
+                .ToList();
+        }
+
         public void AddCheep(string text, Author author) {
 
             Cheep cheep = new Cheep
