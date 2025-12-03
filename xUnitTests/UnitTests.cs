@@ -149,6 +149,17 @@ namespace xUnitTests
             Assert.Equal(Chirp.Text, cheeps.First().Text);
         }
 
+
+        [Fact]
+        public void testCheepRepositoryCheepsFromMultipleAuthors()
+        {
+            var cheeps = _cheepRepository.GetByMultipleAuthors(new List<string>() { "Helge", "Adrian" });
+
+            Assert.All(cheeps, c =>
+                Assert.Contains(c.Author.Name, new[] { "Helge", "Adrian" })
+            );
+        }
+
         [Fact]
         public void testAuthorRepositoryGetByName()
         {

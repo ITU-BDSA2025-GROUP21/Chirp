@@ -150,6 +150,20 @@ namespace XintegrationTests
         }
 
         [Fact]
+        public void testCheepServiceCheepsFromMultipleAuthors()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            _authorService = _testServices._authorService;
+
+            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" });
+
+            Assert.All(cheeps, c =>
+                Assert.Contains(c.Author, new[] { "Helge", "Adrian" })
+            );
+        }
+
+        [Fact]
         public void testAuthorServiceFindByName()
         {
             var dbContext = _testServices.ctx;
