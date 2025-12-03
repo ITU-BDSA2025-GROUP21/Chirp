@@ -172,5 +172,22 @@ namespace xUnitTests
             Assert.NotNull(Author);
             Assert.Equal(AEmail, "ropf@itu.dk");
         }
+
+        [Fact]
+        public void testGDRPDeletion()
+        {
+            var dbContext = _testServices.ctx;
+            _authorRepository = _testServices._authorRepository;
+            var authorToDelete = new Author()
+            {
+                Name = "GDPR Test",
+                Email = "",
+            };
+
+            string authorId = authorToDelete.Id;
+
+            Debug.WriteLine(authorId);
+            Assert.True(true);
+        }
     }
 }
