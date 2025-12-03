@@ -33,7 +33,6 @@ namespace Chirp.Core.Data
                 .WithMany()
                 .HasForeignKey(uf => uf.FolloweeId)
                 .OnDelete(DeleteBehavior.Restrict);
-
         }
     }
 }
