@@ -7,6 +7,8 @@ namespace Chirp.Core.Repositories
     {
         public Author? FindAuthorByName(string name);
         public Author? FindAuthorByEmail(string email);
+        public Author? FindAuthorById(string id);
+
 
         Task DeleteAuthorByIdAsync(string authorId);
 

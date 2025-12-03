@@ -36,15 +36,15 @@ namespace XintegrationTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepService.GetCheepsFromAuthorEmail("ropf@itu.dk"); //change to email
+            var helgeCheeps = _cheepService.GetCheepsFromAuthorId("ropf@itu.dk"); //change to email
 
-            var adrianCheeps = _cheepService.GetCheepsFromAuthorEmail("adho@itu.dk");
+            var adrianCheeps = _cheepService.GetCheepsFromAuthorId("adho@itu.dk");
 
-            var nathanCheeps = _cheepService.GetCheepsFromAuthorEmail("Nathan+Sirmon@dtu.dk");
+            var nathanCheeps = _cheepService.GetCheepsFromAuthorId("Nathan+Sirmon@dtu.dk");
 
-            var johnnieCheeps = _cheepService.GetCheepsFromAuthorEmail("Johnnie+Calixto@itu.dk");
+            var johnnieCheeps = _cheepService.GetCheepsFromAuthorId("Johnnie+Calixto@itu.dk");
 
-            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorEmail("Jacqualine.Gilcoine@gmail.com", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorId("Jacqualine.Gilcoine@gmail.com", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("ropf@itu.dk", c.Author));
@@ -65,8 +65,8 @@ namespace XintegrationTests
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 1); //change to email
-            var luannaSecondPage = _cheepService.GetCheepsFromAuthorEmail("Luanna Muro", page: 2);
+            var luannaFirstPage = _cheepService.GetCheepsFromAuthorId("Luanna Muro", page: 1); //change to email
+            var luannaSecondPage = _cheepService.GetCheepsFromAuthorId("Luanna Muro", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -139,7 +139,7 @@ namespace XintegrationTests
             dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepService.GetCheepsFromAuthorEmail(author.Email);
+            var cheeps = _cheepService.GetCheepsFromAuthorId(author.Email);
 
             Assert.Single(cheeps);
             Assert.Equal(author.Name, cheeps.First().Author);
