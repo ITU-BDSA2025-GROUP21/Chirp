@@ -27,7 +27,7 @@ public class UserTimelineView : PageModel
     {
         Author = _authorService.FindAuthorById(authorId);
 
-        if(_identityService.IsSignedIn(User))
+        if (_identityService.IsSignedIn(User))
         {
             IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
         }
@@ -45,7 +45,8 @@ public class UserTimelineView : PageModel
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
                 Following.Select(a =>
                 {
-                    if(a != null) {
+                    if (a != null)
+                    {
                         return a.Id;
                     }
 
@@ -74,7 +75,7 @@ public class UserTimelineView : PageModel
 
         var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
-        if(userAuthor == null)
+        if (userAuthor == null)
         {
             return RedirectToPage();
         }
@@ -94,11 +95,42 @@ public class UserTimelineView : PageModel
     {
         AuthorDTO? author = _authorService.FindAuthorById(id);
 
-        if(author == null)
+        if (author == null)
         {
             return string.Empty;
         }
 
         return author.Name;
+    }
+
+    //handle likes and dislikes
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string authorId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, true);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
     }
 }

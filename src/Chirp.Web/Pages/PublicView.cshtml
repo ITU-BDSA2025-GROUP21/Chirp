@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Chirp.Core.DTO
 @model Chirp.Web.Pages.PublicView
 @{
     ViewData["Title"] = "Chirp!";
@@ -48,7 +49,26 @@
                             }
                         </div>
                         <span class="cheep-message">@cheep.Message</span>
-                        <small>&mdash; @cheep.CreatedDate</small>
+                        <small>&mdash; @cheep.CreatedDate</small>                       
+                        <div class="like-container">
+                            <form method="post" asp-page-handler="CheepLike">
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
+                                <input type="hidden" name="authorId" value="@cheep.AuthorId" />
+                                <button type="submit" class="like-button">
+                                    <img src="~/images/ThumpsUp.png" alt="Like" class="icon" />
+                                    (@cheep.Likes)
+                                </button>
+                            </form>
+
+                            <form method="post" asp-page-handler="CheepDislike">
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
+                                <input type="hidden" name="authorId" value="@cheep.AuthorId" />
+                                <button type="submit" class="dislike-button">
+                                    <img src="~/images/ThumpsDown.png" alt="Dislike" class="icon" />
+                                    (@cheep.Dislikes)
+                                </button>
+                            </form>
+                        </div>
                     </p>
                 </li>
             }

@@ -303,5 +303,73 @@ namespace xUnitTests
             var cheepsAfterDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Empty(cheepsAfterDeletion);
         }
+
+        [Fact]
+        public void testLikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "Like Tester",
+                Email = "like@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for like testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            //see that there are no likes initially
+
+            Assert.Equal(0, cheepFromDb.Likes.Count());
+
+            _cheepRepository.Like(cheepFromDb.CheepId, author.Id, true);
+            cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Likes.Count());
+        }
+
+        [Fact]
+        public void testDislikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "dislike Tester",
+                Email = "dislike@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for dislike testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            //see that there are no dislikes initially
+
+            Assert.Equal(0, cheepFromDb.Likes.Count());
+
+            _cheepRepository.Like(cheepFromDb.CheepId, author.Id, false);
+            cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            int dislikes = cheepFromDb.Likes.Where(l => l.likeStatus == -1).Count();
+
+            Assert.Equal(1, dislikes);
+        }
     }
 }

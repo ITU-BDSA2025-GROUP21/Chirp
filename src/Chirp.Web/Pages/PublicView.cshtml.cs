@@ -18,6 +18,8 @@ public class PublicView : PageModel
     public int CurrentPage { get; set; }
     public AuthorDTO? IdentityAuthor { get; set; }
 
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
+
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     private readonly IIdentityUserService _identityService;
@@ -112,6 +114,36 @@ public class PublicView : PageModel
         if (author == null)
             return string.Empty;
 
-        return author.Name;
+        return author?.Name ?? "Anon";
+    }
+
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string authorId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, true);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView");
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView");
     }
 }

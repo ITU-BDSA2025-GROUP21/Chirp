@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chirp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class ReworkedLikesWithModelPointers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -204,6 +204,31 @@ namespace Chirp.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Likes",
+                columns: table => new
+                {
+                    authorId = table.Column<string>(type: "TEXT", nullable: false),
+                    CheepId = table.Column<int>(type: "INTEGER", nullable: false),
+                    likeStatus = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Likes", x => new { x.authorId, x.CheepId });
+                    table.ForeignKey(
+                        name: "FK_Likes_AspNetUsers_authorId",
+                        column: x => x.authorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Likes_Cheeps_CheepId",
+                        column: x => x.CheepId,
+                        principalTable: "Cheeps",
+                        principalColumn: "CheepId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -247,6 +272,11 @@ namespace Chirp.Infrastructure.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Likes_CheepId",
+                table: "Likes",
+                column: "CheepId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserFollows_FolloweeId",
                 table: "UserFollows",
                 column: "FolloweeId");
@@ -271,13 +301,16 @@ namespace Chirp.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Cheeps");
+                name: "Likes");
 
             migrationBuilder.DropTable(
                 name: "UserFollows");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Cheeps");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

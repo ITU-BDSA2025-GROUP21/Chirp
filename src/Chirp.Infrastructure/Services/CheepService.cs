@@ -40,6 +40,20 @@ public class CheepService : ICheepService
         return _cheepRepository.DeleteAllCheepsAsync(id);
     }
 
+    public void Like(int cheepId, string authorId, bool like)
+    {
+        _cheepRepository.Like(
+            cheepId,
+            authorId,
+            like
+            );
+    }
+
+    public CheepDTO? GetById(int cheepId)
+    {
+        return _cheepRepository.GetById(cheepId) is Cheep cheep ? createCheepDTO(cheep) : null;
+    }
+
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO
     {
@@ -47,5 +61,8 @@ public class CheepService : ICheepService
         Message = c.Text,
         CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm"),
         AuthorId = c.AuthorId,
+        cheepId = c.CheepId,
+        Likes = c.Likes.Count(l => l.likeStatus == 1),
+        Dislikes = c.Likes.Count(l => l.likeStatus == -1),
     };
 }

@@ -17,5 +17,7 @@ namespace Chirp.Core.Models
         public string Text { get; set; } = null!;
         
         public DateTime TimeStamp { get; set; }
+
+        public List<Likes> Likes { get; set; } = new();
     }
 }

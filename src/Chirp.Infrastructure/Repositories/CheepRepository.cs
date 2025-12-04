@@ -1,7 +1,9 @@
 using Chirp.Core.Data;
-using Microsoft.EntityFrameworkCore;
-using Chirp.Core.Repositories;
 using Chirp.Core.Models;
+using Chirp.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Chirp.Razor.Repositories
 {
@@ -20,6 +22,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
@@ -32,11 +35,21 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .Where(c => c.AuthorId == authorId)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
+        }
+
+        public Cheep? GetById(int id)
+        {
+            return _context.Cheeps
+                .AsNoTracking()
+                .Include(c => c.Author)
+                .Include(c => c.Likes)
+                .FirstOrDefault(c => c.CheepId == id);
         }
 
         public async Task DeleteAllCheepsAsync(string id)
@@ -51,6 +64,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .Where(c => authorIds.Contains(c.AuthorId))
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
@@ -68,6 +82,43 @@ namespace Chirp.Razor.Repositories
             };
 
             _context.Cheeps.Add(cheep);
+            _context.SaveChanges();
+        }
+
+        public void Like(int cheepId, string authorID, bool like)
+        {
+            var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
+            if (!cheepExists) return;
+
+            var authorExists = _context.Authors.Any(a => a.Id == authorID);
+            if (!authorExists) return;
+
+            var existing = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
+
+            if (existing == null)
+            {
+                _context.Likes.Add(new Likes
+                {
+                    CheepId = cheepId,
+                    authorId = authorID,
+                    likeStatus = like ? 1 : -1
+                });
+            }
+            else
+            {
+                if (like && existing.likeStatus == 1)
+                {
+                    _context.Likes.Remove(existing);
+                }
+                else if (!like && existing.likeStatus == -1)
+                {
+                    _context.Likes.Remove(existing);
+                }
+                else
+                {
+                    existing.likeStatus = like ? 1 : -1;
+                }
+            }
             _context.SaveChanges();
         }
     }
