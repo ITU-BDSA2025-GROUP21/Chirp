@@ -3,16 +3,26 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
+
+    var name = string.Empty;
+    var email = string.Empty;
+    var creationDate = string.Empty;
+
+    if(Model.Author != null)
+    {
+        name = Model.Author.Name;
+        email = Model.Author.Email;
+        creationDate = Model.Author.CreationDate;
+    }
+
 }
 
 <div>
 
-    <h2> @Model.Author.Name Information </h2>
-
-
-    <h3>Name: @Model.Author.Name.</h3>
-    <h3>Email: @Model.Author.Email</h3>
-    <h3>Creation Date: @Model.Author.CreationDate</h3>
+    <h2> @name Information </h2>
+    <h3>Name: @name.</h3>
+    <h3>Email: @email</h3>
+    <h3>Creation Date: @creationDate</h3>
     <h3>Total Cheeps sent: @Model.CurrentCheeps</h3>
     <h3>Following:</h3>
 
@@ -24,20 +34,18 @@
             {
                 <li>
                     <p>
-                        <strong>
-                            <div style="display:flex;justify-content:start;align-items:center;">
-                                <a href="/@author.Id">@author.Name</a>
+                        <div style="display:flex;justify-content:start;align-items:center;">
+                            <a href="/@author.Id">@author.Name</a>
 
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <form method="post" asp-page-handler="Unfollow" style="display:inline;">
-                                        <input type="hidden" name="followeeId" value="@author.Id" />
-                                        <button type="submit">Unfollow</button>
-                                    </form>
-                                }
-                            </div>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <form method="post" asp-page-handler="Unfollow" style="display:inline;">
+                                    <input type="hidden" name="followeeId" value="@author.Id" />
+                                    <button type="submit">Unfollow</button>
+                                </form>
+                            }
+                        </div>
 
-                        </strong>
                     </p>
                 </li>
             }

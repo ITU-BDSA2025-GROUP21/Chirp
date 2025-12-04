@@ -14,7 +14,7 @@ public class InformationPageView : PageModel
     private readonly IAuthorService _authorService;
     private readonly ICheepService _cheepService;
     private readonly IIdentityUserService _identityService;
-    public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
     public int CurrentCheeps { get; set; } = 0;
 
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
@@ -78,7 +78,7 @@ public class InformationPageView : PageModel
         return RedirectToPage();
     }
 
-    public async Task<AuthorDTO> GetAuthorDTO()
+    public async Task<AuthorDTO?> GetAuthorDTO()
     {
         if (!_identityService.IsSignedIn(User))
         {

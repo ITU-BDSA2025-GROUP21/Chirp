@@ -14,7 +14,7 @@ public class UserTimelineView : PageModel
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
-    public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
     public UserTimelineView(ICheepService cheepService, IAuthorService authorService, IIdentityUserService identityService)
     {
         _cheepService = cheepService;
@@ -22,7 +22,7 @@ public class UserTimelineView : PageModel
         _identityService = identityService;
     }
 
-    public async Task<ActionResult> OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
+    public ActionResult OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
     {
 
         Author = _authorService.FindAuthorById(authorId);
@@ -75,6 +75,14 @@ public class UserTimelineView : PageModel
 
     public string GetUserName(string id)
     {
-        return _authorService.FindAuthorById(id).Name;
+
+        AuthorDTO? author = _authorService.FindAuthorById(id);
+
+        if(author == null)
+        {
+            return string.Empty;
+        }
+
+        return author.Name;
     }
 }
