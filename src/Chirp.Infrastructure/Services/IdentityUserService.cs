@@ -57,6 +57,5 @@ namespace Chirp.Infrastructure.Services
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
         }
-
     }
 }
