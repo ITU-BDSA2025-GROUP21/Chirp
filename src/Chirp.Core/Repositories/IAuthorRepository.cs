@@ -6,8 +6,6 @@ namespace Chirp.Core.Repositories
     public interface IAuthorRepository
     {
         public Author? FindAuthorById(string id);
-
-
         Task DeleteAuthorByIdAsync(string authorId);
 
         IEnumerable<Author> GetFollowers(Author author);  
