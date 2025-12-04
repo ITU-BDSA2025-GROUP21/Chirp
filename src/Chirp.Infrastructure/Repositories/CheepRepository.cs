@@ -70,5 +70,15 @@ namespace Chirp.Razor.Repositories
             _context.Cheeps.Add(cheep);
             _context.SaveChanges();
         }
+
+        public void like(string AuthorId, Cheep cheep)
+        {
+
+        }
+
+        public void dislike(string AuthorId, Cheep cheep)
+        {
+
+        }
     }
 }

@@ -17,5 +17,13 @@ namespace Chirp.Core.Models
         public string Text { get; set; } = null!;
         
         public DateTime TimeStamp { get; set; }
+
+        public bool liked = false;
+        public bool disliked = false;
+        
+        public HashSet<String> LikedBy { get; set; } = new();
+
+        public HashSet<String> DislikedBy { get; set; } = new();
+    
     }
 }
