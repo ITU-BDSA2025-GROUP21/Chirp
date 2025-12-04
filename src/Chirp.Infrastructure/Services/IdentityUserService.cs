@@ -32,7 +32,6 @@ namespace Chirp.Infrastructure.Services
 
         public async Task<AuthorDTO> GetCurrentIdentityAuthor(ClaimsPrincipal User)
         {
-
             if (!IsSignedIn(User)) return null;
 
             Author authorModel = await _userManager.GetUserAsync(User);
