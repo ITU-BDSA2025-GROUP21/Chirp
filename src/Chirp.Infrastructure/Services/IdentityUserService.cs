@@ -18,7 +18,6 @@ namespace Chirp.Infrastructure.Services
 
 
         public IdentityUserService(SignInManager<Author> signInManager, UserManager<Author> userManager) {
-
             _userManager = userManager;
             _signInManager = signInManager;
 
