@@ -56,6 +56,22 @@ public class CheepService : ICheepService
             );
     }
 
+    public void unLike(CheepDTO cheepDTO, string authorId)
+    {
+        _cheepRepository.unLike(
+            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            authorId
+            );
+    }
+
+    public void unDislike(CheepDTO cheepDTO, string authorId)
+    {
+        _cheepRepository.unDislike(
+            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            authorId
+            );
+    }
+
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO
     {

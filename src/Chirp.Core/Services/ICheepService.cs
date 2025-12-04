@@ -14,6 +14,8 @@ namespace Chirp.Core.Services
 
         public void Like(CheepDTO cheepDTO, string authorId);
         public void Dislike(CheepDTO cheepDTO, string authorId);
+        public void unLike(CheepDTO cheepDTO, string authorId);
+        public void unDislike(CheepDTO cheepDTO, string authorId);
     }
 
 }

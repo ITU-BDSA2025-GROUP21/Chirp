@@ -39,7 +39,7 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public Cheep GetById(int id)
+        public Cheep? GetById(int id)
         {
             return _context.Cheeps
                 .AsNoTracking()
@@ -79,24 +79,43 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public void like(string AuthorId, Cheep cheep)
-        {
-
-        }
-
-        public void dislike(string AuthorId, Cheep cheep)
-        {
-
-        }
-
         public void Like(Cheep cheep, string authorID)
         {
-            throw new NotImplementedException();
+            //remove from disliked if present
+            if (cheep.DislikedBy.Contains(authorID))
+            {
+                cheep.DislikedBy.Remove(authorID);
+            }
+            //add to liked
+            cheep.LikedBy.Add(authorID);
         }
 
         public void Dislike(Cheep cheep, string authorID)
         {
-            throw new NotImplementedException();
+            //remove from disliked if present
+            if (cheep.LikedBy.Contains(authorID))
+            {
+                cheep.LikedBy.Remove(authorID);
+            }
+            //add to disliked
+            cheep.DislikedBy.Add(authorID);
+
+        }
+        //Possible to remove yourself from liked
+        public void unLike(Cheep cheep, string authorID)
+        {
+            if (cheep.LikedBy.Contains(authorID))
+            {
+                cheep.LikedBy.Remove(authorID);
+            }
+        }
+        //possible to remove yourself from dislike
+        public void unDislike(Cheep cheep, string authorID)
+        {
+            if (cheep.DislikedBy.Contains(authorID))
+            {
+                cheep.DislikedBy.Remove(authorID);
+            }
         }
     }
 }
