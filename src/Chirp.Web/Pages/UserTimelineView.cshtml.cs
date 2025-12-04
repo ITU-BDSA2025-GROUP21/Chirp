@@ -81,13 +81,13 @@ public class UserTimelineView : PageModel
     //handle likes and dislikes
     public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId)
     {
-        _cheepService.Like(cheepId, User.Identity.Name);
+        _cheepService.Like(cheepId, (await _identityService.GetCurrentIdentityAuthor(User)).Id, true);
         return RedirectToPage();
     }
 
     public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
     {
-        _cheepService.Dislike(cheepId, User.Identity.Name);
+        _cheepService.Like(cheepId, (await _identityService.GetCurrentIdentityAuthor(User)).Id, false);
         return RedirectToPage();
     }
 }

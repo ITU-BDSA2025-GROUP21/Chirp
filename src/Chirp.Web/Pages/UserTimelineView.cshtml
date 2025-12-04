@@ -39,12 +39,12 @@
                         <div style="margin-left: 20px;">
 
                             <form method="post" asp-page-handler="CheepLike" style="display:inline;">
-                                <input type="hidden" name="cheepId" value="@cheep.Id" />
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
                                 <button type="submit">👍 Like (@cheep.Likes)</button>
                             </form>
 
                             <form method="post" asp-page-handler="CheepDislike" style="display:inline; margin-left:10px;">
-                                <input type="hidden" name="cheepId" value="@cheep.Id" />
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
                                 <button type="submit">👎 Dislike (@cheep.Dislikes)</button>
                             </form>
 
