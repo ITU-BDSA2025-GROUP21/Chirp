@@ -5,7 +5,7 @@ namespace Chirp.Core.DTO
 {
     public record CheepDTO
     {
-        public string cheepId { get; set; } = null!;    
+        public int cheepId { get; set; } = null!;    
         public string Author { get; set; } = null!;
         public string Message { get; set; } = null!;
         public string CreatedDate { get; set; } = null!;

@@ -40,6 +40,22 @@ public class CheepService : ICheepService
         return _cheepRepository.DeleteAllCheepsAsync(id);
     }
 
+    public void Like(CheepDTO cheepDTO, string authorId)
+    {
+        _cheepRepository.Like(
+            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            authorId
+            );
+    }
+
+    public void Dislike(CheepDTO cheepDTO, string authorId)
+    {
+        _cheepRepository.Dislike(
+            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            authorId
+            );
+    }
+
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO
     {

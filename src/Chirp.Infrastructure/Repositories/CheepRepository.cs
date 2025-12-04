@@ -39,6 +39,14 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        public Cheep GetById(int id)
+        {
+            return _context.Cheeps
+                .AsNoTracking()
+                .Include(c => c.Author)
+                .FirstOrDefault(c => c.CheepId == id);
+        }
+
         public async Task DeleteAllCheepsAsync(string id)
         {
             await _context.Cheeps
@@ -79,6 +87,16 @@ namespace Chirp.Razor.Repositories
         public void dislike(string AuthorId, Cheep cheep)
         {
 
+        }
+
+        public void Like(Cheep cheep, string authorID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dislike(Cheep cheep, string authorID)
+        {
+            throw new NotImplementedException();
         }
     }
 }

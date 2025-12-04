@@ -15,5 +15,7 @@ namespace Chirp.Core.Repositories
 
         public void Like(Cheep cheep,  string authorID);
         public void Dislike(Cheep cheep, string authorID);
+
+        public Cheep GetById(int id);
     }
 }
