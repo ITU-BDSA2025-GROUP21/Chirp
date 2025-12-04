@@ -16,5 +16,7 @@ namespace Chirp.Core.Models
         public int CheepId { get; set; }
 
         public int likeStatus { get; set; } = 0; // 1 = like, -1 = dislike, 0 = neutral
+        public Author Author { get; set; } = null!;
+        public Cheep Cheep { get; set; } = null!;
     }
 }

@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Chirp.Razor.Repositories
 {
@@ -86,14 +87,15 @@ namespace Chirp.Razor.Repositories
 
         public void Like(int cheepId, string authorID, bool like)
         {
+            Console.WriteLine("like repo start, author is " + authorID + " liking? " + cheepId);
+
             var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
-            if (!cheepExists) return; // or throw a meaningful exception
+            if (!cheepExists) return;
 
             var authorExists = _context.Authors.Any(a => a.Id == authorID);
-            if (!authorExists) return; // or throw a meaningful exception
+            if (!authorExists) return;
 
-            var existing = _context.Likes
-                .FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
+            var existing = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
 
             if (existing == null)
             {
@@ -108,7 +110,7 @@ namespace Chirp.Razor.Repositories
             {
                 existing.likeStatus = like ? 1 : -1;
             }
-            
+
             _context.SaveChanges();
         }
         
