@@ -7,7 +7,7 @@
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
+    <h2> @Model.Author.Name's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -17,7 +17,7 @@
                 bool IsFollowing = Model.Following.Any(
                     a => a.Id == cheep.AuthorId
                 );
-
+                    
                 <li>
                     <p>
                         <strong>

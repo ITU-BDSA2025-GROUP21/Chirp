@@ -43,6 +43,7 @@ public class PublicView : PageModel
             AuthorName = authorDTO.Name;
         }
 
+
         return Page();
     }
     

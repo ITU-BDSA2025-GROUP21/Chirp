@@ -56,12 +56,10 @@ public class UserTimelineView : PageModel
 
         if (!_identityService.IsSignedIn(User))
         {
-            // throw some error idk.
             return RedirectToPage();
         }
 
         var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
-
 
         if (!_authorService.IsFollowing(userAuthor.Id, followeeId))
         {

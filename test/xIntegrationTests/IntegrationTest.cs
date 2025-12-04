@@ -119,7 +119,7 @@ namespace XintegrationTests
             DateTime prevTime = DateTime.MaxValue;
             var ordered = true;
 
-            var formats = new[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH.mm" };
+            var formats = new[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH.mm", "dd-MM-yyyy HH:mm", "dd-MM-yyyy HH.mm" };
 
             foreach (CheepDTO cheep in cheeps)
             {
