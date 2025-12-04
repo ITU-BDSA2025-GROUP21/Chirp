@@ -77,4 +77,17 @@ public class UserTimelineView : PageModel
     {
         return _authorService.FindAuthorById(id).Name;
     }
+
+    //handle likes and dislikes
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId)
+    {
+        _cheepService.Like(cheepId, User.Identity.Name);
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
+    {
+        _cheepService.Dislike(cheepId, User.Identity.Name);
+        return RedirectToPage();
+    }
 }

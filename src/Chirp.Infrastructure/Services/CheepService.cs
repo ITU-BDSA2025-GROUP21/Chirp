@@ -40,34 +40,34 @@ public class CheepService : ICheepService
         return _cheepRepository.DeleteAllCheepsAsync(id);
     }
 
-    public void Like(CheepDTO cheepDTO, string authorId)
+    public void Like(int cheepId, string authorId)
     {
         _cheepRepository.Like(
-            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            _cheepRepository.GetById(cheepId)!,
             authorId
             );
     }
 
-    public void Dislike(CheepDTO cheepDTO, string authorId)
+    public void Dislike(int cheepId, string authorId)
     {
         _cheepRepository.Dislike(
-            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            _cheepRepository.GetById(cheepId)!,
             authorId
             );
     }
 
-    public void unLike(CheepDTO cheepDTO, string authorId)
+    public void unLike(int cheepId, string authorId)
     {
         _cheepRepository.unLike(
-            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            _cheepRepository.GetById(cheepId)!,
             authorId
             );
     }
 
-    public void unDislike(CheepDTO cheepDTO, string authorId)
+    public void unDislike(int cheepId, string authorId)
     {
         _cheepRepository.unDislike(
-            _cheepRepository.GetById(cheepDTO.cheepId)!,
+            _cheepRepository.GetById(cheepId)!,
             authorId
             );
     }
