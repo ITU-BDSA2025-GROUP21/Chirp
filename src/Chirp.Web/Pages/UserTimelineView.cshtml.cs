@@ -29,8 +29,11 @@ public class UserTimelineView : PageModel
 
         if (Author == null)
         {
-            return Page();
+            return NotFound();
         }
+
+        CurrentPage = page;
+        Following = _authorService.GetFollowing(authorId);
 
         if (_identityService.IsSignedIn(User) && authorId == Author.Id)
         {
@@ -39,8 +42,6 @@ public class UserTimelineView : PageModel
                 .Append(authorId)
                 .ToList(), page);
         }
-
-        Following = _authorService.GetFollowing(authorId);
 
         if (!Cheeps.Any())
         {
@@ -72,7 +73,6 @@ public class UserTimelineView : PageModel
 
         return RedirectToPage();
     }
-
     public string GetUserName(string id)
     {
 

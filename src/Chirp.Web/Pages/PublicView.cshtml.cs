@@ -16,7 +16,7 @@ public class PublicView : PageModel
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
-    public string AuthorName { get; set; } = string.Empty;
+    public AuthorDTO Author { get; set; }
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
@@ -38,9 +38,8 @@ public class PublicView : PageModel
 
         if (_identityService.IsSignedIn(User))
         {
-            AuthorDTO authorDTO = await _identityService.GetCurrentIdentityAuthor(User);
-            Following = _authorService.GetFollowing(authorDTO.Id);
-            AuthorName = authorDTO.Name;
+            Author = await _identityService.GetCurrentIdentityAuthor(User);
+            Following = _authorService.GetFollowing(Author.Id);
         }
 
 
@@ -58,6 +57,8 @@ public class PublicView : PageModel
             return Page();
         }
 
+        Author = author;
+        Following = _authorService.GetFollowing(author.Id);
 
         if (!string.IsNullOrWhiteSpace(Text))
         {
@@ -66,7 +67,8 @@ public class PublicView : PageModel
 
         CurrentPage = page;
         Cheeps = _cheepService.GetCheeps(page);
-
+        Text = string.Empty;
+        ModelState.Clear();
         return Page();
     }
 

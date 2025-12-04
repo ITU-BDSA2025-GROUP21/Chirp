@@ -3,14 +3,12 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-
     var route = HttpContext.GetRouteValue("authorId");
     var routeName = string.Empty;
     if (route != null)
     {
         routeName = route.ToString();
     }
-
 }
 
 <div>
@@ -38,8 +36,7 @@
                                 </form>
                             }
                         </div>
-
-                        @cheep.Message
+                        <span class="cheep-message">@cheep.Message</span>
                         <small>&mdash; @cheep.CreatedDate</small>
                     </p>
                 </li>
