@@ -11,8 +11,10 @@ namespace Chirp.Core.Models
     {
         [ForeignKey(nameof(Author))]
         public string authorId { get; set; } = null!;
+        
         [ForeignKey(nameof(Cheep))]
-        public int cheepId { get; set; } = 0;
+        public int CheepId { get; set; }
+
         public int likeStatus { get; set; } = 0; // 1 = like, -1 = dislike, 0 = neutral
     }
 }
