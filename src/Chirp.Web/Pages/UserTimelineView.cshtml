@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = Model.GetUserName(HttpContext.GetRouteValue("authorId").ToString());
 }
 
 <div>
@@ -34,7 +33,7 @@
                             </div>
 
                         </strong>
-                        @cheep.Message
+                        <span class="cheep-message">@cheep.Message</span>
                         <small>&mdash; @cheep.CreatedDate</small>
                     </p>
                 </li>
