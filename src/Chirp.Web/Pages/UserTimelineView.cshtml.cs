@@ -27,7 +27,7 @@ public class UserTimelineView : PageModel
     {
         Author = _authorService.FindAuthorById(authorId);
 
-        if(_identityService.IsSignedIn(User))
+        if (_identityService.IsSignedIn(User))
         {
             IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
         }
@@ -45,7 +45,8 @@ public class UserTimelineView : PageModel
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
                 Following.Select(a =>
                 {
-                    if(a != null) {
+                    if (a != null)
+                    {
                         return a.Id;
                     }
 
@@ -74,7 +75,7 @@ public class UserTimelineView : PageModel
 
         var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
-        if(userAuthor == null)
+        if (userAuthor == null)
         {
             return RedirectToPage();
         }
@@ -94,7 +95,7 @@ public class UserTimelineView : PageModel
     {
         AuthorDTO? author = _authorService.FindAuthorById(id);
 
-        if(author == null)
+        if (author == null)
         {
             return string.Empty;
         }
@@ -114,13 +115,40 @@ public class UserTimelineView : PageModel
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
 
+        if (string.IsNullOrEmpty(Author?.Id))
+        {
+            // Assuming cheepService or cheepRepository can find the author from cheepId
+            var cheep = _cheepService.GetById(cheepId);
+            if (cheep == null)
+                return RedirectToPage(); // fallback
+
+            Author = _authorService.FindAuthorById(cheep.AuthorId);
+        }
+
         return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
     }
 
-    /*
     public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
     {
-        _cheepService.Like(cheepId, (await _identityService.GetCurrentIdentityAuthor(User)).Id, false);
-        return RedirectToPage();
-    }*/
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+
+        if (string.IsNullOrEmpty(Author?.Id))
+        {
+            // Assuming cheepService or cheepRepository can find the author from cheepId
+            var cheep = _cheepService.GetById(cheepId);
+            if (cheep == null)
+                return RedirectToPage(); // fallback
+
+            Author = _authorService.FindAuthorById(cheep.AuthorId);
+        }
+
+        return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
+    }
 }

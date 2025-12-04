@@ -57,6 +57,10 @@ public class CheepService : ICheepService
             );
     }
 
+    public CheepDTO? GetById(int cheepId)
+    {
+        return _cheepRepository.GetById(cheepId) is Cheep cheep ? createCheepDTO(cheep) : null;
+    }
 
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO

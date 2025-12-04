@@ -82,7 +82,16 @@ namespace Chirp.Razor.Repositories
 
         public void Like(int cheepId, string authorID, bool like)
         {
-            var existing = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
+            var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
+            if (!cheepExists) return; // or throw a meaningful exception
+
+            // Check if the Author exists
+            var authorExists = _context.Authors.Any(a => a.Id == authorID);
+            if (!authorExists) return; // or throw a meaningful exception
+
+            // Try to find an existing Like
+            var existing = _context.Likes
+                .FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
 
             if (existing == null)
             {

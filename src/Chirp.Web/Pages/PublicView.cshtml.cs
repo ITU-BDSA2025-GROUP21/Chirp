@@ -18,6 +18,8 @@ public class PublicView : PageModel
     public int CurrentPage { get; set; }
     public AuthorDTO? IdentityAuthor { get; set; }
 
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
+
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     private readonly IIdentityUserService _identityService;
@@ -113,5 +115,53 @@ public class PublicView : PageModel
             return string.Empty;
 
         return author?.Name ?? "Anon";
+    }
+
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, true);
+
+        if (string.IsNullOrEmpty(Author?.Id))
+        {
+            // Assuming cheepService or cheepRepository can find the author from cheepId
+            var cheep = _cheepService.GetById(cheepId);
+            if (cheep == null)
+                return RedirectToPage(); // fallback
+
+            Author = _authorService.FindAuthorById(cheep.AuthorId);
+        }
+
+        return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+
+        if (string.IsNullOrEmpty(Author?.Id))
+        {
+            // Assuming cheepService or cheepRepository can find the author from cheepId
+            var cheep = _cheepService.GetById(cheepId);
+            if (cheep == null)
+                return RedirectToPage(); // fallback
+
+            Author = _authorService.FindAuthorById(cheep.AuthorId);
+        }
+
+        return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
     }
 }
