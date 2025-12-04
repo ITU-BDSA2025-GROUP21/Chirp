@@ -9,6 +9,10 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\images\Icon1.png" />
+    <Content Remove="wwwroot\images\Thumps Down Grey.png" />
+    <Content Remove="wwwroot\images\Thumps Down.png" />
+    <Content Remove="wwwroot\images\Thumps Up Grey.png" />
+    <Content Remove="wwwroot\images\Thumps Up.png" />
   </ItemGroup>
 
   <ItemGroup>
