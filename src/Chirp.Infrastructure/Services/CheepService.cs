@@ -43,7 +43,7 @@ public class CheepService : ICheepService
     public void Like(int cheepId, string authorId, bool like)
     {
         _cheepRepository.Like(
-            _cheepRepository.GetById(cheepId)!,
+            cheepId,
             authorId,
             like
             );
@@ -52,7 +52,7 @@ public class CheepService : ICheepService
     public void unLike(int cheepId, string authorId)
     {
         _cheepRepository.unLike(
-            _cheepRepository.GetById(cheepId)!,
+            cheepId,
             authorId
             );
     }

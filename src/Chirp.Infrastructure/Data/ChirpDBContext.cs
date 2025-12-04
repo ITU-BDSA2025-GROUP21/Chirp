@@ -9,6 +9,7 @@ namespace Chirp.Core.Data
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
+        public DbSet<Likes> Likes { get; set; } = null!;
 
         public ChirpDBContext(DbContextOptions<ChirpDBContext> options) 
             : base(options)
@@ -20,7 +21,7 @@ namespace Chirp.Core.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Likes>()
-                .HasKey(l => new { l.authorId, l.cheepId });
+                .HasKey(l => new { l.authorId, l.CheepId });
 
             modelBuilder.Entity<UserFollow>()
                 .HasKey(uf => new { uf.FollowerId, uf.FolloweeId });
@@ -30,11 +31,12 @@ namespace Chirp.Core.Data
                 .WithMany()
                 .HasForeignKey(l => l.authorId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             modelBuilder.Entity<Likes>()
                 .HasOne<Cheep>()
                 .WithMany()
-                .HasForeignKey(l => l.cheepId)
+                .HasForeignKey(l => l.CheepId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserFollow>()

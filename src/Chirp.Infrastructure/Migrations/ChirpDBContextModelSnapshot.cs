@@ -113,6 +113,29 @@ namespace Chirp.Infrastructure.Migrations
                     b.ToTable("Cheeps");
                 });
 
+            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+                {
+                    b.Property<string>("authorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CheepId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CheepId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("likeStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("authorId", "CheepId");
+
+                    b.HasIndex("CheepId");
+
+                    b.HasIndex("CheepId1");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("Chirp.Core.Models.UserFollow", b =>
                 {
                     b.Property<string>("FollowerId")
@@ -270,6 +293,25 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+                {
+                    b.HasOne("Chirp.Core.Models.Cheep", null)
+                        .WithMany()
+                        .HasForeignKey("CheepId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Chirp.Core.Models.Cheep", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("CheepId1");
+
+                    b.HasOne("Chirp.Core.Models.Author", null)
+                        .WithMany()
+                        .HasForeignKey("authorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Chirp.Core.Models.UserFollow", b =>
                 {
                     b.HasOne("Chirp.Core.Models.Author", "Followee")
@@ -343,6 +385,11 @@ namespace Chirp.Infrastructure.Migrations
             modelBuilder.Entity("Chirp.Core.Models.Author", b =>
                 {
                     b.Navigation("Cheeps");
+                });
+
+            modelBuilder.Entity("Chirp.Core.Models.Cheep", b =>
+                {
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

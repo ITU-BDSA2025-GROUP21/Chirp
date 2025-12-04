@@ -1,7 +1,8 @@
 using Chirp.Core.Data;
-using Microsoft.EntityFrameworkCore;
-using Chirp.Core.Repositories;
 using Chirp.Core.Models;
+using Chirp.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace Chirp.Razor.Repositories
 {
@@ -79,12 +80,29 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public void Like(Cheep cheep, string authorID, bool like)
+        public void Like(int cheepId, string authorID, bool like)
         {
-            //do logic here
-        }
+            var existing = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
 
-        public void unLike(Cheep cheep, string authorID)
+            if (existing == null)
+            {
+                _context.Likes.Add(new Likes
+                {
+                    CheepId = cheepId,
+                    authorId = authorID,
+                    likeStatus = like ? 1 : -1
+                });
+            }
+            else
+            {
+                existing.likeStatus = like ? 1 : -1;
+            }
+
+            _context.SaveChanges();
+        }
+        
+
+        public void unLike(int cheepId, string authorID)
         {
             
         }
