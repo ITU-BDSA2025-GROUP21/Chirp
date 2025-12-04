@@ -15,6 +15,7 @@ public class InformationPageView : PageModel
     private readonly ICheepService _cheepService;
     private readonly IIdentityUserService _identityService;
     public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+    public int CurrentCheeps { get; set; } = 0;
 
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
 
@@ -53,6 +54,7 @@ public class InformationPageView : PageModel
         if (Author != null)
         {
             Following = _authorService.GetFollowing(Author.Id);
+            CurrentCheeps = _cheepService.GetCheepsFromAuthorId(Author.Id).Count();
         }
         return Page();
     }
@@ -74,18 +76,6 @@ public class InformationPageView : PageModel
         }
 
         return RedirectToPage();
-    }
-
-    public async Task<int> GetCurrentAuthorCheepCount()
-    {
-        if (!_identityService.IsSignedIn(User))
-        {
-            return 0;
-        }
-
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
-
-        return _cheepService.GetCheepsFromAuthorId(author.Id).Count();
     }
 
     public async Task<AuthorDTO> GetAuthorDTO()

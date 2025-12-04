@@ -13,7 +13,7 @@
     <h3>Name: @Model.Author.Name.</h3>
     <h3>Email: @Model.Author.Email</h3>
     <h3>Creation Date: @Model.Author.CreationDate</h3>
-    <h3>Total Cheeps sent: @Model.GetCurrentAuthorCheepCount()</h3>
+    <h3>Total Cheeps sent: @Model.CurrentCheeps</h3>
     <h3>Following:</h3>
 
     @if (Model.Following.Any())
