@@ -48,7 +48,7 @@ namespace XintegrationTests
 
             var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorId("10", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
-            Assert.Single(helgeCheeps); 
+            Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("11", c.AuthorId));
 
             Assert.Single(adrianCheeps);
@@ -178,7 +178,7 @@ namespace XintegrationTests
             _authorRepository = _testServices._authorRepository;
             _authorService = _testServices._authorService;
 
-            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" }); 
+            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" });
             Assert.All(cheeps, c =>
                 Assert.Contains(c.Author, new[] { "Helge", "Adrian" })
             );
@@ -300,6 +300,24 @@ namespace XintegrationTests
             _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
             var deletedCheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Empty(deletedCheeps);
+        }
+
+        [Fact]
+        public void testLikeFunctionality()
+        {
+
+        }
+
+        [Fact]
+        public void testDislikeFunctionality()
+        {
+
+        }
+
+        [Fact]
+        public void testDeleteAllLikesFromAuthor()
+        {
+
         }
     }
 }

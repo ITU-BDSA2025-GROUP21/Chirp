@@ -303,5 +303,23 @@ namespace xUnitTests
             var cheepsAfterDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Empty(cheepsAfterDeletion);
         }
+
+        [Fact]
+        public void testLikeFunctionality()
+        {
+
+        }
+
+        [Fact]
+        public void testDislikeFunctionality()
+        {
+
+        }
+
+        [Fact]
+        public void testDeleteAllLikesFromAuthor()
+        {
+
+        }
     }
 }
