@@ -25,6 +25,5 @@ namespace Chirp.Core.Services
 
         void UnfollowAuthor(string authorId, string followeeId);
 
-
     }
 }
