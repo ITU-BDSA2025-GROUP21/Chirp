@@ -17,6 +17,6 @@ namespace Chirp.Core.Repositories
 
         public Cheep GetById(int id);
 
-        public void deleteAllLikesFromAuthorAsync(string authorId);
+        Task deleteAllLikesFromAuthorAsync(string authorId);
     }
 }

@@ -307,7 +307,34 @@ namespace xUnitTests
         [Fact]
         public void testLikeFunctionality()
         {
+            Author author = new Author()
+            {
+                Name = "Like Tester",
+                Email = "like@test.com"
+            };
 
+            var cheep = new Cheep()
+                {
+                Author = author,
+                Text = "This cheep is for like testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            //see that there are no likes initially
+
+            Assert.Equal(0, cheepFromDb.Likes.Count());
+
+            _cheepRepository.Like(cheepFromDb.CheepId, author.Id, true);
+            cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Likes.Count());
         }
 
         [Fact]
