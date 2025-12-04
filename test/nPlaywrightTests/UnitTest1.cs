@@ -1,51 +1,62 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 
 namespace nPlaywrightTests;
 
+[Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class Tests
+public class Tests : PageTest
 {
     private TestChirpWebFactory _factory = null!;
+    private string _baseUrl = null!;
 
     [OneTimeSetUp]
-    public void SetupFactory()
+    public async Task SetupFactory()
     {
         _factory = new TestChirpWebFactory();
-        _factory.CreateDefaultClient();
+        await _factory.StartAsync();
+        _baseUrl = _factory.BaseAddress;
     }
 
     [Test]
     public async Task ChirpWebsiteExists()
     {
-        using var playwright = await Playwright.CreateAsync();
-        
-        var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        var response = await Page.GotoAsync(_baseUrl);
+
+        TestContext.Out.WriteLine($"Navigated to {response?.Url} with status {response?.Status}");
+        if (response is { Status: not 200 })
         {
-            Headless = true
-        });
+            TestContext.Out.WriteLine(await response.TextAsync());
+        }
 
-        var context = await browser.NewContextAsync();
-        var page = await context.NewPageAsync();
+        Assert.That(response, Is.Not.Null, "No response returned from the web app.");
+        Assert.That(response!.Status, Is.EqualTo(200), $"Home page returned status {response.Status}.");
 
-        string url = "http://localhost:" + _factory.Server.BaseAddress.Port.ToString() + "/";
+        var title = await Page.TitleAsync();
+        Assert.That(title, Is.EqualTo("Chirp!"));
+    }
 
-        await page.GotoAsync(url);
-
-        var title = await page.TitleAsync();
-
-        Assert.Equals("Chirp!", title);
-
-
+    [Test]
+    public async Task MyTest()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Register as a new user" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync("noah");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@outlook.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Hej1234!");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Hej1234!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "My information" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Name: noah." })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Email: noah@outlook.dk" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Total Cheeps sent:" })).ToBeVisibleAsync();
     }
 
     [OneTimeTearDown]
-    public void TearDownFactory()
+    public async Task TearDownFactory()
     {
-        _factory.Dispose();
+        await _factory.DisposeAsync();
     }
-
 }
