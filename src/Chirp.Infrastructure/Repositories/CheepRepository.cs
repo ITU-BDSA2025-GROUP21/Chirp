@@ -121,5 +121,12 @@ namespace Chirp.Razor.Repositories
             }
             _context.SaveChanges();
         }
+
+        public async Task deleteAllLikesFromAuthorAsync(string authorId)
+        {
+            await _context.Likes
+            .Where(l => l.authorId == authorId)
+            .ExecuteDeleteAsync();
+        }
     }
 }

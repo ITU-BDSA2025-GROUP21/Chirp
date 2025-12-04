@@ -15,5 +15,7 @@ namespace Chirp.Core.Services
         public CheepDTO? GetById(int cheepId);
 
         public void Like(int cheepId, string authorId, bool like);
+
+        public void deleteAllLikesFromAuthor(string authorId);
     }
 }
