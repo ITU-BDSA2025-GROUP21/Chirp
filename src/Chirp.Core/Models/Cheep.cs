@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Chirp.Core.Models
@@ -14,8 +15,8 @@ namespace Chirp.Core.Models
         
         [Required]
         [StringLength(160)]
-        public string Text { get; set; } = null!;
-        
-        public DateTime TimeStamp { get; set; }
+        [PersonalData] public string Text { get; set; } = null!;
+
+        [PersonalData] public DateTime TimeStamp { get; set; }
     }
 }
