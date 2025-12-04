@@ -79,43 +79,14 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public void Like(Cheep cheep, string authorID)
+        public void Like(Cheep cheep, string authorID, bool like)
         {
-            //remove from disliked if present
-            if (cheep.DislikedBy.Contains(authorID))
-            {
-                cheep.DislikedBy.Remove(authorID);
-            }
-            //add to liked
-            cheep.LikedBy.Add(authorID);
+            //do logic here
         }
 
-        public void Dislike(Cheep cheep, string authorID)
-        {
-            //remove from disliked if present
-            if (cheep.LikedBy.Contains(authorID))
-            {
-                cheep.LikedBy.Remove(authorID);
-            }
-            //add to disliked
-            cheep.DislikedBy.Add(authorID);
-
-        }
-        //Possible to remove yourself from liked
         public void unLike(Cheep cheep, string authorID)
         {
-            if (cheep.LikedBy.Contains(authorID))
-            {
-                cheep.LikedBy.Remove(authorID);
-            }
-        }
-        //possible to remove yourself from dislike
-        public void unDislike(Cheep cheep, string authorID)
-        {
-            if (cheep.DislikedBy.Contains(authorID))
-            {
-                cheep.DislikedBy.Remove(authorID);
-            }
+            
         }
     }
 }

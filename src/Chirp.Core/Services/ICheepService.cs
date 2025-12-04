@@ -12,10 +12,8 @@ namespace Chirp.Core.Services
         Task DeleteAllCheepsAsync(string authorId);
         public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authorIds, int page = 1);
 
-        public void Like(int cheepId, string authorId);
-        public void Dislike(int cheepId, string authorId);
+        public void Like(int cheepId, string authorId, bool like);
         public void unLike(int cheepId, string authorId);
-        public void unDislike(int cheepId, string authorId);
     }
 
 }
