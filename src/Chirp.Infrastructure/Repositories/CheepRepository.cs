@@ -26,13 +26,13 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByAuthorEmail(string authorEmail, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthorId(string authorId, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => c.Author.Email == authorEmail)
+                .Where(c => c.AuthorId == authorId)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
@@ -45,13 +45,13 @@ namespace Chirp.Razor.Repositories
                 .Where(c => c.AuthorId == id)
                 .ExecuteDeleteAsync();
         }
-        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authors, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => authors.Contains(c.Author.Name))
+                .Where(c => authorIds.Contains(c.AuthorId))
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)

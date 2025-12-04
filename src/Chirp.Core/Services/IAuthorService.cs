@@ -10,21 +10,20 @@ namespace Chirp.Core.Services
 {
     public interface IAuthorService
     {
-
-        AuthorDTO? FindAuthorByEmail(string email);
-        AuthorDTO? FindAuthorByName(string name);
-        AuthorDTO? GetCurrentIdentityAuthor(ClaimsPrincipal user);
-
-        bool SignIn(ClaimsPrincipal user);
+        AuthorDTO? FindAuthorById(string name);
 
         Task DeleteAuthorByIdAsync(string authorId);
-        Task SignOutAsync();
+        IEnumerable<AuthorDTO> GetFollowers(string authorId);
 
-        IEnumerable<AuthorDTO> GetFollowers(string name);
-        IEnumerable<AuthorDTO> GetFollowing(string name);
+        IEnumerable<AuthorDTO> GetFollowing(string authorId);
+        void RemoveAllFollowers(string authorId);
 
-        bool IsFollowing(string followerName, string followeeName);
-        void FollowAuthor(string followerName, string followeeName);
-        void UnfollowAuthor(string followerName, string followeeName);
+
+        bool IsFollowing(string authorId, string followeeId);
+
+        void FollowAuthor(string authorId, string followeeId);
+
+        void UnfollowAuthor(string authorId, string followeeId);
+
     }
 }

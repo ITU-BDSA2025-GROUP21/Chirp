@@ -1,4 +1,16 @@
-﻿@inject Chirp.Core.Services.IAuthorService authorService
+﻿@inject Chirp.Core.Services.IIdentityUserService identityUserService
+
+
+@{
+    var isSignedIn = identityUserService.IsSignedIn(User);
+
+    Chirp.Core.DTO.AuthorDTO? currentAuthor = null;
+
+    if (isSignedIn)
+    {
+        currentAuthor = await identityUserService.GetCurrentIdentityAuthor(User);
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,13 +23,13 @@
 <div class=page>
     <h1><img src="/images/Icon1.png" alt="Icon1"/>Chirp!</h1>
         <div class=navigation>
-            @if (authorService.SignIn(User))
+            @if (isSignedIn)
             {
                 <div>
-                    <a href="/@(authorService.GetCurrentIdentityAuthor(User).Email)">my timeline</a> |
+                    <a href="/@(currentAuthor.Id)">my timeline</a> |
                     <a href="/">public timeline</a> |
                     <a href="/information">My information</a> |
-                    <a id="logout" asp-area="Identity" asp-page="/Account/Logout">logout [@(authorService.GetCurrentIdentityAuthor(User).Name)]</a>
+                    <a id="logout" asp-area="Identity" asp-page="/Account/Logout">logout [@(currentAuthor.Name)]</a>
                 </div>
             }
             else

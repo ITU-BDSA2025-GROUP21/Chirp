@@ -38,37 +38,37 @@ namespace XintegrationTests
         [Fact]
         public void GetCheepsFromAuthor_FilteringWorks()
         {
-            var helgeCheeps = _cheepService.GetCheepsFromAuthorEmail("ropf@itu.dk");
+            var helgeCheeps = _cheepService.GetCheepsFromAuthorId("11"); //Change from email
 
-            var adrianCheeps = _cheepService.GetCheepsFromAuthorEmail("adho@itu.dk");
+            var adrianCheeps = _cheepService.GetCheepsFromAuthorId("12");
 
-            var nathanCheeps = _cheepService.GetCheepsFromAuthorEmail("Nathan+Sirmon@dtu.dk");
+            var nathanCheeps = _cheepService.GetCheepsFromAuthorId("4");
 
-            var johnnieCheeps = _cheepService.GetCheepsFromAuthorEmail("Johnnie+Calixto@itu.dk");
+            var johnnieCheeps = _cheepService.GetCheepsFromAuthorId("9");
 
-            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorEmail("Jacqualine.Gilcoine@gmail.com", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
+            var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorId("10", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
             Assert.Single(helgeCheeps); 
-            Assert.All(helgeCheeps, c => Assert.Equal("Helge", c.Author));
+            Assert.All(helgeCheeps, c => Assert.Equal("11", c.AuthorId));
 
             Assert.Single(adrianCheeps);
-            Assert.All(adrianCheeps, c => Assert.Equal("Adrian", c.Author));
+            Assert.All(adrianCheeps, c => Assert.Equal("12", c.AuthorId));
 
             Assert.Equal(22, nathanCheeps.Count());
-            Assert.All(nathanCheeps, c => Assert.Equal("Nathan Sirmon", c.Author));
+            Assert.All(nathanCheeps, c => Assert.Equal("4", c.AuthorId));
 
             Assert.Equal(15, johnnieCheeps.Count());
-            Assert.All(johnnieCheeps, c => Assert.Equal("Johnnie Calixto", c.Author));
+            Assert.All(johnnieCheeps, c => Assert.Equal("9", c.AuthorId));
 
             Assert.Equal(7, jacqualineTwelfthPage.Count());
-            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("Jacqualine Gilcoine", c.Author));
+            Assert.All(jacqualineTwelfthPage, c => Assert.Equal("10", c.AuthorId));
         }
 
         [Fact]
         public void GetCheepsFromAuthor_PaginationWorks()
         {
-            var luannaFirstPage = _cheepService.GetCheepsFromAuthorEmail("Luanna-Muro@ku.dk", page: 1); //change to email
-            var luannaSecondPage = _cheepService.GetCheepsFromAuthorEmail("Luanna-Muro@ku.dko", page: 2);
+            var luannaFirstPage = _cheepService.GetCheepsFromAuthorId("2", page: 1);
+            var luannaSecondPage = _cheepService.GetCheepsFromAuthorId("2", page: 2);
             Assert.NotEmpty(luannaFirstPage);
             Assert.Empty(luannaSecondPage);
         }
@@ -103,7 +103,7 @@ namespace XintegrationTests
                 TimeStamp = DateTime.Parse("2023-08-01 14:15:37")
             };
 
-            var testCheep = _testServices._cheepService.GetCheepsFromAuthorEmail("consMail").First();
+            var testCheep = _testServices._cheepService.GetCheepsFromAuthorId("consistency").First();
 
             Assert.Equal(testCheep.Author, controlCheep.Author.Name);
             Assert.Equal(testCheep.Message, controlCheep.Text);
@@ -164,10 +164,10 @@ namespace XintegrationTests
             dbContext.Cheeps.Add(Chirp);
             dbContext.SaveChanges();
 
-            var cheeps = _cheepService.GetCheepsFromAuthorEmail(author.Email);
+            var cheeps = _cheepService.GetCheepsFromAuthorId("1234567789");
 
             Assert.Single(cheeps); //is empty somehow
-            Assert.Equal(author.Name, cheeps.First().Author);
+            Assert.Equal(author.Id, cheeps.First().AuthorId);
             Assert.Equal(Chirp.Text, cheeps.First().Message);
         }
 
@@ -185,29 +185,16 @@ namespace XintegrationTests
         }
 
         [Fact]
-        public void testAuthorServiceFindByName()
+        public void testAuthorServiceFindById()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
             _authorService = _testServices._authorService;
 
-            var Author = _authorService.FindAuthorByName("Helge");
-            var AName = Author?.Name;
+            var Author = _authorService.FindAuthorById("10");
+            var Aid = Author?.Id;
             Assert.NotNull(Author);
-            Assert.Equal(AName, "Helge");
-        }
-
-        [Fact]
-        public void testAuthorServiceFindByEmail()
-        {
-            var dbContext = _testServices.ctx;
-            _authorRepository = _testServices._authorRepository;
-            _authorService = _testServices._authorService;
-
-            var Author = _authorService.FindAuthorByEmail("ropf@itu.dk");
-            var AEmail = Author?.Email;
-            Assert.NotNull(Author);
-            Assert.Equal(AEmail, "ropf@itu.dk");
+            Assert.Equal(Aid, "10");
         }
 
         [Fact]
@@ -216,20 +203,20 @@ namespace XintegrationTests
             var dbContext = _testServices.ctx;
             _authorService = _testServices._authorService;
 
-            var helgeDTO = _authorService.FindAuthorByName("Helge");
-            var adrianDTO = _authorService.FindAuthorByName("Adrian");
+            var helgeDTO = _authorService.FindAuthorById("11");
+            var adrianDTO = _authorService.FindAuthorById("12");
 
             // make sure both authors exists
             Assert.NotNull(helgeDTO);
             Assert.NotNull(adrianDTO);
 
-            Assert.DoesNotContain(helgeDTO, _authorService.GetFollowers("Adrian"));
-            Assert.DoesNotContain(adrianDTO, _authorService.GetFollowing("Helge"));
+            Assert.DoesNotContain(helgeDTO, _authorService.GetFollowers("12"));
+            Assert.DoesNotContain(adrianDTO, _authorService.GetFollowing("11"));
 
-            _authorService.FollowAuthor("Helge", "Adrian");
+            _authorService.FollowAuthor("11", "12");
 
-            Assert.Contains(helgeDTO, _authorService.GetFollowers("Adrian"));
-            Assert.Contains(adrianDTO, _authorService.GetFollowing("Helge"));
+            Assert.Contains(helgeDTO, _authorService.GetFollowers("12"));
+            Assert.Contains(adrianDTO, _authorService.GetFollowing("11"));
         }
 
         [Fact]
@@ -238,22 +225,22 @@ namespace XintegrationTests
             var dbContext = _testServices.ctx;
             _authorService = _testServices._authorService;
 
-            var helgeDTO = _authorService.FindAuthorByName("Helge");
-            var adrianDTO = _authorService.FindAuthorByName("Adrian");
+            var helgeDTO = _authorService.FindAuthorById("11");
+            var adrianDTO = _authorService.FindAuthorById("12");
 
             // make sure both authors exists
             Assert.NotNull(helgeDTO);
             Assert.NotNull(adrianDTO);
 
-            _authorService.FollowAuthor("Helge", "Adrian");
+            _authorService.FollowAuthor("11", "12");
 
             // Follow was not added
-            Assert.True(_authorService.IsFollowing("Helge", "Adrian"));
+            Assert.True(_authorService.IsFollowing("11", "12"));
 
-            _authorService.UnfollowAuthor("Helge", "Adrian");
+            _authorService.UnfollowAuthor("11", "12");
 
             // Follow did not get removed.
-            Assert.False(_authorService.IsFollowing("Helge", "Adrian"));
+            Assert.False(_authorService.IsFollowing("11", "12"));
         }
 
         [Fact]
@@ -272,12 +259,12 @@ namespace XintegrationTests
             dbContext.SaveChanges();
 
             //see that author exists
-            var authorDTO = _authorService.FindAuthorByName("Delete Test");
+            var authorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.NotNull(authorDTO);
 
             //delete author and see that it is deleted
             _authorService.DeleteAuthorByIdAsync("DeleteID").Wait();
-            var deletedAuthorDTO = _authorService.FindAuthorByName("Delete Test");
+            var deletedAuthorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.Null(deletedAuthorDTO);
         }
 
@@ -306,12 +293,12 @@ namespace XintegrationTests
             dbContext.SaveChanges();
 
             //see that cheep exists
-            var cheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            var cheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Single(cheeps);
 
             //delete cheeps and see that they are deleted
             _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
-            var deletedCheeps = _cheepService.GetCheepsFromAuthorEmail("cheepDelMail");
+            var deletedCheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Empty(deletedCheeps);
         }
     }

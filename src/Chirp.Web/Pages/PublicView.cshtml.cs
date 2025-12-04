@@ -16,50 +16,42 @@ public class PublicView : PageModel
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
-    
-    public string? CurrentAuthorName { get; set; }
+    public string AuthorName { get; set; } = string.Empty;
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
+    private readonly IIdentityUserService _identityService;
 
-    public PublicView(ICheepService cheepService, IAuthorService authorService)
+    public PublicView(ICheepService cheepService, IAuthorService authorService, IIdentityUserService identityService)
     {
         _cheepService = cheepService;
         _authorService = authorService;
+        _identityService = identityService;
     }
 
-    public ActionResult OnGet([FromQuery] int page = 1) //Pagination via query string
+    public async Task<ActionResult> OnGet([FromQuery] int page = 1) //Pagination via query string
     {
         if (page < 1) page = 1; //Sikrer at page ikke er mindre end 1
 
         CurrentPage = page;
         Cheeps = _cheepService.GetCheeps(page);
-        
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.Identity.Name != null)
-        {
-            var email = User.Identity.Name;
-            var author = _authorService.FindAuthorByEmail(email);
 
-            if (author != null)
-            {
-                CurrentAuthorName = author?.Name; 
-                Following = _authorService.GetFollowing(email) ?? new List<AuthorDTO>();
-            }
-            else
-            {
-                Following = new List<AuthorDTO>();
-            }
+        if (_identityService.IsSignedIn(User))
+        {
+            AuthorDTO authorDTO = await _identityService.GetCurrentIdentityAuthor(User);
+            Following = _authorService.GetFollowing(authorDTO.Id);
+            AuthorName = authorDTO.Name;
         }
 
 
         return Page();
     }
     
-    public IActionResult OnPost([FromQuery] int page = 1)
+    public async Task<IActionResult> OnPost([FromQuery] int page = 1)
     {
         if (page < 1) page = 1;
 
-        AuthorDTO? author = _authorService.GetCurrentIdentityAuthor(User);
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User);
 
         if(author == null)
         {
@@ -78,32 +70,33 @@ public class PublicView : PageModel
         return Page();
     }
 
-    public ActionResult OnPostToggleFollow(string followee)
+    public async Task<ActionResult> OnPostToggleFollow(string followeeId)
     {
         // grab my current user.
-
-        if (User.Identity == null|| followee == null || !User.Identity.IsAuthenticated)
+        if (!_identityService.IsSignedIn(User))
         {
             // throw some error idk.
             return RedirectToPage();
         }
 
-        var currentUser = _authorService.FindAuthorByEmail(User.Identity.Name);
+        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User); 
 
-        if (!_authorService.IsFollowing(currentUser.Name, followee))
+        if (!_authorService.IsFollowing(author.Id, followeeId))
         {
-            _authorService.FollowAuthor(currentUser.Name, followee);
+            _authorService.FollowAuthor(author.Id, followeeId);
         } 
         else
         {
-            _authorService.UnfollowAuthor(currentUser.Name, followee);
+            _authorService.UnfollowAuthor(author.Id, followeeId);
         }
 
         return RedirectToPage();
     }
 
-    public string GetUserName()
+    public async Task<string> GetUserName()
     {
-        return _authorService.GetCurrentIdentityAuthor(User).Name;
+        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        return author.Name;
     }
 }

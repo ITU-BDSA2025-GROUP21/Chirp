@@ -15,17 +15,10 @@ namespace Chirp.Razor.Repositories
             _context = context;
         }
 
-        public Author? FindAuthorByName(string name)
+        public Author? FindAuthorById(string id)
         {
             return _context.Authors
-                .Where(a => a.Name.ToLower() == name.ToLower())
-                .FirstOrDefault();
-        }
-
-        public Author? FindAuthorByEmail(string email)
-        {
-            return _context.Authors
-                .Where(a => a.Email.ToLower() == email.ToLower())
+                .Where(a => a.Id == id)
                 .FirstOrDefault();
         }
 
