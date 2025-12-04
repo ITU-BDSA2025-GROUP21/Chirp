@@ -97,6 +97,6 @@ public class PublicView : PageModel
     {
         AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
 
-        return author.Name;
+        return author?.Name ?? "Anon";
     }
 }

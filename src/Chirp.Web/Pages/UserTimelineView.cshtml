@@ -3,7 +3,10 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = Model.GetUserName(HttpContext.GetRouteValue("authorId").ToString());
+    var authorIdObj = HttpContext.GetRouteValue("authorId");
+    var routeName = authorIdObj != null
+        ? Model.GetUserName(authorIdObj.ToString())
+        : "Unknown";
 }
 
 <div>

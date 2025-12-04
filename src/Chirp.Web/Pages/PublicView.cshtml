@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Chirp.Core.DTO
 @model Chirp.Web.Pages.PublicView
 @{
     ViewData["Title"] = "Chirp!";
@@ -8,7 +9,7 @@
 <div>
     <h2> Public Timeline </h2>
     
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    @if (User?.Identity?.IsAuthenticated == true)
     {
         <div class="cheepbox">
             <h3>What's on your mind @Model.AuthorName?</h3>
@@ -25,9 +26,8 @@
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
-                bool IsFollowing = Model.Following.Any(
-                    a => a.Name == cheep.Author
-                );
+                bool IsFollowing = (Model.Following ?? Enumerable.Empty<AuthorDTO>())
+                    .Any(a => a.Name == cheep.Author);
 
                 <li>
                     <p>
@@ -35,7 +35,7 @@
                                 <div style="display:flex;justify-content:start;align-items:center;">
                                 <a href="/@cheep.AuthorId">@cheep.Author</a>
 
-                                @if (User.Identity.IsAuthenticated)
+                                @if (User?.Identity?.IsAuthenticated == true)
                                 {
                                     <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
                                         <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
