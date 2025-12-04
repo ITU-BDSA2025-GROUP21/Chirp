@@ -117,7 +117,7 @@ public class PublicView : PageModel
         return author?.Name ?? "Anon";
     }
 
-    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId)
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string authorId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -128,20 +128,11 @@ public class PublicView : PageModel
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
 
-        if (string.IsNullOrEmpty(Author?.Id))
-        {
-            // Assuming cheepService or cheepRepository can find the author from cheepId
-            var cheep = _cheepService.GetById(cheepId);
-            if (cheep == null)
-                return RedirectToPage(); // fallback
-
-            Author = _authorService.FindAuthorById(cheep.AuthorId);
-        }
-
-        return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView", new { authorId = authorId, page = CurrentPage });
     }
 
-    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -152,16 +143,7 @@ public class PublicView : PageModel
 
         _cheepService.Like(cheepId, currentAuthor.Id, false);
 
-        if (string.IsNullOrEmpty(Author?.Id))
-        {
-            // Assuming cheepService or cheepRepository can find the author from cheepId
-            var cheep = _cheepService.GetById(cheepId);
-            if (cheep == null)
-                return RedirectToPage(); // fallback
-
-            Author = _authorService.FindAuthorById(cheep.AuthorId);
-        }
-
-        return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView", new { authorId = authorId, page = CurrentPage });
     }
 }

@@ -69,7 +69,7 @@ public class CheepService : ICheepService
         Message = c.Text,
         CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm"),
         AuthorId = c.AuthorId,
+        Likes = c.Likes.Count(l => l.likeStatus == 1),
+        Dislikes = c.Likes.Count(l => l.likeStatus == -1),
     };
-
-    
 }

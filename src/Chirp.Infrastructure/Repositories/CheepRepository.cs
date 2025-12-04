@@ -21,6 +21,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
@@ -33,6 +34,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .Where(c => c.AuthorId == authorId)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
@@ -45,6 +47,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .FirstOrDefault(c => c.CheepId == id);
         }
 
@@ -60,6 +63,7 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
+                .Include(c => c.Likes)
                 .Where(c => authorIds.Contains(c.AuthorId))
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
@@ -85,11 +89,9 @@ namespace Chirp.Razor.Repositories
             var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
             if (!cheepExists) return; // or throw a meaningful exception
 
-            // Check if the Author exists
             var authorExists = _context.Authors.Any(a => a.Id == authorID);
             if (!authorExists) return; // or throw a meaningful exception
 
-            // Try to find an existing Like
             var existing = _context.Likes
                 .FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorID);
 
@@ -106,7 +108,7 @@ namespace Chirp.Razor.Repositories
             {
                 existing.likeStatus = like ? 1 : -1;
             }
-
+            
             _context.SaveChanges();
         }
         
