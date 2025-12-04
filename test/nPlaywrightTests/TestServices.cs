@@ -5,13 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Playwright;
-
-using Chirp.Web;
 
 namespace nPlaywrightTests
 {
-    public class TestChirpWebFactory : WebApplicationFactory<Program>
+    public class TestChirpWebFactory : WebApplicationFactory<global::Program>
     {
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
