@@ -27,16 +27,16 @@ namespace Chirp.Core.Data
                 .HasKey(uf => new { uf.FollowerId, uf.FolloweeId });
 
             modelBuilder.Entity<Likes>()
-                .HasOne<Author>()
-                .WithMany()
-                .HasForeignKey(l => l.authorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Likes>()
                 .HasOne<Cheep>()
                 .WithMany()
                 .HasForeignKey(l => l.CheepId)
                 .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Likes>()
+                .HasOne<Author>()
+                .WithMany()
+                .HasForeignKey(l => l.authorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<UserFollow>()

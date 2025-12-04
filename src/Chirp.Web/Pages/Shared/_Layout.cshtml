@@ -2,8 +2,7 @@
 
 
 @{
-    var isSignedIn = identityUserService.IsSignedIn(User);
-
+    var isSignedIn = User?.Identity?.IsAuthenticated == true;
     Chirp.Core.DTO.AuthorDTO? currentAuthor = null;
 
     if (isSignedIn)
