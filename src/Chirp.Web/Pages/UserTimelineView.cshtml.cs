@@ -93,9 +93,10 @@ public class UserTimelineView : PageModel
         return RedirectToPage(new { authorId = Author.Id, page = CurrentPage });
     }
 
+    /*
     public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId)
     {
         _cheepService.Like(cheepId, (await _identityService.GetCurrentIdentityAuthor(User)).Id, false);
         return RedirectToPage();
-    }
+    }*/
 }
