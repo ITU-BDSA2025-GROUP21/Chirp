@@ -87,8 +87,6 @@ namespace Chirp.Razor.Repositories
 
         public void Like(int cheepId, string authorID, bool like)
         {
-            Console.WriteLine("like repo start, author is " + authorID + " liking? " + cheepId);
-
             var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
             if (!cheepExists) return;
 

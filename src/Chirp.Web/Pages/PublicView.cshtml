@@ -49,27 +49,25 @@
                             }
                         </div>
                         <span class="cheep-message">@cheep.Message</span>
-                        <small>&mdash; @cheep.CreatedDate</small>
-                        <div style="margin-left: 20px;">
+                        <small>&mdash; @cheep.CreatedDate</small>                       
+                        <div class="like-container">
+                            <form method="post" asp-page-handler="CheepLike">
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
+                                <input type="hidden" name="authorId" value="@cheep.AuthorId" />
+                                <button type="submit" class="like-button">
+                                    <img src="~/images/ThumpsUp.png" alt="Like" class="icon" />
+                                    (@cheep.Likes)
+                                </button>
+                            </form>
 
-                            <div style="margin-left: 20px;">
-
-                                <div style="margin-left: 20px;">
-                                    <form method="post" asp-page-handler="CheepLike" style="display:inline;">
-                                        <input type="hidden" name="cheepId" value="@cheep.cheepId" />
-                                        <input type="hidden" name="authorId" value="@cheep.AuthorId" />
-                                        <button type="submit">👍 Like (@cheep.Likes)</button>
-                                    </form>
-
-                                    <form method="post" asp-page-handler="CheepDislike" style="display:inline; margin-left:10px;">
-                                        <input type="hidden" name="cheepId" value="@cheep.cheepId" />
-                                        <input type="hidden" name="authorId" value="@cheep.AuthorId" />
-                                        <button type="submit">👎 Dislike (@cheep.Dislikes)</button>
-                                    </form>
-                                </div>
-
-                            </div>
-
+                            <form method="post" asp-page-handler="CheepDislike">
+                                <input type="hidden" name="cheepId" value="@cheep.cheepId" />
+                                <input type="hidden" name="authorId" value="@cheep.AuthorId" />
+                                <button type="submit" class="dislike-button">
+                                    <img src="~/images/ThumpsDown.png" alt="Dislike" class="icon" />
+                                    (@cheep.Dislikes)
+                                </button>
+                            </form>
                         </div>
                     </p>
                 </li>
