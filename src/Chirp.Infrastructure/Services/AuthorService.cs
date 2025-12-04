@@ -32,7 +32,6 @@ namespace Chirp.Infrastructure.Services
             foreach (var author in following)
             {
                 _repo.UnfollowAuthor(userAuthor, author);
-
             }
         }
 
