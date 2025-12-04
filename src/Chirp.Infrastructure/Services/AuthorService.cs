@@ -48,7 +48,7 @@ namespace Chirp.Infrastructure.Services
             {
                 Id = author.Id,
                 Name = author.Name,
-                Email = author.Email,
+                Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
         }
@@ -65,18 +65,18 @@ namespace Chirp.Infrastructure.Services
             return CreateAuthorDTO(author);
         }
 
-        public IEnumerable<AuthorDTO> GetFollowers(string authorId)
+        public IEnumerable<AuthorDTO?> GetFollowers(string authorId)
         {
-            Author author = _repo.FindAuthorById(authorId);
+            Author? author = _repo.FindAuthorById(authorId);
 
             if (author == null) return Enumerable.Empty<AuthorDTO>();
 
             return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
-        public IEnumerable<AuthorDTO> GetFollowing(string authorId)
+        public IEnumerable<AuthorDTO?> GetFollowing(string authorId)
         {
-            Author author = _repo.FindAuthorById(authorId);
+            Author? author = _repo.FindAuthorById(authorId);
 
             if (author == null) return Enumerable.Empty<AuthorDTO>();
 

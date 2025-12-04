@@ -3,10 +3,16 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
+    var route = HttpContext.GetRouteValue("authorId");
+    var routeId = string.Empty;
+    if (route != null)
+    {
+        routeId = route.ToString();
+    }
 }
 
 <div>
-    <h2> @Model.Author.Name's Timeline </h2>
+    <h2> @(Model.Author == null ? "Empty" : Model.Author.Name)'s Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -14,25 +20,29 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 bool IsFollowing = Model.Following.Any(
-                    a => a.Id == cheep.AuthorId
-                );
-                    
+                a => { 
+                    if(a == null)
+                    {
+                        return false;
+                    }
+
+
+                    return a.Id == cheep.AuthorId; 
+                });
+
                 <li>
                     <p>
-                        <strong>
-                                <div style="display:flex;justify-content:start;align-items:center;">
-                                <a href="/@cheep.AuthorId">@cheep.Author</a>
+                        <div style="display:flex;justify-content:start;align-items:center;">
+                            <a href="/@cheep.AuthorId">@cheep.Author</a>
 
-                        @if (User.Identity.IsAuthenticated)
-                        {   
-                                        <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
-                                            <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
-                                        </form>
-                        }
-                            </div>
-
-                        </strong>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && (Model.IdentityAuthor == null || cheep.AuthorId != Model.IdentityAuthor.Id))
+                            {
+                                <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
+                                    <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
+                                    <button class="small-button" type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
+                                </form>
+                            }
+                        </div>
                         <span class="cheep-message">@cheep.Message</span>
                         <small>&mdash; @cheep.CreatedDate</small>
                     </p>
@@ -44,16 +54,16 @@
     {
         <em>There are no cheeps so far.</em>
     }
-    
+
     <div class="pagination">
         @if (Model.CurrentPage > 1)
         {
-            <a href="/@Model.Author?page=@(Model.CurrentPage - 1)">Previous</a>
+            <a href="/@routeId?page=@(Model.CurrentPage - 1)">Previous</a>
         }
-        
+
         @if (Model.Cheeps.Count() == 32)
         {
-            <a href="/@Model.Author?page=@(Model.CurrentPage + 1)">Next</a>
+            <a href="/@routeId?page=@(Model.CurrentPage + 1)">Next</a>
         }
     </div>
 </div>
