@@ -108,16 +108,20 @@ namespace Chirp.Razor.Repositories
             }
             else
             {
-                existing.likeStatus = like ? 1 : -1;
+                if (like && existing.likeStatus == 1)
+                {
+                    _context.Likes.Remove(existing);
+                }
+                else if (!like && existing.likeStatus == -1)
+                {
+                    _context.Likes.Remove(existing);
+                }
+                else
+                {
+                    existing.likeStatus = like ? 1 : -1;
+                }
             }
-
             _context.SaveChanges();
-        }
-        
-
-        public void unLike(int cheepId, string authorID)
-        {
-            
         }
     }
 }

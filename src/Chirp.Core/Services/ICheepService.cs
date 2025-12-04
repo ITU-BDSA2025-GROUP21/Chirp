@@ -15,7 +15,5 @@ namespace Chirp.Core.Services
         public CheepDTO? GetById(int cheepId);
 
         public void Like(int cheepId, string authorId, bool like);
-        public void unLike(int cheepId, string authorId);
     }
-
 }

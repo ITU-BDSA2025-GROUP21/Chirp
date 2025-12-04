@@ -49,14 +49,6 @@ public class CheepService : ICheepService
             );
     }
 
-    public void unLike(int cheepId, string authorId)
-    {
-        _cheepRepository.unLike(
-            cheepId,
-            authorId
-            );
-    }
-
     public CheepDTO? GetById(int cheepId)
     {
         return _cheepRepository.GetById(cheepId) is Cheep cheep ? createCheepDTO(cheep) : null;

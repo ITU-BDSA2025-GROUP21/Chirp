@@ -14,8 +14,6 @@ namespace Chirp.Core.Repositories
         IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32);
 
         public void Like(int cheepId,  string authorID, bool like);
-        public void unLike(int cheepId, string authorID);
-
 
         public Cheep GetById(int id);
     }
