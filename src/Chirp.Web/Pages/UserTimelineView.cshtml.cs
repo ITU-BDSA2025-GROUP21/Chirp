@@ -12,9 +12,10 @@ public class UserTimelineView : PageModel
     private readonly IAuthorService _authorService;
     private readonly IIdentityUserService _identityService;
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
+    public IEnumerable<AuthorDTO?> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; } //Tracker til pagination
     public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
+    public AuthorDTO? IdentityAuthor { get; set; } = null;
     public UserTimelineView(ICheepService cheepService, IAuthorService authorService, IIdentityUserService identityService)
     {
         _cheepService = cheepService;
@@ -22,10 +23,15 @@ public class UserTimelineView : PageModel
         _identityService = identityService;
     }
 
-    public ActionResult OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
+    public async Task<ActionResult> OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
     {
 
         Author = _authorService.FindAuthorById(authorId);
+
+        if(_identityService.IsSignedIn(User))
+        {
+            IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        }
 
         if (Author == null)
         {
@@ -38,7 +44,15 @@ public class UserTimelineView : PageModel
         if (_identityService.IsSignedIn(User) && authorId == Author.Id)
         {
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
-                Following.Select(a => a.Id)
+                Following.Select(a =>
+                {
+                    
+                    if(a != null) {
+                        return a.Id;
+                    }
+
+                    return string.Empty;
+                })
                 .Append(authorId)
                 .ToList(), page);
         }
@@ -61,6 +75,11 @@ public class UserTimelineView : PageModel
         }
 
         var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+
+        if(userAuthor == null)
+        {
+            return RedirectToPage();
+        }
 
         if (!_authorService.IsFollowing(userAuthor.Id, followeeId))
         {

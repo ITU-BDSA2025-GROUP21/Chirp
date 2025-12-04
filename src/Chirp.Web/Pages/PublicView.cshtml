@@ -11,7 +11,7 @@
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div class="cheepbox">
-            <h3>What's on your mind @(Model.Author.Name)?</h3>
+            <h3>What's on your mind @(Model.IdentityAuthor == null ? "EmptyName" : Model.IdentityAuthor.Name)?</h3>
             <form method="post" asp-controller="Public" asp-action="Index">
                 <input style="float: left" type="text" asp-for="Text" minlength="0" maxlength="160" required/>
                 <input type="submit" value="Share"/>
@@ -25,18 +25,25 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 bool IsFollowing = Model.Following.Any(
-                a => a.Name == cheep.Author
-                );
+                a =>
+                {
+                    if (a == null)
+                    {
+                        return false;
+                    }
+
+                    return a.Id == cheep.AuthorId;
+                });
 
                 <li>
                     <p>
                         <div style="display:flex;justify-content:start;align-items:center;">
                             <a href="/@cheep.AuthorId">@cheep.Author</a>
-                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && (Model.IdentityAuthor == null || cheep.AuthorId != Model.IdentityAuthor.Id))
                             {
                                 <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
                                     <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
-                                    <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
+                                    <button class="small-button" type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
                                 </form>
                             }
                         </div>

@@ -12,8 +12,8 @@ namespace Chirp.Core.Services
     {
         AuthorDTO? FindAuthorById(string name);
         Task DeleteAuthorByIdAsync(string authorId);
-        IEnumerable<AuthorDTO> GetFollowers(string authorId);
-        IEnumerable<AuthorDTO> GetFollowing(string authorId);
+        IEnumerable<AuthorDTO?> GetFollowers(string authorId);
+        IEnumerable<AuthorDTO?> GetFollowing(string authorId);
         void RemoveAllFollowers(string authorId);
 
 

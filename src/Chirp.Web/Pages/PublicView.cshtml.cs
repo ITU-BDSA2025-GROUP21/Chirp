@@ -14,9 +14,9 @@ public class PublicView : PageModel
     public string? Text { get; set; }
     
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
+    public IEnumerable<AuthorDTO?> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
-    public AuthorDTO Author { get; set; }
+    public AuthorDTO? IdentityAuthor { get; set; }
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
@@ -38,8 +38,14 @@ public class PublicView : PageModel
 
         if (_identityService.IsSignedIn(User))
         {
-            Author = await _identityService.GetCurrentIdentityAuthor(User);
-            Following = _authorService.GetFollowing(Author.Id);
+            IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+
+            if(IdentityAuthor == null)
+            {
+                return Page();
+            }
+
+            Following = _authorService.GetFollowing(IdentityAuthor.Id);
         }
 
 
@@ -57,7 +63,7 @@ public class PublicView : PageModel
             return Page();
         }
 
-        Author = author;
+        IdentityAuthor = author;
         Following = _authorService.GetFollowing(author.Id);
 
         if (!string.IsNullOrWhiteSpace(Text))
@@ -81,7 +87,13 @@ public class PublicView : PageModel
             return RedirectToPage();
         }
 
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User); 
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User); 
+
+
+        if(author == null)
+        {
+            return RedirectToPage();
+        }
 
         if (!_authorService.IsFollowing(author.Id, followeeId))
         {
@@ -97,7 +109,11 @@ public class PublicView : PageModel
 
     public async Task<string> GetUserName()
     {
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User);
+
+
+        if (author == null)
+            return string.Empty;
 
         return author.Name;
     }
