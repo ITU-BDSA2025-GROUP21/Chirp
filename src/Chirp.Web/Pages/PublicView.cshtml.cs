@@ -129,7 +129,7 @@ public class PublicView : PageModel
         _cheepService.Like(cheepId, currentAuthor.Id, true);
 
         // Redirect back to the same author’s page
-        return RedirectToPage("/PublicView", new { authorId = authorId, page = CurrentPage });
+        return RedirectToPage("/PublicView");
     }
 
     public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
@@ -144,6 +144,6 @@ public class PublicView : PageModel
         _cheepService.Like(cheepId, currentAuthor.Id, false);
 
         // Redirect back to the same author’s page
-        return RedirectToPage("/PublicView", new { authorId = authorId, page = CurrentPage });
+        return RedirectToPage("/PublicView");
     }
 }

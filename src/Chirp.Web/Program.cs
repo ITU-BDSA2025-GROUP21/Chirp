@@ -19,8 +19,13 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
+
 builder.Services.AddDbContext<ChirpDBContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection"))
+           .EnableSensitiveDataLogging(false);
+});
 
 builder.Services.AddDefaultIdentity<Author>(
     options => {
