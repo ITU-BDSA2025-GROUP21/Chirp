@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using System.Linq.Expressions;
+using NuGet.Protocol.Core.Types;
 
 public class CheepService : ICheepService
 {
@@ -17,22 +18,26 @@ public class CheepService : ICheepService
 
     public IEnumerable<CheepDTO> GetCheeps(int page = 1) 
     {
-        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetAll(page, PageSize).Select(createCheepDTO).ToList();
     }
 
-    public IEnumerable<CheepDTO> GetCheepsFromAuthor(string author, int page = 1)
+    public IEnumerable<CheepDTO> GetCheepsFromAuthorId(string authorId, int page = 1)
     {   
-        return _cheepRepository.GetByAuthor(author, page, PageSize).Select(createCheepDTO);
+        return _cheepRepository.GetByAuthorId(authorId, page, PageSize).Select(createCheepDTO);
+    }
+    public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authorIds, int page = 1)
+    {
+        return _cheepRepository.GetByMultipleAuthors(authorIds, page, PageSize).Select(createCheepDTO);
     }
 
-    public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authors, int page = 1)
+    public void AddCheep(string text, string authorId)
     {
-        return _cheepRepository.GetByMultipleAuthors(authors, page, PageSize).Select(createCheepDTO);
+        _cheepRepository.AddCheep(text, authorId);
     }
 
-    public void AddCheeps(string text, Author author)
+    public Task DeleteAllCheepsAsync(string id)
     {
-        _cheepRepository.AddCheep(text, author);
+        return _cheepRepository.DeleteAllCheepsAsync(id);
     }
 
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
@@ -40,6 +45,7 @@ public class CheepService : ICheepService
     {
         Author = c.Author.Name,
         Message = c.Text,
-        CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+        CreatedDate = c.TimeStamp.ToString("dd/MM/yyyy HH:mm"),
+        AuthorId = c.AuthorId,
     };
 }

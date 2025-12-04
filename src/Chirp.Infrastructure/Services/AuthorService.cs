@@ -1,7 +1,11 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Reflection.Metadata;
+using System.Security.Claims;
 using System.Linq;
 
 namespace Chirp.Infrastructure.Services
@@ -9,63 +13,80 @@ namespace Chirp.Infrastructure.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _repo;
-
         public AuthorService(IAuthorRepository repo) {
             _repo = repo;
         }
 
-        public AuthorDTO? FindAuthorByName(string name)
+        public void RemoveAllFollowers(string authorId)
         {
-            var author = _repo.FindAuthorByName(name);
+
+            var userAuthor = _repo.FindAuthorById(authorId);
+
+            if(userAuthor == null)
+            {
+                return;
+            }
+
+            IEnumerable<Author> following = _repo.GetFollowing(userAuthor);
+
+            foreach (var author in following)
+            {
+                _repo.UnfollowAuthor(userAuthor, author);
+            }
+        }
+
+        public async Task DeleteAuthorByIdAsync(string authorId)
+            => await _repo.DeleteAuthorByIdAsync(authorId);
+
+       
+        private AuthorDTO? CreateAuthorDTO(Author author)
+        {
+            if (author == null)
+                return null;
+
+            return new AuthorDTO
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Email = author.Email,
+                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
+            };
+        }
+
+        public AuthorDTO? FindAuthorById(string authorId)
+        {
+            var author = _repo.FindAuthorById(authorId);
 
             if (author == null)
             {
                 return null;
             }
 
-            return createAuthorDTO(author);
+            return CreateAuthorDTO(author);
         }
 
-        public AuthorDTO? FindAuthorByEmail(string email)
+        public IEnumerable<AuthorDTO> GetFollowers(string authorId)
         {
-            var author = _repo.FindAuthorByEmail(email);
+            Author author = _repo.FindAuthorById(authorId);
 
-            if (author == null)
-            {
-                return null;
-            }
+            if (author == null) return Enumerable.Empty<AuthorDTO>();
 
-            return createAuthorDTO(author);
+            return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
-        public IEnumerable<AuthorDTO> GetFollowers(string name)
+        public IEnumerable<AuthorDTO> GetFollowing(string authorId)
         {
-            var author = _repo.FindAuthorByName(name);
+            Author author = _repo.FindAuthorById(authorId);
 
-            if (author == null)
-            {
-                return Enumerable.Empty<AuthorDTO>();
-            }
+            if (author == null) return Enumerable.Empty<AuthorDTO>();
 
-            return _repo.GetFollowers(author).Select(createAuthorDTO).ToList();
-        }
-
-        public IEnumerable<AuthorDTO> GetFollowing(string name)
-        {
-            var author = _repo.FindAuthorByName(name);
-
-            if (author == null)
-            {
-                return Enumerable.Empty<AuthorDTO>();
-            }
-
-            return _repo.GetFollowing(author).Select(createAuthorDTO).ToList();
+            return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
         } 
 
-        public bool IsFollowing(string followerName, string followeeName)
+        public bool IsFollowing(string authorId, string followeeId)
         {
-            var follower = _repo.FindAuthorByName(followerName);
-            var followee = _repo.FindAuthorByName(followeeName);
+            var follower = _repo.FindAuthorById(authorId);
+            var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
             {
@@ -75,10 +96,10 @@ namespace Chirp.Infrastructure.Services
             return _repo.DoesAuthorFollow(follower, followee);
         }
 
-        public void FollowAuthor(string followerName, string followeeName)
+        public void FollowAuthor(string authorId, string followeeId)
         {
-            var follower = _repo.FindAuthorByName(followerName);
-            var followee = _repo.FindAuthorByName(followeeName);
+            var follower = _repo.FindAuthorById(authorId);
+            var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
             {
@@ -88,10 +109,10 @@ namespace Chirp.Infrastructure.Services
             _repo.FollowAuthor(follower, followee);
         }
 
-        public void UnfollowAuthor(string followerName, string followeeName) 
+        public void UnfollowAuthor(string authorId, string followeeId)
         {
-            var follower = _repo.FindAuthorByName(followerName);
-            var followee = _repo.FindAuthorByName(followeeName);
+            var follower = _repo.FindAuthorById(authorId);
+            var followee = _repo.FindAuthorById(followeeId);
 
             if (follower == null || followee == null)
             {
@@ -100,21 +121,6 @@ namespace Chirp.Infrastructure.Services
 
             _repo.UnfollowAuthor(follower, followee);
         }
-
-        private readonly Func<Author, AuthorDTO> createAuthorDTO =
-        author => new AuthorDTO
-        {
-            Name = author.Name,
-            Email = author.Email
-        };
-
-        private readonly Func<UserFollow, UserFollowDTO> createUserFollowDTO =
-        userFollow => new UserFollowDTO
-        {
-            FollowerId = userFollow.FollowerId,
-            FolloweeId = userFollow.FolloweeId,
-            TimeStamp = userFollow.TimeStamp.ToString("dd/MM/yyyy HH:mm")
-        };
     }
 }
 

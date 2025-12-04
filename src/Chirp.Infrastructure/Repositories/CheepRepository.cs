@@ -1,8 +1,7 @@
-﻿using Chirp.Core.Data;
+using Chirp.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Chirp.Core.Repositories;
 using Chirp.Core.Models;
-using Chirp.Core.DTO;
 
 namespace Chirp.Razor.Repositories
 {
@@ -21,54 +20,54 @@ namespace Chirp.Razor.Repositories
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByAuthor(string authorName, int page = 1, int pageSize = 32)
+        public IEnumerable<Cheep> GetByAuthorId(string authorId, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => c.Author.Name == authorName)
+                .Where(c => c.AuthorId == authorId)
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
         }
 
-        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authors, int page = 1, int pageSize = 32)
+        public async Task DeleteAllCheepsAsync(string id)
+        {
+            await _context.Cheeps
+                .Where(c => c.AuthorId == id)
+                .ExecuteDeleteAsync();
+        }
+        public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
-                .Where(c => authors.Contains(c.Author.Name))
+                .Where(c => authorIds.Contains(c.AuthorId))
                 .OrderBy(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
         }
 
-        public void AddCheep(string text, Author author) {
-
+        public void AddCheep(string text, string authorId)
+        {
             Cheep cheep = new Cheep
             {
-                Author = author,
-                TimeStamp = DateTime.Now,
-                Text = text
+                AuthorId = authorId,
+                Text = text,
+                TimeStamp = DateTime.Now
             };
 
-            author.Cheeps.Add(cheep);
             _context.Cheeps.Add(cheep);
-            _context.SaveChanges();
-        }
-
-        public void Save()
-        {
             _context.SaveChanges();
         }
     }

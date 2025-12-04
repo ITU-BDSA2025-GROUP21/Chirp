@@ -1,19 +1,24 @@
+using Chirp.Core.Data;
+using Chirp.Core.Models;
+using Chirp.Core.Repositories;
+using Chirp.Core.Services;
+using Chirp.Infrastructure.Services;
+using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Chirp.Razor.Repositories;
-using Chirp.Core.Services;
-using Chirp.Core.Data;
-using Chirp.Core.Repositories;
-using Chirp.Core.Models;
-using Chirp.Infrastructure.Services;
-using System.Security.Policy;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 public class TestServices : IDisposable
 {
-    private readonly ServiceProvider _provider;
     private readonly SqliteConnection _conn;
     private readonly IServiceScope _scope;
+    private readonly ServiceProvider _provider;
 
     public ChirpDBContext ctx { get; }
     public ICheepRepository _cheepRepository { get; }
@@ -33,6 +38,21 @@ public class TestServices : IDisposable
         services.AddScoped<ICheepRepository, CheepRepository>();
         services.AddScoped<ICheepService, CheepService>();
         services.AddScoped<IAuthorRepository, AuthorRepository>();
+
+        services.AddScoped<IUserStore<Author>, UserStore<Author, IdentityRole, ChirpDBContext>>();
+
+        //setup identity services
+        services.AddIdentityCore<Author>(options => { });
+        services.AddScoped<UserManager<Author>>();
+        services.AddScoped<SignInManager<Author>>();
+
+        services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<IUserClaimsPrincipalFactory<Author>, UserClaimsPrincipalFactory<Author>>();
+        services.AddScoped<IOptions<IdentityOptions>, OptionsManager<IdentityOptions>>();
+        services.AddScoped<ILogger<SignInManager<Author>>, Logger<SignInManager<Author>>>();
+        services.AddScoped<IAuthenticationSchemeProvider, AuthenticationSchemeProvider>();
+        services.AddScoped<IUserConfirmation<Author>, DefaultUserConfirmation<Author>>();
+        services.AddScoped<SignInManager<Author>>();
         services.AddScoped<IAuthorService, AuthorService>();
 
         _provider = services.BuildServiceProvider();
@@ -42,7 +62,7 @@ public class TestServices : IDisposable
         ctx = _scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
         ctx.Database.EnsureCreated();
         DbInitializer.SeedDatabase(ctx);
-        
+
         _cheepService = _scope.ServiceProvider.GetRequiredService<ICheepService>();
         _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
         _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();

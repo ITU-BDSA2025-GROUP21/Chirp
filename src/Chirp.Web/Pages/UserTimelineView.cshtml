@@ -1,13 +1,12 @@
-﻿@page "/{author}"
+﻿@page "/{authorId}"
 @model Chirp.Web.Pages.UserTimelineView
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("author");
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
+    <h2> @Model.Author.Name's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -15,26 +14,26 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 bool IsFollowing = Model.Following.Any(
-                    a => a.Name == cheep.Author
+                    a => a.Id == cheep.AuthorId
                 );
-
+                    
                 <li>
                     <p>
                         <strong>
                                 <div style="display:flex;justify-content:start;align-items:center;">
-                                <a href="/@cheep.Author">@cheep.Author</a>
+                                <a href="/@cheep.AuthorId">@cheep.Author</a>
 
                         @if (User.Identity.IsAuthenticated)
                         {   
                                         <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                            <input type="hidden" name="followee" value="@cheep.Author"/>
+                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
                                             <button type="submit">@(IsFollowing ? "Unfollow" : "Follow")</button>
                                         </form>
                         }
                             </div>
 
                         </strong>
-                        @cheep.Message
+                        <span class="cheep-message">@cheep.Message</span>
                         <small>&mdash; @cheep.CreatedDate</small>
                     </p>
                 </li>
