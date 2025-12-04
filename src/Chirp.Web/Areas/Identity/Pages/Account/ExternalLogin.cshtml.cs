@@ -86,7 +86,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             public string Email { get; set; }
         }
         
-        public IActionResult OnGet() => RedirectToPage("./Login");
+        public IActionResult OnGet() => NotFound();
 
         public IActionResult OnPost(string provider, string returnUrl = null)
         {

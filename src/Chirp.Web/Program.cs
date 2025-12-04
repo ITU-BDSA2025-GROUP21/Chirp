@@ -44,7 +44,6 @@ using (var scope = app.Services.CreateScope())
     var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
 
     ctx.Database.Migrate();
-    DbInitializer.SeedDatabase(ctx);
 }
 
 if (!app.Environment.IsDevelopment())

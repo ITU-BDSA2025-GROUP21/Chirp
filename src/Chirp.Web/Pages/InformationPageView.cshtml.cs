@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +14,10 @@ public class InformationPageView : PageModel
     private readonly IAuthorService _authorService;
     private readonly ICheepService _cheepService;
     private readonly IIdentityUserService _identityService;
-    public AuthorDTO Author { get; set; } = null;  //Tracker til author navn
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
     public int CurrentCheeps { get; set; } = 0;
 
-    public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
+    public IEnumerable<AuthorDTO?> Following { get; set; } = new List<AuthorDTO>();
 
     public InformationPageView(ICheepService service, IAuthorService authorService, IIdentityUserService identityService)
     {
@@ -30,7 +30,10 @@ public class InformationPageView : PageModel
     {
         if (_identityService.IsSignedIn(User))
         {
-            AuthorDTO CurrentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+            AuthorDTO? CurrentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+
+            if (CurrentAuthor == null)
+                return Page();
 
             await _cheepService.DeleteAllCheepsAsync(CurrentAuthor.Id);
             _authorService.RemoveAllFollowers(CurrentAuthor.Id);
@@ -43,7 +46,6 @@ public class InformationPageView : PageModel
 
     public async Task<ActionResult> OnGet()
     {
-
         if (!_identityService.IsSignedIn(User))
         {
             return RedirectToPage("/PublicView");
@@ -61,8 +63,7 @@ public class InformationPageView : PageModel
 
     public async Task<ActionResult> OnPostUnfollow(string followeeId)
     {
-
-        AuthorDTO currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        AuthorDTO? currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
         if (currentAuthor == null)
         {
@@ -78,27 +79,15 @@ public class InformationPageView : PageModel
         return RedirectToPage();
     }
 
-    public async Task<AuthorDTO> GetAuthorDTO()
+    public async Task<AuthorDTO?> GetAuthorDTO()
     {
         if (!_identityService.IsSignedIn(User))
         {
             return null;
         }
 
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User);
 
         return author;
-    }
-
-    public async Task<IEnumerable<AuthorDTO>> GetFollowers()
-    {
-        if (!_identityService.IsSignedIn(User))
-        {
-            return new List<AuthorDTO>();
-        }
-
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
-
-        return _authorService.GetFollowers(author.Id);
     }
 }

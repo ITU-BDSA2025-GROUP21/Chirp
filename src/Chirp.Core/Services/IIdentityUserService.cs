@@ -14,7 +14,7 @@ namespace Chirp.Core.Services
 
         bool IsSignedIn(ClaimsPrincipal User);
 
-        Task<AuthorDTO> GetCurrentIdentityAuthor(ClaimsPrincipal User);
+        Task<AuthorDTO?> GetCurrentIdentityAuthor(ClaimsPrincipal User);
 
         Task SignOutAsync();
 

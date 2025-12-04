@@ -30,11 +30,14 @@ namespace Chirp.Infrastructure.Services
             return _signInManager.IsSignedIn(User);
         }
 
-        public async Task<AuthorDTO> GetCurrentIdentityAuthor(ClaimsPrincipal User)
+        public async Task<AuthorDTO?> GetCurrentIdentityAuthor(ClaimsPrincipal User)
         {
             if (!IsSignedIn(User)) return null;
 
-            Author authorModel = await _userManager.GetUserAsync(User);
+            Author? authorModel = await _userManager.GetUserAsync(User);
+
+            if (authorModel == null)
+                return null;
 
             return CreateAuthorDTO(authorModel);
         }
@@ -53,7 +56,7 @@ namespace Chirp.Infrastructure.Services
             {
                 Id = author.Id,
                 Name = author.Name,
-                Email = author.Email,
+                Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email  ),
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
         }

@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
@@ -14,9 +14,9 @@ public class PublicView : PageModel
     public string? Text { get; set; }
     
     public IEnumerable<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public IEnumerable<AuthorDTO> Following { get; set; } = new List<AuthorDTO>();
+    public IEnumerable<AuthorDTO?> Following { get; set; } = new List<AuthorDTO>();
     public int CurrentPage { get; set; }
-    public string AuthorName { get; set; } = string.Empty;
+    public AuthorDTO? IdentityAuthor { get; set; }
 
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
@@ -38,11 +38,15 @@ public class PublicView : PageModel
 
         if (_identityService.IsSignedIn(User))
         {
-            AuthorDTO authorDTO = await _identityService.GetCurrentIdentityAuthor(User);
-            Following = _authorService.GetFollowing(authorDTO.Id);
-            AuthorName = authorDTO.Name;
-        }
+            IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
+            if(IdentityAuthor == null)
+            {
+                return Page();
+            }
+
+            Following = _authorService.GetFollowing(IdentityAuthor.Id);
+        }
 
         return Page();
     }
@@ -58,6 +62,8 @@ public class PublicView : PageModel
             return Page();
         }
 
+        IdentityAuthor = author;
+        Following = _authorService.GetFollowing(author.Id);
 
         if (!string.IsNullOrWhiteSpace(Text))
         {
@@ -66,7 +72,8 @@ public class PublicView : PageModel
 
         CurrentPage = page;
         Cheeps = _cheepService.GetCheeps(page);
-
+        Text = string.Empty;
+        ModelState.Clear();
         return Page();
     }
 
@@ -79,7 +86,12 @@ public class PublicView : PageModel
             return RedirectToPage();
         }
 
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User); 
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User); 
+
+        if(author == null)
+        {
+            return RedirectToPage();
+        }
 
         if (!_authorService.IsFollowing(author.Id, followeeId))
         {
@@ -95,7 +107,10 @@ public class PublicView : PageModel
 
     public async Task<string> GetUserName()
     {
-        AuthorDTO author = await _identityService.GetCurrentIdentityAuthor(User);
+        AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User);
+
+        if (author == null)
+            return string.Empty;
 
         return author?.Name ?? "Anon";
     }
