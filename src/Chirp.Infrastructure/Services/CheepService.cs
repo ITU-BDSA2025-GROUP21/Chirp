@@ -54,11 +54,6 @@ public class CheepService : ICheepService
         return _cheepRepository.GetById(cheepId) is Cheep cheep ? createCheepDTO(cheep) : null;
     }
 
-    public void deleteAllLikesFromAuthor(string authorId)
-    {
-        _cheepRepository.deleteAllLikesFromAuthorAsync(authorId);
-    }
-
     private readonly Func<Cheep, CheepDTO> createCheepDTO =
     c => new CheepDTO
     {

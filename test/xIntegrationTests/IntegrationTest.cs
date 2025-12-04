@@ -2,6 +2,7 @@ using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Chirp.Razor.Repositories;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
@@ -305,19 +306,67 @@ namespace XintegrationTests
         [Fact]
         public void testLikeFunctionality()
         {
+            Author author = new Author()
+            {
+                Name = "like Tester",
+                Email = "like@test.com"
+            };
 
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for like testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            //see that there are no likes initially
+
+            Assert.Equal(0, cheepFromDb.Likes);
+
+            _cheepService.Like(cheepFromDb.cheepId, author.Id, true);
+            cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Likes);
         }
 
         [Fact]
         public void testDislikeFunctionality()
         {
+            Author author = new Author()
+            {
+                Name = "dislike Tester",
+                Email = "dislike@test.com"
+            };
 
-        }
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for dislike testing.",
+                TimeStamp = DateTime.Now
+            };
 
-        [Fact]
-        public void testDeleteAllLikesFromAuthor()
-        {
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
 
+            var cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            //see that there are no dislikes initially
+
+            Assert.Equal(0, cheepFromDb.Dislikes);
+
+            _cheepService.Like(cheepFromDb.cheepId, author.Id, false);
+            cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Dislikes);
         }
     }
 }
