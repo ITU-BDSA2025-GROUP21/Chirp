@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +25,6 @@ public class UserTimelineView : PageModel
 
     public async Task<ActionResult> OnGet(string authorId, [FromQuery] int page = 1) //Pagination via query string
     {
-
         Author = _authorService.FindAuthorById(authorId);
 
         if(_identityService.IsSignedIn(User))
@@ -46,7 +45,6 @@ public class UserTimelineView : PageModel
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
                 Following.Select(a =>
                 {
-                    
                     if(a != null) {
                         return a.Id;
                     }
@@ -94,7 +92,6 @@ public class UserTimelineView : PageModel
     }
     public string GetUserName(string id)
     {
-
         AuthorDTO? author = _authorService.FindAuthorById(id);
 
         if(author == null)

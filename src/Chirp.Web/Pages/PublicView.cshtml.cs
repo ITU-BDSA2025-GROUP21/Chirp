@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
@@ -48,7 +48,6 @@ public class PublicView : PageModel
             Following = _authorService.GetFollowing(IdentityAuthor.Id);
         }
 
-
         return Page();
     }
     
@@ -89,7 +88,6 @@ public class PublicView : PageModel
 
         AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User); 
 
-
         if(author == null)
         {
             return RedirectToPage();
@@ -110,7 +108,6 @@ public class PublicView : PageModel
     public async Task<string> GetUserName()
     {
         AuthorDTO? author = await _identityService.GetCurrentIdentityAuthor(User);
-
 
         if (author == null)
             return string.Empty;

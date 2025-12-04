@@ -1,4 +1,4 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +46,6 @@ public class InformationPageView : PageModel
 
     public async Task<ActionResult> OnGet()
     {
-
         if (!_identityService.IsSignedIn(User))
         {
             return RedirectToPage("/PublicView");
@@ -64,7 +63,6 @@ public class InformationPageView : PageModel
 
     public async Task<ActionResult> OnPostUnfollow(string followeeId)
     {
-
         AuthorDTO? currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
         if (currentAuthor == null)
@@ -92,6 +90,4 @@ public class InformationPageView : PageModel
 
         return author;
     }
-
-
 }
