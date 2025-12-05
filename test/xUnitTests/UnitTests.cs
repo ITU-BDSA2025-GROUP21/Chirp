@@ -254,7 +254,7 @@ namespace xUnitTests
         }
 
         [Fact]
-        public void testAuthorDeletion()
+        public async Task testAuthorDeletion()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
@@ -272,14 +272,14 @@ namespace xUnitTests
             var testAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.NotNull(testAuthor);
 
-            _userManager.DeleteAsync(authorToDelete);
+            await _userManager.DeleteAsync(authorToDelete);
 
             var deletedAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.Null(deletedAuthor);
         }
 
         [Fact]
-        public void testCheepDeletion()
+        public async Task testCheepDeletion()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
@@ -305,8 +305,7 @@ namespace xUnitTests
             var cheepsBeforeDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Single(cheepsBeforeDeletion);
 
-            _userManager.DeleteAsync(author);
-
+            await _userManager.DeleteAsync(author);
             var cheepsAfterDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Empty(cheepsAfterDeletion);
         }

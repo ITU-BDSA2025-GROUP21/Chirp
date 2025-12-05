@@ -3,6 +3,8 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
@@ -16,6 +18,7 @@ namespace XintegrationTests
         private readonly TestServices _testServices;
         private IAuthorService _authorService;
         private IAuthorRepository _authorRepository;
+        private readonly UserManager<Author> _userManager;
 
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
@@ -23,6 +26,7 @@ namespace XintegrationTests
             _testServices = testService;
             _cheepService = testService._cheepService;
             _authorService = testService._authorService;
+            _userManager = testService._userManager;
         }
 
         [Fact]
@@ -245,7 +249,7 @@ namespace XintegrationTests
         }
 
         [Fact]
-        public void testAuthorDeletion()
+        public async Task testAuthorDeletion()
         {
             var author = new Author()
             {
@@ -264,13 +268,15 @@ namespace XintegrationTests
             Assert.NotNull(authorDTO);
 
             //delete author and see that it is deleted
-            _authorService.DeleteAuthorByIdAsync("DeleteID").Wait();
+            
+            await _userManager.DeleteAsync(author);
+
             var deletedAuthorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.Null(deletedAuthorDTO);
         }
 
         [Fact]
-        public void testCheepDeletion()
+        public async Task testCheepDeletion()
         {
             var author = new Author()
             {
@@ -298,7 +304,7 @@ namespace XintegrationTests
             Assert.Single(cheeps);
 
             //delete cheeps and see that they are deleted
-            _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
+            await _userManager.DeleteAsync(author);
             var deletedCheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Empty(deletedCheeps);
         }
