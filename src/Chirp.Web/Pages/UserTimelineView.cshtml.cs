@@ -105,7 +105,7 @@ public class UserTimelineView : PageModel
     }
 
     //handle likes and dislikes
-    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string authorId)
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string userId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -113,14 +113,27 @@ public class UserTimelineView : PageModel
         var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
         if (currentAuthor == null)
             return RedirectToPage();
+
+        Likes like = _cheepService.getLike(cheepId, currentAuthor.Id, true);
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
 
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        if (like.likeStatus == 1)
+        {
+            _authorService.changeKarma(-10, authorId);
+        }
+        else
+        {
+            _authorService.changeKarma(10, authorId);
+        }
+
         // Redirect back to the same author’s page
-        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+        return RedirectToPage("/UserTimelineView", new { authorId = userId, page = CurrentPage });
     }
 
-    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string userId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -129,19 +142,22 @@ public class UserTimelineView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = _cheepService.getLike(cheepId, authorId, false);
+        Likes like = _cheepService.getLike(cheepId, currentAuthor.Id, false);
 
         _cheepService.Like(cheepId, currentAuthor.Id, false);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
 
         if (like.likeStatus == -1)
         {
             _authorService.changeKarma(10, authorId);
-        } else
+        }
+        else
         {
             _authorService.changeKarma(-10, authorId);
         }
 
-            // Redirect back to the same author’s page
-            return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+        // Redirect back to the same author’s page
+        return RedirectToPage("/UserTimelineView", new { authorId = userId, page = CurrentPage });
     }
 }
