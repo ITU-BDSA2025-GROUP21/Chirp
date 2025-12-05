@@ -14,5 +14,4 @@ namespace Chirp.Core.Models
 
         public int karma { get; set; } = 0;
     }
-
 }

@@ -4,6 +4,7 @@ using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Web.Pages;
 public class UserTimelineView : PageModel
@@ -128,9 +129,19 @@ public class UserTimelineView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
+        Likes like = _cheepService.getLike(cheepId, authorId, false);
+
         _cheepService.Like(cheepId, currentAuthor.Id, false);
 
-        // Redirect back to the same author’s page
-        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+        if (like.likeStatus == -1)
+        {
+            _authorService.changeKarma(10, authorId);
+        } else
+        {
+            _authorService.changeKarma(-10, authorId);
+        }
+
+            // Redirect back to the same author’s page
+            return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
     }
 }

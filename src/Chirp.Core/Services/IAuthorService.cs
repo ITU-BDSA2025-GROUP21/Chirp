@@ -24,5 +24,7 @@ namespace Chirp.Core.Services
         void UnfollowAuthor(string authorId, string followeeId);
 
         int GetKarmaScore(string authorId);
+
+        void changeKarma(int karma, string authorId);
     }
 }

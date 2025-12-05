@@ -65,4 +65,9 @@ public class CheepService : ICheepService
         Likes = c.Likes.Count(l => l.likeStatus == 1),
         Dislikes = c.Likes.Count(l => l.likeStatus == -1),
     };
+
+    public Likes getLike(int cheepId, string authorId, bool like)
+    {
+        return _cheepRepository.getLike(cheepId, authorId, like);
+    }
 }

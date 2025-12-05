@@ -13,5 +13,6 @@ namespace Chirp.Core.Repositories
         void FollowAuthor(Author Follower, Author Followee);
         void UnfollowAuthor(Author Follower, Author Followee);
         int getKarmaScore(string authorId);
+        void changeKarma(int karma, string authorId);
     }
 }

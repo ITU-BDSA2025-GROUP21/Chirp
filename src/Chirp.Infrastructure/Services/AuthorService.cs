@@ -127,6 +127,11 @@ namespace Chirp.Infrastructure.Services
         {
             return _repo.getKarmaScore(authorId);
         }
+
+        public void changeKarma(int karma, string authorId)
+        {
+            _repo.changeKarma(karma, authorId);
+        }   
     }
 }
 

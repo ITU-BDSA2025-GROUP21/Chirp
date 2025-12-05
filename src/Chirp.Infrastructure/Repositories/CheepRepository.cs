@@ -121,5 +121,18 @@ namespace Chirp.Razor.Repositories
             }
             _context.SaveChanges();
         }
+
+        public Likes getLike(int cheepId, string authorId, bool state)
+        {
+            if (state)
+            {
+                var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == 1);
+                return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
+            } else
+            {
+                var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == -1);
+                return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
+            }
+        }
     }
 }

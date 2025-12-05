@@ -1,4 +1,5 @@
 ﻿using Chirp.Core.DTO;
+using Chirp.Core.Models;
 
 namespace Chirp.Core.Services
 {
@@ -15,5 +16,7 @@ namespace Chirp.Core.Services
         public CheepDTO? GetById(int cheepId);
 
         public void Like(int cheepId, string authorId, bool like);
+
+        public Likes getLike(int cheepId, string authorId, bool like);
     }
 }
