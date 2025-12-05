@@ -48,6 +48,7 @@ namespace Chirp.Infrastructure.Services
             {
                 Id = author.Id,
                 Name = author.Name,
+                karma = author.karma,
                 Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
@@ -120,6 +121,11 @@ namespace Chirp.Infrastructure.Services
             }
 
             _repo.UnfollowAuthor(follower, followee);
+        }
+
+        public int GetKarmaScore(string authorId)
+        {
+            return _repo.getKarmaScore(authorId);
         }
     }
 }

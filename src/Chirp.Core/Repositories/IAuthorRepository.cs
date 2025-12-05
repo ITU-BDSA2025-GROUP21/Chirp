@@ -7,12 +7,11 @@ namespace Chirp.Core.Repositories
     {
         public Author? FindAuthorById(string id);
         Task DeleteAuthorByIdAsync(string authorId);
-
         IEnumerable<Author> GetFollowers(Author author);  
         IEnumerable<Author> GetFollowing(Author author);
-
         bool DoesAuthorFollow(Author Follower, Author Followee);
         void FollowAuthor(Author Follower, Author Followee);
         void UnfollowAuthor(Author Follower, Author Followee);
+        int getKarmaScore(string authorId);
     }
 }
