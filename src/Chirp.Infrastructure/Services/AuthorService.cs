@@ -17,7 +17,7 @@ namespace Chirp.Infrastructure.Services
             _repo = repo;
         }
 
-        public void RemoveAllFollowers(string authorId)
+        public void DeleteAllFollowers(string authorId)
         {
 
             var userAuthor = _repo.FindAuthorById(authorId);
@@ -48,6 +48,7 @@ namespace Chirp.Infrastructure.Services
             {
                 Id = author.Id,
                 Name = author.Name,
+                karma = author.karma,
                 Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
@@ -121,6 +122,16 @@ namespace Chirp.Infrastructure.Services
 
             _repo.UnfollowAuthor(follower, followee);
         }
+
+        public int GetKarmaScore(string authorId)
+        {
+            return _repo.GetKarmaScore(authorId);
+        }
+
+        public void changeKarma(int karma, string authorId)
+        {
+            _repo.ChangeKarma(karma, authorId);
+        }   
     }
 }
 

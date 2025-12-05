@@ -9,6 +9,7 @@ namespace Chirp.Core.Data
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
+        public DbSet<Likes> Likes { get; set; } = null!;
 
         public ChirpDBContext(DbContextOptions<ChirpDBContext> options) 
             : base(options)
@@ -18,21 +19,38 @@ namespace Chirp.Core.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-        
+
             modelBuilder.Entity<UserFollow>()
                 .HasKey(uf => new { uf.FollowerId, uf.FolloweeId });
-        
+
+            modelBuilder.Entity<Likes>()
+                .HasKey(l => new { l.authorId, l.CheepId });
+
+            modelBuilder.Entity<Likes>()
+                .HasOne(l => l.Cheep)
+                .WithMany(c => c.Likes) 
+                .HasForeignKey(l => l.CheepId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Likes>()
+                .HasOne(l => l.Author)
+                .WithMany() 
+                .HasForeignKey(l => l.authorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
             modelBuilder.Entity<UserFollow>()
                 .HasOne(uf => uf.Follower)
                 .WithMany()
                 .HasForeignKey(uf => uf.FollowerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserFollow>()
                 .HasOne(uf => uf.Followee)
                 .WithMany()
                 .HasForeignKey(uf => uf.FolloweeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

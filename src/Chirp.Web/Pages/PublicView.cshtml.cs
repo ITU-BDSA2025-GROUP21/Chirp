@@ -18,6 +18,8 @@ public class PublicView : PageModel
     public int CurrentPage { get; set; }
     public AuthorDTO? IdentityAuthor { get; set; }
 
+    public AuthorDTO? Author { get; set; } = null;  //Tracker til author navn
+
     private readonly ICheepService _cheepService;
     private readonly IAuthorService _authorService;
     private readonly IIdentityUserService _identityService;
@@ -112,6 +114,65 @@ public class PublicView : PageModel
         if (author == null)
             return string.Empty;
 
-        return author.Name;
+        return author?.Name ?? "Anon";
+    }
+
+    //handle likes and dislikes
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string userId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 20; }
+
+        else if (like.likeStatus == 0) { karmaChange = 10; }
+
+        else if (like.likeStatus == 1) { karmaChange = -10; }
+
+
+        _cheepService.Like(cheepId, currentAuthor.Id, true);
+        _authorService.changeKarma(karmaChange, authorId);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string userId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 10; }
+
+        else if (like.likeStatus == 0) { karmaChange = -10; }
+        
+        else if (like.likeStatus == 1) { karmaChange = -20; }
+
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+        _authorService.changeKarma(karmaChange, authorId);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
     }
 }

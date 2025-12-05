@@ -2,8 +2,7 @@
 
 
 @{
-    var isSignedIn = identityUserService.IsSignedIn(User);
-
+    var isSignedIn = User?.Identity?.IsAuthenticated == true;
     Chirp.Core.DTO.AuthorDTO? currentAuthor = null;
 
     if (isSignedIn)
@@ -21,7 +20,7 @@
 </head>
 <body>
 <div class=page>
-    <h1><img src="/images/Icon1.png" alt="Icon1"/>Chirp!</h1>
+    <h1><img src="/images/Icon.png" alt="Icon"/>Chirp!</h1>
         <div class=navigation>
             @if (isSignedIn && currentAuthor != null)
             {

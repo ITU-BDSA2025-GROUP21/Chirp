@@ -11,6 +11,7 @@ namespace Chirp.Core.Models
         [PersonalData] public DateTime CreationDate { get; set; } = DateTime.Now;
         
         public List<Cheep> Cheeps { get; set; } = new();
-    }
 
+        public int karma { get; set; } = 0;
+    }
 }

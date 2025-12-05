@@ -6,7 +6,7 @@ namespace Chirp.Core.Models
 {
     public class Cheep
     {
-        public int CheepId { get; set; }
+        [PersonalData] public int CheepId { get; set; }
         
         [ForeignKey(nameof(Author))]
         public string AuthorId { get; set; } = null!;
@@ -18,5 +18,7 @@ namespace Chirp.Core.Models
         [PersonalData] public string Text { get; set; } = null!;
 
         [PersonalData] public DateTime TimeStamp { get; set; }
+
+        public List<Likes> Likes { get; set; } = new();
     }
 }

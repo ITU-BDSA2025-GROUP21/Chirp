@@ -4,6 +4,7 @@ using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Web.Pages;
 public class UserTimelineView : PageModel
@@ -27,7 +28,7 @@ public class UserTimelineView : PageModel
     {
         Author = _authorService.FindAuthorById(authorId);
 
-        if(_identityService.IsSignedIn(User))
+        if (_identityService.IsSignedIn(User))
         {
             IdentityAuthor = await _identityService.GetCurrentIdentityAuthor(User);
         }
@@ -45,7 +46,8 @@ public class UserTimelineView : PageModel
             Cheeps = _cheepService.GetCheepsFromMultipleAuthors(
                 Following.Select(a =>
                 {
-                    if(a != null) {
+                    if (a != null)
+                    {
                         return a.Id;
                     }
 
@@ -74,7 +76,7 @@ public class UserTimelineView : PageModel
 
         var userAuthor = await _identityService.GetCurrentIdentityAuthor(User);
 
-        if(userAuthor == null)
+        if (userAuthor == null)
         {
             return RedirectToPage();
         }
@@ -94,11 +96,70 @@ public class UserTimelineView : PageModel
     {
         AuthorDTO? author = _authorService.FindAuthorById(id);
 
-        if(author == null)
+        if (author == null)
         {
             return string.Empty;
         }
 
         return author.Name;
+    }
+
+    //handle likes and dislikes
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string userId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 20; }
+
+        else if (like.likeStatus == 0) { karmaChange = 10; }
+
+        else if (like.likeStatus == 1) { karmaChange = -10; }
+
+
+        _cheepService.Like(cheepId, currentAuthor.Id, true);
+        _authorService.changeKarma(karmaChange, authorId);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });
+    }
+
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string userId)
+    {
+        if (!_identityService.IsSignedIn(User))
+            return RedirectToPage();
+
+        var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
+        if (currentAuthor == null)
+            return RedirectToPage();
+
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 10; }
+
+        else if (like.likeStatus == 0) { karmaChange = -10; }
+
+        else if (like.likeStatus == 1) { karmaChange = -20; }
+
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+        _authorService.changeKarma(karmaChange, authorId);
+
+        // Redirect back to the same author’s page
+        return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });
     }
 }

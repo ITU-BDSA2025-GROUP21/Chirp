@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\Icon1.png" />
+    <Content Remove="wwwroot\images\Thumps Down Grey.png" />
+    <Content Remove="wwwroot\images\Thumps Down.png" />
+    <Content Remove="wwwroot\images\Thumps Up Grey.png" />
+    <Content Remove="wwwroot\images\Thumps Up.png" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.0.0" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>

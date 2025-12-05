@@ -86,5 +86,32 @@ namespace Chirp.Razor.Repositories
 
             _context.SaveChanges();
         }
+
+        public int GetKarmaScore(string authorId) 
+        {
+            var author = _context.Authors
+                .Where(a => a.Id == authorId)
+                .FirstOrDefault();
+            if (author == null)
+            {
+                return 0;
+            }
+            return author.karma;
+        }
+
+        public void ChangeKarma(int karma, string authorId) 
+        {
+            var author = _context.Authors
+                .Where(a => a.Id == authorId)
+                .FirstOrDefault();
+            if (author == null)
+            {
+                return;
+            }
+            Console.WriteLine("Changing karma for author " + authorId + " by " + karma);
+            author.karma += karma;
+            _context.SaveChanges();
+            Console.WriteLine("New karma: " + author.karma);
+        }
     }
 }
