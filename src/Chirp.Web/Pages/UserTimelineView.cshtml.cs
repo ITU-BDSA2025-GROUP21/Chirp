@@ -122,7 +122,6 @@ public class UserTimelineView : PageModel
 
         if (like.likeStatus == -1) { karmaChange = 20; }
         else if (like.likeStatus == 0) { karmaChange = 10; }
-
         else if (like.likeStatus == 1) { karmaChange = -10; }
 
 
