@@ -161,7 +161,6 @@ public class PublicView : PageModel
         int karmaChange = 0;
 
         if (like.likeStatus == -1) { karmaChange = 10; }
-
         else if (like.likeStatus == 0) { karmaChange = -10; }
         
         else if (like.likeStatus == 1) { karmaChange = -20; }
