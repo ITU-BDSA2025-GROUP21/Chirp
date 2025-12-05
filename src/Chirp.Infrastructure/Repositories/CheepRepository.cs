@@ -2,6 +2,7 @@ using Chirp.Core.Data;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -133,6 +134,12 @@ namespace Chirp.Razor.Repositories
                 var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == -1);
                 return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
             }
+        }
+
+        public async Task<Likes> getLikeAsync(int cheepId, string authorId, bool state)
+        {
+            var like = await _context.Likes.FirstOrDefaultAsync(l => l.CheepId == cheepId && l.authorId == authorId);
+            return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
         }
     }
 }

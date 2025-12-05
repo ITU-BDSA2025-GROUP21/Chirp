@@ -17,6 +17,6 @@ namespace Chirp.Core.Repositories
 
         public Cheep GetById(int id);
 
-        public Likes getLike(int cheepId, string authorId, bool like);
+        Task<Likes> getLikeAsync(int cheepId, string authorId, bool like);
     }
 }

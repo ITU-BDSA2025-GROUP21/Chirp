@@ -17,6 +17,6 @@ namespace Chirp.Core.Services
 
         public void Like(int cheepId, string authorId, bool like);
 
-        public Likes getLike(int cheepId, string authorId, bool like);
+        Task<Likes> getLikeAsync(int cheepId, string authorId, bool like);
     }
 }
