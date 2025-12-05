@@ -17,28 +17,6 @@ namespace Chirp.Infrastructure.Services
             _repo = repo;
         }
 
-        public void RemoveAllFollowers(string authorId)
-        {
-
-            var userAuthor = _repo.FindAuthorById(authorId);
-
-            if(userAuthor == null)
-            {
-                return;
-            }
-
-            IEnumerable<Author> following = _repo.GetFollowing(userAuthor);
-
-            foreach (var author in following)
-            {
-                _repo.UnfollowAuthor(userAuthor, author);
-            }
-        }
-
-        public async Task DeleteAuthorByIdAsync(string authorId)
-            => await _repo.DeleteAuthorByIdAsync(authorId);
-
-       
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if (author == null)
@@ -48,6 +26,7 @@ namespace Chirp.Infrastructure.Services
             {
                 Id = author.Id,
                 Name = author.Name,
+                karma = author.karma,
                 Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
             };
@@ -121,6 +100,16 @@ namespace Chirp.Infrastructure.Services
 
             _repo.UnfollowAuthor(follower, followee);
         }
+
+        public int GetKarmaScore(string authorId)
+        {
+            return _repo.GetKarmaScore(authorId);
+        }
+
+        public void ChangeKarma(int karma, string authorId)
+        {
+            _repo.ChangeKarma(karma, authorId);
+        }   
     }
 }
 

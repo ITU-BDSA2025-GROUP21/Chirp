@@ -31,26 +31,26 @@ namespace Chirp.Core.Data
                 .WithMany(c => c.Likes) 
                 .HasForeignKey(l => l.CheepId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Likes>()
                 .HasOne(l => l.Author)
                 .WithMany() 
                 .HasForeignKey(l => l.authorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<UserFollow>()
                 .HasOne(uf => uf.Follower)
                 .WithMany()
                 .HasForeignKey(uf => uf.FollowerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserFollow>()
                 .HasOne(uf => uf.Followee)
                 .WithMany()
                 .HasForeignKey(uf => uf.FolloweeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -415,3 +415,30 @@ button {
 .dislike-button:hover {
     background: #005fcc;
 }
+
+/* =========================
+   Cheep header (author + karma)
+   ========================= */
+
+.cheep-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.cheep-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cheep-karma {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2b3a;
+    background: #e7efff;
+    border: 1px solid #c7d5f5;
+    padding: 3px 8px;
+    border-radius: 6px;
+}

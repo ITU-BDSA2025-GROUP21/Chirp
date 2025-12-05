@@ -4,6 +4,7 @@ using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Web.Pages;
 public class UserTimelineView : PageModel
@@ -104,7 +105,7 @@ public class UserTimelineView : PageModel
     }
 
     //handle likes and dislikes
-    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string authorId)
+    public async Task<IActionResult> OnPostCheepLikeAsync(int cheepId, string userId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -112,14 +113,26 @@ public class UserTimelineView : PageModel
         var currentAuthor = await _identityService.GetCurrentIdentityAuthor(User);
         if (currentAuthor == null)
             return RedirectToPage();
+
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
+
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 20; }
+        else if (like.likeStatus == 0) { karmaChange = 10; }
+        else if (like.likeStatus == 1) { karmaChange = -10; }
+
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
-        // Redirect back to the same author’s page
-        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+        // Redirect back to the same authorâ€™s page
+        return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });
     }
 
-    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string authorId)
+    public async Task<IActionResult> OnPostCheepDislikeAsync(int cheepId, string userId)
     {
         if (!_identityService.IsSignedIn(User))
             return RedirectToPage();
@@ -128,9 +141,21 @@ public class UserTimelineView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        _cheepService.Like(cheepId, currentAuthor.Id, false);
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
 
-        // Redirect back to the same author’s page
-        return RedirectToPage("/UserTimelineView", new { authorId = authorId, page = CurrentPage });
+        string authorId = _cheepService.GetById(cheepId).AuthorId;
+
+        int karmaChange = 0;
+
+        if (like.likeStatus == -1) { karmaChange = 10; }
+        else if (like.likeStatus == 0) { karmaChange = -10; }
+        else if (like.likeStatus == 1) { karmaChange = -20; }
+
+
+        _cheepService.Like(cheepId, currentAuthor.Id, false);
+        _authorService.ChangeKarma(karmaChange, authorId);
+
+        // Redirect back to the same authorâ€™s page
+        return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });
     }
 }

@@ -35,11 +35,6 @@ public class CheepService : ICheepService
         _cheepRepository.AddCheep(text, authorId);
     }
 
-    public Task DeleteAllCheepsAsync(string id)
-    {
-        return _cheepRepository.DeleteAllCheepsAsync(id);
-    }
-
     public void Like(int cheepId, string authorId, bool like)
     {
         _cheepRepository.Like(
@@ -65,4 +60,9 @@ public class CheepService : ICheepService
         Likes = c.Likes.Count(l => l.likeStatus == 1),
         Dislikes = c.Likes.Count(l => l.likeStatus == -1),
     };
+
+    public Task<Likes> GetLikeAsync(int cheepId, string authorId, bool like)
+    {
+        return _cheepRepository.GetLikeAsync(cheepId, authorId, like);
+    }
 }
