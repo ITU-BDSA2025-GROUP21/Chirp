@@ -134,7 +134,6 @@ public class PublicView : PageModel
         int karmaChange = 0;
 
         if (like.likeStatus == -1) { karmaChange = 20; }
-
         else if (like.likeStatus == 0) { karmaChange = 10; }
 
         else if (like.likeStatus == 1) { karmaChange = -10; }
@@ -143,7 +142,7 @@ public class PublicView : PageModel
         _cheepService.Like(cheepId, currentAuthor.Id, true);
         _authorService.ChangeKarma(karmaChange, authorId);
 
-        // Redirect back to the same author’s page
+        // Redirect back to the same authorâ€™s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
     }
 
@@ -172,7 +171,7 @@ public class PublicView : PageModel
         _cheepService.Like(cheepId, currentAuthor.Id, false);
         _authorService.ChangeKarma(karmaChange, authorId);
 
-        // Redirect back to the same author’s page
+        // Redirect back to the same authorâ€™s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
     }
 }
