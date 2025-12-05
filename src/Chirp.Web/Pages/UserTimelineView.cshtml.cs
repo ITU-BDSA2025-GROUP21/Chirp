@@ -128,7 +128,7 @@ public class UserTimelineView : PageModel
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
         // Redirect back to the same author’s page
         return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });
@@ -157,7 +157,7 @@ public class UserTimelineView : PageModel
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, false);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
         // Redirect back to the same author’s page
         return RedirectToPage("/UserTimelineView", new { authorId = currentAuthor.Id, page = CurrentPage });

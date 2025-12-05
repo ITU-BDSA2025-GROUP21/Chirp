@@ -141,7 +141,7 @@ public class PublicView : PageModel
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
         // Redirect back to the same author’s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
@@ -170,7 +170,7 @@ public class PublicView : PageModel
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, false);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
         // Redirect back to the same author’s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });

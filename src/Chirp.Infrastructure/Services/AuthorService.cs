@@ -17,28 +17,6 @@ namespace Chirp.Infrastructure.Services
             _repo = repo;
         }
 
-        public void DeleteAllFollowers(string authorId)
-        {
-
-            var userAuthor = _repo.FindAuthorById(authorId);
-
-            if(userAuthor == null)
-            {
-                return;
-            }
-
-            IEnumerable<Author> following = _repo.GetFollowing(userAuthor);
-
-            foreach (var author in following)
-            {
-                _repo.UnfollowAuthor(userAuthor, author);
-            }
-        }
-
-        public async Task DeleteAuthorByIdAsync(string authorId)
-            => await _repo.DeleteAuthorByIdAsync(authorId);
-
-       
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if (author == null)
@@ -128,7 +106,7 @@ namespace Chirp.Infrastructure.Services
             return _repo.GetKarmaScore(authorId);
         }
 
-        public void changeKarma(int karma, string authorId)
+        public void ChangeKarma(int karma, string authorId)
         {
             _repo.ChangeKarma(karma, authorId);
         }   

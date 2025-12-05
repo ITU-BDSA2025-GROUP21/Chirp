@@ -3,9 +3,11 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Claims;
 using Xunit.Abstractions;
 
 namespace xUnitTests
@@ -16,12 +18,15 @@ namespace xUnitTests
         private readonly ICheepRepository _cheepRepository;
         private readonly TestServices _testServices;
         private IAuthorRepository _authorRepository;
+        private UserManager<Author> _userManager;
 
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepRepository = testService._cheepRepository;
             _testServices = testService;
+            _cheepRepository = testService._cheepRepository;
+            _authorRepository = testService._authorRepository;
+            _userManager = testService._userManager;
         }
 
         [Fact]
@@ -48,7 +53,7 @@ namespace xUnitTests
 
             var jacqualineTwelfthPage = _cheepRepository.GetByAuthorId("10", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
-            Assert.Single(helgeCheeps); 
+            Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("11", c.AuthorId));
 
             Assert.Single(adrianCheeps);
@@ -267,7 +272,8 @@ namespace xUnitTests
             var testAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.NotNull(testAuthor);
 
-            _authorRepository.DeleteAuthorByIdAsync(authorToDelete.Id).Wait();
+            _userManager.DeleteAsync(authorToDelete);
+
             var deletedAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.Null(deletedAuthor);
         }
@@ -299,7 +305,8 @@ namespace xUnitTests
             var cheepsBeforeDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Single(cheepsBeforeDeletion);
 
-            _cheepRepository.DeleteAllCheepsAsync(author.Id).Wait();
+            _userManager.DeleteAsync(author);
+
             var cheepsAfterDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Empty(cheepsAfterDeletion);
         }
@@ -372,4 +379,6 @@ namespace xUnitTests
             Assert.Equal(1, dislikes);
         }
     }
+
+
 }

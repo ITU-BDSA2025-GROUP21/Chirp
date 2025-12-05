@@ -53,13 +53,6 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Likes)
                 .FirstOrDefault(c => c.CheepId == id);
         }
-
-        public async Task DeleteAllCheepsAsync(string id)
-        {
-            await _context.Cheeps
-                .Where(c => c.AuthorId == id)
-                .ExecuteDeleteAsync();
-        }
         public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -141,11 +134,6 @@ namespace Chirp.Razor.Repositories
         {
             var like = await _context.Likes.FirstOrDefaultAsync(l => l.CheepId == cheepId && l.authorId == authorId);
             return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
-        }
-
-        public async Task DeleteLikes(string authorId)
-        {
-            await _context.Likes.Where(l => l.authorId == authorId).ExecuteDeleteAsync();
         }
     }
 }

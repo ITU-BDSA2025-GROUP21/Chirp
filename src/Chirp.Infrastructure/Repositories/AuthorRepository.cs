@@ -22,13 +22,6 @@ namespace Chirp.Razor.Repositories
                 .FirstOrDefault();
         }
 
-        public async Task DeleteAuthorByIdAsync(string authorId)
-        {
-            await _context.Authors
-                .Where(a => a.Id == authorId)
-                .ExecuteDeleteAsync();
-        }
-
         public IEnumerable<Author> GetFollowers(Author author) 
         {
             return _context.UserFollows

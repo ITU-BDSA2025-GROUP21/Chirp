@@ -10,8 +10,6 @@ namespace Chirp.Core.Services
 {
     public interface IIdentityUserService
     {
-
-
         bool IsSignedIn(ClaimsPrincipal User);
 
         Task<AuthorDTO?> GetCurrentIdentityAuthor(ClaimsPrincipal User);

@@ -11,11 +11,8 @@ namespace Chirp.Core.Services
     public interface IAuthorService
     {
         AuthorDTO? FindAuthorById(string name);
-        Task DeleteAuthorByIdAsync(string authorId);
         IEnumerable<AuthorDTO?> GetFollowers(string authorId);
         IEnumerable<AuthorDTO?> GetFollowing(string authorId);
-        void DeleteAllFollowers(string authorId);
-
 
         bool IsFollowing(string authorId, string followeeId);
 
@@ -25,7 +22,7 @@ namespace Chirp.Core.Services
 
         int GetKarmaScore(string authorId);
 
-        void changeKarma(int karma, string authorId);
+        void ChangeKarma(int karma, string authorId);
 
     }
 }
