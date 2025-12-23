@@ -127,23 +127,21 @@ public class PublicView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.getLikeAsync(cheepId, currentAuthor.Id, true);
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 
         int karmaChange = 0;
 
         if (like.likeStatus == -1) { karmaChange = 20; }
-
         else if (like.likeStatus == 0) { karmaChange = 10; }
-
         else if (like.likeStatus == 1) { karmaChange = -10; }
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, true);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
-        // Redirect back to the same author’s page
+        // Redirect back to the same authorâ€™s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
     }
 
@@ -156,23 +154,21 @@ public class PublicView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.getLikeAsync(cheepId, currentAuthor.Id, false);
+        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 
         int karmaChange = 0;
 
         if (like.likeStatus == -1) { karmaChange = 10; }
-
         else if (like.likeStatus == 0) { karmaChange = -10; }
-        
         else if (like.likeStatus == 1) { karmaChange = -20; }
 
 
         _cheepService.Like(cheepId, currentAuthor.Id, false);
-        _authorService.changeKarma(karmaChange, authorId);
+        _authorService.ChangeKarma(karmaChange, authorId);
 
-        // Redirect back to the same author’s page
+        // Redirect back to the same authorâ€™s page
         return RedirectToPage("/PublicView", new { authorId = userId, page = CurrentPage });
     }
 }

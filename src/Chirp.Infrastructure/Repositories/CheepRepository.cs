@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Mono.TextTemplating;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Chirp.Razor.Repositories
 {
@@ -38,7 +39,7 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Author)
                 .Include(c => c.Likes)
                 .Where(c => c.AuthorId == authorId)
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
@@ -52,13 +53,6 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Likes)
                 .FirstOrDefault(c => c.CheepId == id);
         }
-
-        public async Task DeleteAllCheepsAsync(string id)
-        {
-            await _context.Cheeps
-                .Where(c => c.AuthorId == id)
-                .ExecuteDeleteAsync();
-        }
         public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -67,7 +61,7 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Author)
                 .Include(c => c.Likes)
                 .Where(c => authorIds.Contains(c.AuthorId))
-                .OrderBy(c => c.TimeStamp)
+                .OrderByDescending(c => c.TimeStamp)
                 .Skip(offset)
                 .Take(pageSize)
                 .ToList();
@@ -123,7 +117,7 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public Likes getLike(int cheepId, string authorId, bool state)
+        public Likes GetLike(int cheepId, string authorId, bool state)
         {
             if (state)
             {
@@ -136,7 +130,7 @@ namespace Chirp.Razor.Repositories
             }
         }
 
-        public async Task<Likes> getLikeAsync(int cheepId, string authorId, bool state)
+        public async Task<Likes> GetLikeAsync(int cheepId, string authorId, bool state)
         {
             var like = await _context.Likes.FirstOrDefaultAsync(l => l.CheepId == cheepId && l.authorId == authorId);
             return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };

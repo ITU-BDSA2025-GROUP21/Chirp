@@ -26,6 +26,7 @@ public class TestServices : IDisposable
     public ICheepService _cheepService { get; }
     public IAuthorRepository _authorRepository { get; }
     public IAuthorService _authorService { get; }
+    public UserManager<Author> _userManager { get; }
 
     public TestServices()
     {
@@ -68,6 +69,7 @@ public class TestServices : IDisposable
         _cheepRepository = _scope.ServiceProvider.GetRequiredService<ICheepRepository>();
         _authorService = _scope.ServiceProvider.GetRequiredService<IAuthorService>();
         _authorRepository = _scope.ServiceProvider.GetRequiredService<IAuthorRepository>();
+        _userManager = _scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
     }
 
     public void Dispose()

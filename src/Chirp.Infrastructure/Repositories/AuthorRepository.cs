@@ -22,13 +22,6 @@ namespace Chirp.Razor.Repositories
                 .FirstOrDefault();
         }
 
-        public async Task DeleteAuthorByIdAsync(string authorId)
-        {
-            await _context.Authors
-                .Where(a => a.Id == authorId)
-                .ExecuteDeleteAsync();
-        }
-
         public IEnumerable<Author> GetFollowers(Author author) 
         {
             return _context.UserFollows
@@ -87,7 +80,7 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public int getKarmaScore(string authorId) 
+        public int GetKarmaScore(string authorId) 
         {
             var author = _context.Authors
                 .Where(a => a.Id == authorId)
@@ -99,7 +92,7 @@ namespace Chirp.Razor.Repositories
             return author.karma;
         }
 
-        public void changeKarma(int karma, string authorId) 
+        public void ChangeKarma(int karma, string authorId) 
         {
             var author = _context.Authors
                 .Where(a => a.Id == authorId)

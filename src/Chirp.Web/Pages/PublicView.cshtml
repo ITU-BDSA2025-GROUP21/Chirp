@@ -11,10 +11,10 @@
 <div>
     <h2> Public Timeline </h2>
 
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    @if (Model.IdentityAuthor != null)
     {
         <div class="cheepbox">
-            <h3>What's on your mind @(Model.IdentityAuthor == null ? "EmptyName" : Model.IdentityAuthor.Name)?</h3>
+            <h3>What's on your mind @(Model.IdentityAuthor.Name)?</h3>
             <form method="post" asp-controller="Public" asp-action="Index">
                 <input style="float: left" type="text" asp-for="Text" minlength="0" maxlength="160" required/>
                 <input type="submit" value="Share"/>

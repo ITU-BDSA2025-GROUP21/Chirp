@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Chirp.Core.Data;
+using Chirp.Core.Models;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
 {
@@ -19,13 +22,16 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
     {
         private readonly UserManager<Chirp.Core.Models.Author> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
+        private readonly ChirpDBContext _dbContext;
 
         public DownloadPersonalDataModel(
             UserManager<Chirp.Core.Models.Author> userManager,
-            ILogger<DownloadPersonalDataModel> logger)
+            ILogger<DownloadPersonalDataModel> logger,
+            ChirpDBContext dbContext)
         {
             _userManager = userManager;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         public IActionResult OnGet()
@@ -41,15 +47,16 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            await _dbContext.Entry(user).Collection(u => u.Cheeps).LoadAsync();
+
             _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
 
-            // Only include personal data for download
-            var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(IdentityUser).GetProperties().Where(
+            var personalData = new Dictionary<string, object>();
+            var personalDataProps = typeof(Author).GetProperties().Where(
                             prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             foreach (var p in personalDataProps)
             {
-                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
+                personalData[p.Name] = p.GetValue(user) ?? "null";
             }
 
             var logins = await _userManager.GetLoginsAsync(user);
@@ -58,10 +65,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manager
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
+            if (user.Cheeps != null)
+            {
+                personalData["Cheeps"] = user.Cheeps.Select(c => new
+                {
+                    Message = c.Text,
+                    Timestamp = c.TimeStamp.ToString("dd/MM/yyyy HH:mm")
+                });
+            }
+
             personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
 
             Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
-            return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
+            return new FileContentResult(
+                JsonSerializer.SerializeToUtf8Bytes(personalData, new JsonSerializerOptions { WriteIndented = true }),
+                "application/json");
         }
     }
 }

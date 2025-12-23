@@ -9,14 +9,12 @@ namespace Chirp.Core.Repositories
         IEnumerable<Cheep> GetByAuthorId(string authorId, int page = 1, int pageSize = 32);
 
         public void AddCheep(string text, string authorId);
-        Task DeleteAllCheepsAsync(string authorId);
-
         IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32);
 
         public void Like(int cheepId,  string authorID, bool like);
 
         public Cheep GetById(int id);
 
-        Task<Likes> getLikeAsync(int cheepId, string authorId, bool like);
+        Task<Likes> GetLikeAsync(int cheepId, string authorId, bool like);
     }
 }
