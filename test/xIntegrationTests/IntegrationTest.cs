@@ -3,9 +3,9 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.AspNetCore.Mvc.Routing;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
@@ -391,7 +391,7 @@ namespace XintegrationTests
 
             Assert.Equal(0, _authorService.GetKarmaScore(author.Id));
 
-            _authorService.changeKarma(5, author.Id);
+            _authorService.ChangeKarma(5, author.Id);
 
             Assert.Equal(5, _authorService.GetKarmaScore(author.Id));
         }

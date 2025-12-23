@@ -393,11 +393,11 @@ namespace xUnitTests
             dbContext.Authors.Add(author);
             dbContext.SaveChanges();
 
-            Assert.Equal(0, _authorRepository.getKarmaScore(author.Id));
+            Assert.Equal(0, _authorRepository.GetKarmaScore(author.Id));
 
-            _authorRepository.changeKarma(5, author.Id);
+            _authorRepository.ChangeKarma(5, author.Id);
 
-            Assert.Equal(5, _authorRepository.getKarmaScore(author.Id));
+            Assert.Equal(5, _authorRepository.GetKarmaScore(author.Id));
         }
     }
 
