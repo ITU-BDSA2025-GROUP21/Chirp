@@ -368,5 +368,25 @@ namespace XintegrationTests
 
             Assert.Equal(1, cheepFromDb.Dislikes);
         }
+
+        [Fact]
+        public void testKarma()
+        {
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = ""
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, author.karma);
+
+            _authorService.changeKarma(5, author.Name);
+
+            Assert.Equal(5, _authorService.GetKarmaScore(author.Name));
+        }
     }
 }

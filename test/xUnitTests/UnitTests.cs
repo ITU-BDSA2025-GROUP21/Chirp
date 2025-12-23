@@ -371,5 +371,11 @@ namespace xUnitTests
 
             Assert.Equal(1, dislikes);
         }
+
+        [Fact]
+        public void testKarma()
+        {
+
+        }
     }
 }
