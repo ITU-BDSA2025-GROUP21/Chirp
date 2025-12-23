@@ -375,7 +375,23 @@ namespace xUnitTests
         [Fact]
         public void testKarma()
         {
+            _authorRepository = _testServices._authorRepository;
 
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = "",
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, _authorRepository.getKarmaScore(author.Id));
+
+            _authorRepository.changeKarma(5, author.Id);
+
+            Assert.Equal(5, _authorRepository.getKarmaScore(author.Id));
         }
     }
 }
