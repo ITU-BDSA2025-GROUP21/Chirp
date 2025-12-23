@@ -28,7 +28,8 @@ namespace Chirp.Infrastructure.Services
                 Name = author.Name,
                 karma = author.karma,
                 Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
-                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
+                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm"),
+                ProfilePicPath = author.ProfilePicPath
             };
         }
 

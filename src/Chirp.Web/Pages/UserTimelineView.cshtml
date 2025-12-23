@@ -23,6 +23,9 @@
             {
                 var author = _authorService.FindAuthorById(cheep.AuthorId);
 
+                var profilePic = string.IsNullOrWhiteSpace(author?.ProfilePicPath)
+                    ? "/images/default_profile_pic.png"
+                    : author.ProfilePicPath;
 
                 bool IsFollowing = Model.Following.Any(
                 a =>
@@ -40,13 +43,14 @@
 
                         <div class="cheep-header">
                             <div class="cheep-author">
+                                <img src="@profilePic" alt="@cheep.Author" class="cheep-profile-pic" />
                                 <a href="/@cheep.AuthorId">@cheep.Author</a>
 
                                 @if (User.Identity != null && User.Identity.IsAuthenticated &&
-                                                        (Model.IdentityAuthor == null || cheep.AuthorId != Model.IdentityAuthor.Id))
+                                     (Model.IdentityAuthor == null || cheep.AuthorId != Model.IdentityAuthor.Id))
                                 {
                                     <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
+                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId"/>
                                         <button class="small-button" type="submit">
                                             @(Model.Following.Any(f => f.Id == cheep.AuthorId) ? "Unfollow" : "Follow")
                                         </button>
