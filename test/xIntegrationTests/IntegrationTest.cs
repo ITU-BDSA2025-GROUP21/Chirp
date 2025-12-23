@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Mvc.Routing;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
@@ -382,11 +383,11 @@ namespace XintegrationTests
             dbContext.Authors.Add(author);
             dbContext.SaveChanges();
 
-            Assert.Equal(0, author.karma);
+            Assert.Equal(0, _authorService.GetKarmaScore(author.Id));
 
-            _authorService.changeKarma(5, author.Name);
+            _authorService.changeKarma(5, author.Id);
 
-            Assert.Equal(5, _authorService.GetKarmaScore(author.Name));
+            Assert.Equal(5, _authorService.GetKarmaScore(author.Id));
         }
     }
 }
