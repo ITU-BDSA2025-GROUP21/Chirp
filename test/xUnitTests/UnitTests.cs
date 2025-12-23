@@ -223,6 +223,48 @@ namespace xUnitTests
         }
 
         [Fact]
+        public void testAuthorRepositoryProfilePicPersists()
+        {
+            var dbContext = _testServices.ctx;
+            var author = new Author()
+            {
+                Name = "Profile Pic Persists",
+                Email = "profilepic@test.com",
+                Id = "PROFILE-PIC-TEST-ID",
+                ProfilePicPath = "/profilePics/test-image.png"
+            };
+
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            var fetched = _authorRepository.FindAuthorById(author.Id);
+
+            Assert.NotNull(fetched);
+            Assert.Equal("/profilePics/test-image.png", fetched!.ProfilePicPath);
+        }
+
+        [Fact]
+        public void testAuthorServiceMapsProfilePicPath()
+        {
+            var dbContext = _testServices.ctx;
+            var author = new Author()
+            {
+                Name = "Service Pic",
+                Email = "servicepic@test.com",
+                Id = "SERVICE-PIC-TEST-ID",
+                ProfilePicPath = "/profilePics/from-service.png"
+            };
+
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            var dto = _testServices._authorService.FindAuthorById(author.Id);
+
+            Assert.NotNull(dto);
+            Assert.Equal("/profilePics/from-service.png", dto!.ProfilePicPath);
+        }
+
+        [Fact]
         public void testAuthorRepositoryFollowLogic()
         {
             // Tests the following:
