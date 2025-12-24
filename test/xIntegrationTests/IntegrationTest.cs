@@ -3,6 +3,7 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
@@ -373,6 +374,26 @@ namespace XintegrationTests
             cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
 
             Assert.Equal(1, cheepFromDb.Dislikes);
+        }
+
+        [Fact]
+        public void testKarma()
+        {
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = ""
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, _authorService.GetKarmaScore(author.Id));
+
+            _authorService.ChangeKarma(5, author.Id);
+
+            Assert.Equal(5, _authorService.GetKarmaScore(author.Id));
         }
     }
 }

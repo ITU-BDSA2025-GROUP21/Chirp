@@ -101,10 +101,8 @@ namespace Chirp.Razor.Repositories
             {
                 return;
             }
-            Console.WriteLine("Changing karma for author " + authorId + " by " + karma);
             author.karma += karma;
             _context.SaveChanges();
-            Console.WriteLine("New karma: " + author.karma);
         }
     }
 }
