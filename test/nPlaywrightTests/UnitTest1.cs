@@ -38,7 +38,7 @@ public class Tests : PageTest
     }
 
     [Test]
-    public async Task MyTest()
+    public async Task newUserTest()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
@@ -53,6 +53,24 @@ public class Tests : PageTest
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Email: noah@outlook.dk" })).ToBeVisibleAsync();
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Total Cheeps sent:" })).ToBeVisibleAsync();
     }
+
+    [Test]
+    public async Task createCheepTest()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.Locator("#Text").ClickAsync();
+        await Page.Locator("#Text").FillAsync("halløj");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(Page.Locator("#messagelist")).ToContainTextAsync("philip");
+        await Page.GetByText("halløj").ClickAsync();
+    }
+
 
     [OneTimeTearDown]
     public async Task TearDownFactory()
