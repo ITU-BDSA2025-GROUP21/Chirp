@@ -124,6 +124,20 @@ public class Tests : PageTest
         await Expect(Page.GetByText("OfficialChutney Follow Adhede")).ToBeVisibleAsync();
     }
 
+    [Test]
+    public async Task logoutTest()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.Locator("div").Nth(1).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "logout [philip]" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
+    }
 
     [OneTimeTearDown]
     public async Task TearDownFactory()
