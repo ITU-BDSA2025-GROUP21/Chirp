@@ -104,6 +104,26 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Heading, new() { Name = "philip's Timeline" }).ClickAsync();
     }
 
+    [Test]
+    public async Task unfollowUserTest()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = "OfficialChutney Follow Adhede" }).GetByRole(AriaRole.Button).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First.ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Heading, new() { Name = "philip's Timeline" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).First.ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await Expect(Page.GetByText("OfficialChutney Follow Adhede")).ToBeVisibleAsync();
+    }
+
 
     [OneTimeTearDown]
     public async Task TearDownFactory()
