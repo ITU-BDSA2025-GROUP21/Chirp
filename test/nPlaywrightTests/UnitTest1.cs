@@ -72,6 +72,22 @@ public class Tests : PageTest
     }
 
 
+    [Test]
+    public async Task loginTest()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Expect(Page.Locator("h3")).ToContainTextAsync("What's on your mind philip?");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "My information" }).ClickAsync();
+        await Expect(Page.Locator("body")).ToContainTextAsync("Email: phqu@itu.dk");
+    }
+
+
     [OneTimeTearDown]
     public async Task TearDownFactory()
     {
