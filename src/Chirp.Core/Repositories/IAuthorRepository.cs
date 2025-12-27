@@ -1,4 +1,3 @@
-using Chirp.Core.DTO;
 using Chirp.Core.Models;
 
 namespace Chirp.Core.Repositories

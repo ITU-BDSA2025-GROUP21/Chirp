@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-
-namespace Chirp.Core.DTO
+﻿namespace Chirp.Application.DTO
 {
     public record CheepDTO
     {

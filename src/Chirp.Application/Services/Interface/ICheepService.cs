@@ -1,11 +1,11 @@
-﻿using Chirp.Core.DTO;
+using Chirp.Application.DTO;
 using Chirp.Core.Models;
 
-namespace Chirp.Core.Services
+namespace Chirp.Application.Services.Interface
 {
     public interface ICheepService
     {
-        public IEnumerable<CheepDTO> GetCheeps(int page = 1); 
+        public IEnumerable<CheepDTO> GetCheeps(int page = 1);
         public IEnumerable<CheepDTO> GetCheepsFromAuthorId(string author, int page = 1);
 
         void AddCheep(string text, string authorId);
@@ -15,6 +15,6 @@ namespace Chirp.Core.Services
 
         public void Like(int cheepId, string authorId, bool like);
 
-        Task<Likes> GetLikeAsync(int cheepId, string authorId, bool like);
+        Task<Like> GetLikeAsync(int cheepId, string authorId, bool like);
     }
 }

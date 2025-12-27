@@ -1,8 +1,8 @@
 ﻿@page "/"
-@using Chirp.Core.DTO
+@using Chirp.Application.Services.Interface
+@using Chirp.Application.DTO
 @model Chirp.Web.Pages.PublicView
-@inject Chirp.Core.Services.IAuthorService _authorService
-
+@inject IAuthorService _authorService;
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
