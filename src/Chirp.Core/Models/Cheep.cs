@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Chirp.Core.Models
 {
     public class Cheep
     {
-        public int CheepId { get; set; }
+        [PersonalData] public int CheepId { get; set; }
         
         [ForeignKey(nameof(Author))]
         public string AuthorId { get; set; } = null!;
@@ -14,8 +15,10 @@ namespace Chirp.Core.Models
         
         [Required]
         [StringLength(160)]
-        public string Text { get; set; } = null!;
-        
-        public DateTime TimeStamp { get; set; }
+        [PersonalData] public string Text { get; set; } = null!;
+
+        [PersonalData] public DateTime TimeStamp { get; set; }
+
+        public List<Likes> Likes { get; set; } = new();
     }
 }

@@ -2,8 +2,7 @@
 
 
 @{
-    var isSignedIn = identityUserService.IsSignedIn(User);
-
+    var isSignedIn = User?.Identity?.IsAuthenticated == true;
     Chirp.Core.DTO.AuthorDTO? currentAuthor = null;
 
     if (isSignedIn)
@@ -21,14 +20,14 @@
 </head>
 <body>
 <div class=page>
-    <h1><img src="/images/Icon1.png" alt="Icon1"/>Chirp!</h1>
+    <h1><img src="/images/Icon.png" alt="Icon"/>Chirp!</h1>
         <div class=navigation>
-            @if (isSignedIn)
+            @if (isSignedIn && currentAuthor != null)
             {
                 <div>
                     <a href="/@(currentAuthor.Id)">my timeline</a> |
                     <a href="/">public timeline</a> |
-                    <a href="/information">My information</a> |
+                    <a id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage your account">Account</a> |
                     <a id="logout" asp-area="Identity" asp-page="/Account/Logout">logout [@(currentAuthor.Name)]</a>
                 </div>
             }

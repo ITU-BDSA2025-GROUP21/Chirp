@@ -3,9 +3,11 @@ using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Claims;
 using Xunit.Abstractions;
 
 namespace xUnitTests
@@ -16,12 +18,15 @@ namespace xUnitTests
         private readonly ICheepRepository _cheepRepository;
         private readonly TestServices _testServices;
         private IAuthorRepository _authorRepository;
+        private UserManager<Author> _userManager;
 
         public UnitTests(ITestOutputHelper output, TestServices testService)
         {
             _output = output;
-            _cheepRepository = testService._cheepRepository;
             _testServices = testService;
+            _cheepRepository = testService._cheepRepository;
+            _authorRepository = testService._authorRepository;
+            _userManager = testService._userManager;
         }
 
         [Fact]
@@ -48,7 +53,7 @@ namespace xUnitTests
 
             var jacqualineTwelfthPage = _cheepRepository.GetByAuthorId("10", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
-            Assert.Single(helgeCheeps); 
+            Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("11", c.AuthorId));
 
             Assert.Single(adrianCheeps);
@@ -249,7 +254,7 @@ namespace xUnitTests
         }
 
         [Fact]
-        public void testAuthorDeletion()
+        public async Task testAuthorDeletion()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
@@ -267,13 +272,14 @@ namespace xUnitTests
             var testAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.NotNull(testAuthor);
 
-            _authorRepository.DeleteAuthorByIdAsync(authorToDelete.Id).Wait();
+            await _userManager.DeleteAsync(authorToDelete);
+
             var deletedAuthor = _authorRepository.FindAuthorById("GDPR-TEST-ID");
             Assert.Null(deletedAuthor);
         }
 
         [Fact]
-        public void testCheepDeletion()
+        public async Task testCheepDeletion()
         {
             var dbContext = _testServices.ctx;
             _authorRepository = _testServices._authorRepository;
@@ -299,9 +305,100 @@ namespace xUnitTests
             var cheepsBeforeDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Single(cheepsBeforeDeletion);
 
-            _cheepRepository.DeleteAllCheepsAsync(author.Id).Wait();
+            await _userManager.DeleteAsync(author);
             var cheepsAfterDeletion = _cheepRepository.GetByAuthorId(author.Id);
             Assert.Empty(cheepsAfterDeletion);
         }
+
+        [Fact]
+        public void testLikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "Like Tester",
+                Email = "like@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for like testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            //see that there are no likes initially
+
+            Assert.Equal(0, cheepFromDb.Likes.Count());
+
+            _cheepRepository.Like(cheepFromDb.CheepId, author.Id, true);
+            cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Likes.Count());
+        }
+
+        [Fact]
+        public void testDislikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "dislike Tester",
+                Email = "dislike@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for dislike testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            //see that there are no dislikes initially
+
+            Assert.Equal(0, cheepFromDb.Likes.Count());
+
+            _cheepRepository.Like(cheepFromDb.CheepId, author.Id, false);
+            cheepFromDb = _cheepRepository.GetByAuthorId(author.Id).First();
+
+            int dislikes = cheepFromDb.Likes.Where(l => l.likeStatus == -1).Count();
+
+            Assert.Equal(1, dislikes);
+        }
+
+        [Fact]
+        public void testKarma()
+        {
+            _authorRepository = _testServices._authorRepository;
+
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = "",
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, _authorRepository.GetKarmaScore(author.Id));
+
+            _authorRepository.ChangeKarma(5, author.Id);
+
+            Assert.Equal(5, _authorRepository.GetKarmaScore(author.Id));
+        }
     }
+
 }

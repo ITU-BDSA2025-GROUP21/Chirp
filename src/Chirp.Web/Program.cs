@@ -57,8 +57,14 @@ public partial class Program
         builder.Services.AddScoped<IAuthorService, AuthorService>();
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
-        builder.Services.AddDbContext<ChirpDBContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection")));
+
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
+
+builder.Services.AddDbContext<ChirpDBContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection"))
+           .EnableSensitiveDataLogging(false);
+});
 
         builder.Services.AddDefaultIdentity<Author>(
             options =>
@@ -85,13 +91,12 @@ public partial class Program
 
         var app = builder.Build();
 
-        using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var ctx = services.GetRequiredService<ChirpDBContext>();
-            ctx.Database.EnsureCreated();
-            DbInitializer.SeedDatabase(ctx);
-        }
+using (var scope = app.Services.CreateScope())
+{
+    var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+
+    ctx.Database.Migrate();
+}
 
         if (!app.Environment.IsDevelopment())
         {

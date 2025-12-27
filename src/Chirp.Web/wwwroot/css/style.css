@@ -339,7 +339,9 @@ form * {
     margin: 2px 0;
 }
 
-/* Generic buttons */
+/* =========================
+    Generic buttons 
+    =========================*/
 
 button {
     background: linear-gradient(135deg, #3267d8 0%, #4d81f7 100%);
@@ -359,9 +361,8 @@ button {
         transform: translateY(-1px);
     }
 
-/* Optional tiny follow/unfollow buttons if you use them */
-
 .small-button {
+    margin-left: 10px;
     background: #e7efff;
     color: #3267d8;
     padding: 4px 10px;
@@ -375,3 +376,69 @@ button {
     .small-button:hover {
         background: #d8e7ff;
     }
+
+/* =========================
+    Like Container
+    =========================*/
+
+.like-container {
+    display: flex;
+    gap: 10px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+}
+
+/* =========================
+    Like/Dislike buttons 
+    =========================*/
+
+.like-button,
+.dislike-button {
+    background: #007bff; 
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+}
+
+.like-button:hover,
+.dislike-button:hover {
+    background: #005fcc;
+}
+
+/* =========================
+   Cheep header (author + karma)
+   ========================= */
+
+.cheep-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.cheep-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cheep-karma {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2b3a;
+    background: #e7efff;
+    border: 1px solid #c7d5f5;
+    padding: 3px 8px;
+    border-radius: 6px;
+}

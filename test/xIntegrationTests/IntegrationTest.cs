@@ -2,6 +2,10 @@ using Chirp.Core.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
+using Chirp.Razor.Repositories;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
@@ -15,6 +19,7 @@ namespace XintegrationTests
         private readonly TestServices _testServices;
         private IAuthorService _authorService;
         private IAuthorRepository _authorRepository;
+        private readonly UserManager<Author> _userManager;
 
         public IntegrationTests(ITestOutputHelper output, TestServices testService)
         {
@@ -22,6 +27,7 @@ namespace XintegrationTests
             _testServices = testService;
             _cheepService = testService._cheepService;
             _authorService = testService._authorService;
+            _userManager = testService._userManager;
         }
 
         [Fact]
@@ -48,7 +54,7 @@ namespace XintegrationTests
 
             var jacqualineTwelfthPage = _cheepService.GetCheepsFromAuthorId("10", page: 12); // there is 359 entries which means that the 11th page is completely full & and the 12th page has 7 entries
 
-            Assert.Single(helgeCheeps); 
+            Assert.Single(helgeCheeps);
             Assert.All(helgeCheeps, c => Assert.Equal("11", c.AuthorId));
 
             Assert.Single(adrianCheeps);
@@ -178,7 +184,7 @@ namespace XintegrationTests
             _authorRepository = _testServices._authorRepository;
             _authorService = _testServices._authorService;
 
-            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" }); 
+            var cheeps = _cheepService.GetCheepsFromMultipleAuthors(new List<string>() { "Helge", "Adrian" });
             Assert.All(cheeps, c =>
                 Assert.Contains(c.Author, new[] { "Helge", "Adrian" })
             );
@@ -244,7 +250,7 @@ namespace XintegrationTests
         }
 
         [Fact]
-        public void testAuthorDeletion()
+        public async Task testAuthorDeletion()
         {
             var author = new Author()
             {
@@ -263,13 +269,15 @@ namespace XintegrationTests
             Assert.NotNull(authorDTO);
 
             //delete author and see that it is deleted
-            _authorService.DeleteAuthorByIdAsync("DeleteID").Wait();
+            
+            await _userManager.DeleteAsync(author);
+
             var deletedAuthorDTO = _authorService.FindAuthorById("DeleteID");
             Assert.Null(deletedAuthorDTO);
         }
 
         [Fact]
-        public void testCheepDeletion()
+        public async Task testCheepDeletion()
         {
             var author = new Author()
             {
@@ -297,9 +305,95 @@ namespace XintegrationTests
             Assert.Single(cheeps);
 
             //delete cheeps and see that they are deleted
-            _cheepService.DeleteAllCheepsAsync("CheepDeleteID").Wait();
+            await _userManager.DeleteAsync(author);
             var deletedCheeps = _cheepService.GetCheepsFromAuthorId("CheepDeleteID");
             Assert.Empty(deletedCheeps);
+        }
+
+        [Fact]
+        public void testLikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "like Tester",
+                Email = "like@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for like testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            //see that there are no likes initially
+
+            Assert.Equal(0, cheepFromDb.Likes);
+
+            _cheepService.Like(cheepFromDb.cheepId, author.Id, true);
+            cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Likes);
+        }
+
+        [Fact]
+        public void testDislikeFunctionality()
+        {
+            Author author = new Author()
+            {
+                Name = "dislike Tester",
+                Email = "dislike@test.com"
+            };
+
+            var cheep = new Cheep()
+            {
+                Author = author,
+                Text = "This cheep is for dislike testing.",
+                TimeStamp = DateTime.Now
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.Cheeps.Add(cheep);
+            dbContext.SaveChanges();
+
+            var cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            //see that there are no dislikes initially
+
+            Assert.Equal(0, cheepFromDb.Dislikes);
+
+            _cheepService.Like(cheepFromDb.cheepId, author.Id, false);
+            cheepFromDb = _cheepService.GetCheepsFromAuthorId(author.Id).First();
+
+            Assert.Equal(1, cheepFromDb.Dislikes);
+        }
+
+        [Fact]
+        public void testKarma()
+        {
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = ""
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, _authorService.GetKarmaScore(author.Id));
+
+            _authorService.ChangeKarma(5, author.Id);
+
+            Assert.Equal(5, _authorService.GetKarmaScore(author.Id));
         }
     }
 }
