@@ -419,6 +419,28 @@ namespace xUnitTests
 
             Assert.Equal(1, dislikes);
         }
+
+        [Fact]
+        public void testKarma()
+        {
+            _authorRepository = _testServices._authorRepository;
+
+            Author author = new Author()
+            {
+                Name = "Karma Tester",
+                Email = "",
+            };
+
+            var dbContext = _testServices.ctx;
+            dbContext.Authors.Add(author);
+            dbContext.SaveChanges();
+
+            Assert.Equal(0, _authorRepository.GetKarmaScore(author.Id));
+
+            _authorRepository.ChangeKarma(5, author.Id);
+
+            Assert.Equal(5, _authorRepository.GetKarmaScore(author.Id));
+        }
     }
 
 }
