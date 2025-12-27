@@ -1,7 +1,6 @@
-using Chirp.Core.DTO;
+using Chirp.Application.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Globalization;
 using Xunit.Abstractions;
+using Chirp.Application.Services.Interface;
 
 namespace XintegrationTests
 {

@@ -1,6 +1,7 @@
 ﻿@page "/{authorId}"
+@using Chirp.Application.Services.Interface
 @model Chirp.Web.Pages.UserTimelineView
-@inject Chirp.Core.Services.IAuthorService _authorService
+@inject IAuthorService _authorService
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
