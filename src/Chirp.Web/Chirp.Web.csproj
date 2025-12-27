@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Folder Include="wwwroot\profilePics\" />
 	<PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.0.0" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>

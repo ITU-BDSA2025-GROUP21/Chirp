@@ -2,6 +2,11 @@ using Chirp.Application.DTO;
 using Chirp.Application.Services.Interface;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Reflection.Metadata;
+using System.Security.Claims;
+using System.Linq;
 
 namespace Chirp.Application.Services.Implementation
 {
@@ -25,7 +30,8 @@ namespace Chirp.Application.Services.Implementation
                 Name = author.Name,
                 karma = author.karma,
                 Email = author.Email == null ? "noEmaiFound@nomail.dk" : author.Email,
-                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
+                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm"),
+                ProfilePicPath = author.ProfilePicPath
             };
         }
 
