@@ -1,4 +1,5 @@
-using Chirp.Core.DTO;
+using Chirp.Application.DTO;
+using Chirp.Application.Services.Interface;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Chirp.Core.Services;
@@ -8,12 +9,14 @@ using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Linq;
 
-namespace Chirp.Infrastructure.Services
+namespace Chirp.Application.Services.Implementation
 {
     public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _repo;
-        public AuthorService(IAuthorRepository repo) {
+
+        public AuthorService(IAuthorRepository repo)
+        {
             _repo = repo;
         }
 
@@ -27,8 +30,8 @@ namespace Chirp.Infrastructure.Services
                 Id = author.Id,
                 Name = author.Name,
                 karma = author.karma,
-                Email = (author.Email == null ? "noEmaiFound@nomail.dk" : author.Email),
-                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm"),
+                Email = author.Email == null ? "noEmaiFound@nomail.dk" : author.Email,
+                CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm")
                 ProfilePicPath = author.ProfilePicPath
             };
         }
@@ -61,7 +64,7 @@ namespace Chirp.Infrastructure.Services
             if (author == null) return Enumerable.Empty<AuthorDTO>();
 
             return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
-        } 
+        }
 
         public bool IsFollowing(string authorId, string followeeId)
         {
@@ -110,7 +113,6 @@ namespace Chirp.Infrastructure.Services
         public void ChangeKarma(int karma, string authorId)
         {
             _repo.ChangeKarma(karma, authorId);
-        }   
+        }
     }
 }
-

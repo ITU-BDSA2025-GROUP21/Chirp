@@ -1,11 +1,12 @@
 using Chirp.Core.Data;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services;
 using Chirp.Infrastructure.Services;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Chirp.Application.Services.Implementation;
+using Chirp.Application.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 

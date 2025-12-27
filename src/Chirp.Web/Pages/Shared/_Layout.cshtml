@@ -1,9 +1,10 @@
-﻿@inject Chirp.Core.Services.IIdentityUserService identityUserService
+@using Chirp.Application.Services.Interface
+@inject IIdentityUserService identityUserService
 
 
 @{
     var isSignedIn = User?.Identity?.IsAuthenticated == true;
-    Chirp.Core.DTO.AuthorDTO? currentAuthor = null;
+    Chirp.Application.DTO.AuthorDTO? currentAuthor = null;
 
     if (isSignedIn)
     {

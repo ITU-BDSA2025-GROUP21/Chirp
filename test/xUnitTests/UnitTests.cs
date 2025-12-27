@@ -1,8 +1,6 @@
-using Chirp.Core.DTO;
+using Chirp.Application.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services;
-using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
