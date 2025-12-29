@@ -53,11 +53,24 @@ namespace Chirp.Application.Services.Implementation
             return _cheepRepository.GetByMultipleAuthors(authorIds, page, PageSize).Select(CreateCheepDTO);
         }
 
+        /// <summary>
+        /// Adds a new cheep with the specified text and author identifier to the repository.
+        /// </summary>
+        /// <param name="text">The content of the cheep to add. Cannot be null or empty.</param>
+        /// <param name="authorId">The unique identifier of the author creating the cheep. Cannot be null or empty.</param>
         public void AddCheep(string text, string authorId)
         {
             _cheepRepository.AddCheep(text, authorId);
         }
 
+        /// <summary>
+        /// Registers or removes a "like" for the specified cheep by the given author.
+        /// </summary>
+        /// <remarks>This method updates the like status for the specified cheep and author. If the cheep
+        /// or author does not exist, the operation may have no effect.</remarks>
+        /// <param name="cheepId">The unique identifier of the cheep to be liked or unliked.</param>
+        /// <param name="authorId">The identifier of the user performing the like or unlike action. Cannot be null or empty.</param>
+        /// <param name="like"><see langword="true"/> to add a like to the cheep; <see langword="false"/> to remove an existing like.</param>
         public void Like(int cheepId, string authorId, bool like)
         {
             _cheepRepository.Like(
@@ -67,11 +80,24 @@ namespace Chirp.Application.Services.Implementation
             );
         }
 
+        /// <summary>
+        /// Retrieves a <see cref="CheepDTO"/> that represents the cheep with the specified identifier.
+        /// </summary>
+        /// <remarks>Returns <see langword="null"/> if no cheep exists with the specified parameter <paramref name="cheepId"/>.</remarks>
+        /// <param name="cheepId">The unique identifier of the cheep to retrieve. Must be a positive integer.</param>
+        /// <returns>A <see cref="CheepDTO"/> containing the details of the cheep if found; otherwise, <see langword="null"/>.</returns>
         public CheepDTO? GetById(int cheepId)
         {
             return _cheepRepository.GetById(cheepId) is Cheep cheep ? CreateCheepDTO(cheep) : null;
         }
 
+        /// <summary>
+        /// Converts a <see cref="Cheep"/> instance to a <see cref="CheepDTO"/> for data transfer or presentation
+        /// purposes.
+        /// </summary>
+        /// <remarks>The <c>CreatedDate</c> property is formatted as "dd/MM/yyyy HH:mm". The <c>Likes</c>
+        /// and <c>Dislikes</c> properties represent the number of positive and negative reactions, respectively, based
+        /// on the <c>likeStatus</c> values in the <c>Likes</c> collection.</remarks>
         private readonly Func<Cheep, CheepDTO> CreateCheepDTO =
             c => new CheepDTO
             {
@@ -84,6 +110,15 @@ namespace Chirp.Application.Services.Implementation
                 Dislikes = c.Likes.Count(l => l.likeStatus == -1),
             };
 
+        /// <summary>
+        /// Asynchronously retrieves a <see cref="Like"/> for the specified cheep and author, filtered by like status.
+        /// </summary>
+        /// <param name="cheepId">The unique identifier of the cheep to search for.</param>
+        /// <param name="authorId">The unique identifier of the author whose like is being queried. Cannot be null.</param>
+        /// <param name="like"><see langword="true"/> to retrieve a like; <see langword="false"/> to retrieve a dislike or unlike,
+        /// depending on the application's model. </param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="Like"/> if found;
+        /// otherwise, <see langword="null"/>. </returns>
         public Task<Like> GetLikeAsync(int cheepId, string authorId, bool like)
         {
             return _cheepRepository.GetLikeAsync(cheepId, authorId, like);
