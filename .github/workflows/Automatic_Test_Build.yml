@@ -21,6 +21,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Restore Playwright tests
+        run: dotnet restore test/nPlaywrightTests/nPlaywrightTests.csproj
+
       - name: Build
         run: dotnet build --configuration Debug --no-restore
 
