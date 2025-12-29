@@ -50,7 +50,8 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "logout [noah]" })).ToBeVisibleAsync();
         await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile", Exact = true }))
+            .ToBeVisibleAsync();
         await Expect(Page.GetByLabel("Username")).ToHaveValueAsync("noah@outlook.dk");
     }
 
@@ -84,7 +85,8 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await Expect(Page.Locator("h3")).ToContainTextAsync("What's on your mind philip?");
         await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile", Exact = true }))
+            .ToBeVisibleAsync();
         await Expect(Page.GetByLabel("Username")).ToHaveValueAsync("phqu@itu.dk");
     }
 
