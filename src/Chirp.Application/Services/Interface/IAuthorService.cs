@@ -4,7 +4,6 @@ namespace Chirp.Application.Services.Interface
 {
     public interface IAuthorService
     {
-
         /// <summary>
         /// Retrieves the author with the specified authorID, if one exists.
         /// </summary>
