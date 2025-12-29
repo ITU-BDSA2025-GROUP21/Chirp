@@ -2,10 +2,6 @@ using Chirp.Core.Data;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Chirp.Razor.Repositories
 {
