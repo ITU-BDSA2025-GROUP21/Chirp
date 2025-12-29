@@ -19,6 +19,17 @@ namespace Chirp.Application.Services.Implementation
             _repo = repo;
         }
 
+        /// <summary>
+        /// Creates an <see cref="AuthorDTO"/> from an <see cref="Author"/> entity.
+        /// If the provided author is null, the method returns null.
+        /// </summary>
+        /// <param name="author">
+        /// The <see cref="Author"/> entity to convert.
+        /// </param>
+        /// <returns>
+        /// An <see cref="AuthorDTO"/> representing the author, or null if the
+        /// input author is null.
+        /// </returns>
         private AuthorDTO? CreateAuthorDTO(Author author)
         {
             if (author == null)
@@ -152,6 +163,11 @@ namespace Chirp.Application.Services.Implementation
             return _repo.GetKarmaScore(authorId);
         }
 
+        /// <summary>
+        /// Changes the karma score of the specified author by the given amount.
+        /// </summary>
+        /// <param name="karma">The karma amount one would like to add onto the <paramref name="authorId"/> 's Karma</param>
+        /// <param name="authorId"> The unique identifier of the author whose karma score is to be changed. Cannot be null.</param>
         public void ChangeKarma(int karma, string authorId)
         {
             _repo.ChangeKarma(karma, authorId);
