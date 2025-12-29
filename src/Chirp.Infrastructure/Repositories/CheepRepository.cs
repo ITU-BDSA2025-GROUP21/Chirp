@@ -74,6 +74,15 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Likes)
                 .FirstOrDefault(c => c.CheepId == id);
         }
+        /// <summary>
+        /// Returns a paginated collection of cheeps specifically identified to be made by multiple Authors.
+        /// </summary>
+        /// <param name="authorIds">The unique identification of the Author</param>
+        /// <param name="page">The page number of results to retrieve. Must be grater than or equal to 1. Defaults to 1.</param>
+        /// <param name="pageSize">The pagination int i.e 32 as default</param>
+        /// <returns>Returns an Enumarable collection of <see cref="Cheep"/> objects representing cheeps from the specified <see cref="Author"/> 's,
+        /// for the specified requested page. 
+        /// If no cheeps are found. The collection will be empty.</returns>
         public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -88,6 +97,11 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        /// <summary>
+        /// Creates a new Cheep and saves it to the Database.
+        /// </summary>
+        /// <param name="text">The text you would like to save as the cheep-text</param>
+        /// <param name="authorId">The unique identification of the Author</param>
         public void AddCheep(string text, string authorId)
         {
             Cheep cheep = new Cheep
@@ -101,6 +115,14 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Registers or removes a "like" for the specified cheep by the given author.
+        /// </summary>
+        /// <remarks>This method updates the like status for the specified cheep and author. If the cheep
+        /// or author does not exist, the operation may have no effect.</remarks>
+        /// <param name="cheepId">The unique identifier of the cheep to be liked or unliked.</param>
+        /// <param name="authorId">The identifier of the user performing the like or unlike action. Cannot be null or empty.</param>
+        /// <param name="like">True to add a like to the cheep; False to remove an existing like.</param>
         public void Like(int cheepId, string authorID, bool like)
         {
             var cheepExists = _context.Cheeps.Any(c => c.CheepId == cheepId);
@@ -138,19 +160,15 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public Like GetLike(int cheepId, string authorId, bool state)
-        {
-            if (state)
-            {
-                var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == 1);
-                return like ?? new Like { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
-            } else
-            {
-                var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == -1);
-                return like ?? new Like { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
-            }
-        }
-
+        /// <summary>
+        /// Asynchronously retrieves a <see cref="Like"/> for the specified cheep and author, filtered by like status.
+        /// </summary>
+        /// <param name="cheepId">The unique identifier of the cheep to search for.</param>
+        /// <param name="authorId">The unique identifier of the author whose like is being queried. Cannot be null.</param>
+        /// <param name="like">True to retrieve a like; false to retrieve a dislike or unlike,
+        /// depending on the application's model. </param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="Like"/> if found;
+        /// otherwise, null. </returns>
         public async Task<Like> GetLikeAsync(int cheepId, string authorId, bool state)
         {
             var like = await _context.Likes.FirstOrDefaultAsync(l => l.CheepId == cheepId && l.authorId == authorId);

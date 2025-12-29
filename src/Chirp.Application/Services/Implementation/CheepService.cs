@@ -70,7 +70,7 @@ namespace Chirp.Application.Services.Implementation
         /// or author does not exist, the operation may have no effect.</remarks>
         /// <param name="cheepId">The unique identifier of the cheep to be liked or unliked.</param>
         /// <param name="authorId">The identifier of the user performing the like or unlike action. Cannot be null or empty.</param>
-        /// <param name="like"><see langword="true"/> to add a like to the cheep; <see langword="false"/> to remove an existing like.</param>
+        /// <param name="like">True to add a like to the cheep; False to remove an existing like.</param>
         public void Like(int cheepId, string authorId, bool like)
         {
             _cheepRepository.Like(
