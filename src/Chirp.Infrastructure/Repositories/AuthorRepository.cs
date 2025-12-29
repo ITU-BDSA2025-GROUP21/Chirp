@@ -100,8 +100,8 @@ namespace Chirp.Razor.Repositories
         /// </summary>
         /// <remarks>If the follower is not currently following the followee, this method performs no
         /// action.</remarks>
-        /// <param name="Follower">The author who is unfollowing another author. Cannot be <c>null</c>.</param>
-        /// <param name="Followee">The author to be unfollowed. Cannot be <c>null</c>.</param>
+        /// <param name="Follower">The author who is unfollowing another author. Cannot be null.</param>
+        /// <param name="Followee">The author to be unfollowed. Cannot be null.</param>
         public void UnfollowAuthor(Author Follower, Author Followee) 
         {
             var follow = _context.UserFollows.FirstOrDefault(x =>
