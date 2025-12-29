@@ -1,8 +1,8 @@
 ﻿@page "/"
-@using Chirp.Core.DTO
+@using Chirp.Application.Services.Interface
+@using Chirp.Application.DTO
 @model Chirp.Web.Pages.PublicView
-@inject Chirp.Core.Services.IAuthorService _authorService
-
+@inject IAuthorService _authorService;
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
@@ -29,6 +29,9 @@
             {
                 var author = _authorService.FindAuthorById(cheep.AuthorId);
 
+                var profilePic = string.IsNullOrWhiteSpace(author?.ProfilePicPath)
+                    ? "/images/default_profile_pic.png"
+                    : author.ProfilePicPath;
 
                 bool IsFollowing = Model.Following.Any(
                 a =>
@@ -46,6 +49,7 @@
 
                         <div class="cheep-header">
                             <div class="cheep-author">
+                                <img src="@profilePic" alt="@cheep.Author" class="cheep-profile-pic" />
                                 <a href="/@cheep.AuthorId">@cheep.Author</a>
 
                                 @if (User.Identity != null && User.Identity.IsAuthenticated &&

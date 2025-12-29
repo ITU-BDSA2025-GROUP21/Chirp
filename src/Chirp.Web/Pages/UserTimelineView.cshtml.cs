@@ -1,10 +1,10 @@
-using Chirp.Core.DTO;
+using Chirp.Application.DTO;
 using Chirp.Core.Models;
-using Chirp.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Chirp.Application.Services.Interface;
 
 namespace Chirp.Web.Pages;
 public class UserTimelineView : PageModel
@@ -114,7 +114,7 @@ public class UserTimelineView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
+        Like like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 
@@ -141,7 +141,7 @@ public class UserTimelineView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
+        Like like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 

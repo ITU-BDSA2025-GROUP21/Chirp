@@ -92,7 +92,7 @@ namespace Chirp.Razor.Repositories
 
             if (existing == null)
             {
-                _context.Likes.Add(new Likes
+                _context.Likes.Add(new Like
                 {
                     CheepId = cheepId,
                     authorId = authorID,
@@ -117,23 +117,23 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
-        public Likes GetLike(int cheepId, string authorId, bool state)
+        public Like GetLike(int cheepId, string authorId, bool state)
         {
             if (state)
             {
                 var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == 1);
-                return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
+                return like ?? new Like { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
             } else
             {
                 var like = _context.Likes.FirstOrDefault(l => l.CheepId == cheepId && l.authorId == authorId && l.likeStatus == -1);
-                return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
+                return like ?? new Like { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
             }
         }
 
-        public async Task<Likes> GetLikeAsync(int cheepId, string authorId, bool state)
+        public async Task<Like> GetLikeAsync(int cheepId, string authorId, bool state)
         {
             var like = await _context.Likes.FirstOrDefaultAsync(l => l.CheepId == cheepId && l.authorId == authorId);
-            return like ?? new Likes { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
+            return like ?? new Like { CheepId = cheepId, authorId = authorId, likeStatus = 0 };
         }
     }
 }
