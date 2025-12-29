@@ -85,7 +85,7 @@ namespace Chirp.Application.Services.Implementation
         /// </summary>
         /// <remarks>Returns null if no cheep exists with the specified parameter <paramref name="cheepId"/>.</remarks>
         /// <param name="cheepId">The unique identifier of the cheep to retrieve. Must be a positive integer.</param>
-        /// <returns>A <see cref="CheepDTO"/> containing the details of the cheep if found; otherwise, <see langword="null"/>.</returns>
+        /// <returns>A <see cref="CheepDTO"/> containing the details of the cheep if found; otherwise, null/>.</returns>
         public CheepDTO? GetById(int cheepId)
         {
             return _cheepRepository.GetById(cheepId) is Cheep cheep ? CreateCheepDTO(cheep) : null;
