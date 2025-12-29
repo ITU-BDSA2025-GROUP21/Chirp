@@ -22,7 +22,7 @@ using Chirp.Application.Services.Interface;
 // the composition root of the system, where all infrastructure, services, and
 // framework integrations are wired together.
 //
-// No application or business logic should reside here.
+// No application or business logic resides here.
 // -----------------------------------------------------------------------------
 
 var builder = WebApplication.CreateBuilder(args);
