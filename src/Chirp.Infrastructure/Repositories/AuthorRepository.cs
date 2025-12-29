@@ -118,6 +118,11 @@ namespace Chirp.Razor.Repositories
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Retrieves the karma score for the specified author.
+        /// </summary>
+        /// <param name="authorId">The unique identifier of the author whose karma score is to be retrieved. Cannot be null.</param>
+        /// <returns>The karma score of the author if found; otherwise, 0.</returns>
         public int GetKarmaScore(string authorId) 
         {
             var author = _context.Authors
@@ -130,6 +135,11 @@ namespace Chirp.Razor.Repositories
             return author.karma;
         }
 
+        /// <summary>
+        /// Changes the karma score of the specified author by the given amount.
+        /// </summary>
+        /// <param name="karma">The karma amount one would like to add onto the <paramref name="authorId"/> 's Karma</param>
+        /// <param name="authorId"> The unique identifier of the author whose karma score is to be changed. Cannot be null.</param>
         public void ChangeKarma(int karma, string authorId) 
         {
             var author = _context.Authors
