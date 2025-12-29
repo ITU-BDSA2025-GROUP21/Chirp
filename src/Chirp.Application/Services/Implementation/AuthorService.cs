@@ -35,6 +35,13 @@ namespace Chirp.Application.Services.Implementation
             };
         }
 
+
+        /// <summary>
+        /// Retrieves the author with the specified authorID, if one exists.
+        /// </summary>
+        /// <param name="authorId">The unique authorID of the author to retrieve. Cannot be <see langword="null"/> or empty.</param>
+        /// <returns>An <see cref="AuthorDTO"/> representing the author with the specified authorID, or <see langword="null"/>
+        /// if no such author exists.</returns>
         public AuthorDTO? FindAuthorById(string authorId)
         {
             var author = _repo.FindAuthorById(authorId);
@@ -47,6 +54,11 @@ namespace Chirp.Application.Services.Implementation
             return CreateAuthorDTO(author);
         }
 
+        /// <summary>
+        /// Retrieves a list of followers for the specified author.
+        /// </summary>
+        /// <param name ="authorId"> The unique authorID of the author to retrieve the list from. Cannot be <see langword="null"/> or empty.</param>
+        /// <returns> Returns a list representing the followers of specified <see cref="Author"/>, or <see langword="null"/> </returns>
         public IEnumerable<AuthorDTO?> GetFollowers(string authorId)
         {
             Author? author = _repo.FindAuthorById(authorId);
@@ -56,6 +68,11 @@ namespace Chirp.Application.Services.Implementation
             return _repo.GetFollowers(author).Select(CreateAuthorDTO).ToList();
         }
 
+        /// <summary>
+        /// Retrieves a list of following for the specified author.
+        /// </summary>
+        /// <param name ="authorId"> The unique authorID of the author to retrieve the list from. Cannot be <see langword="null"/> or empty.</param>
+        /// <returns> Returns a list representing the following of specified <see cref="Author"/>, or <see langword="null"/> </returns>
         public IEnumerable<AuthorDTO?> GetFollowing(string authorId)
         {
             Author? author = _repo.FindAuthorById(authorId);
@@ -65,6 +82,12 @@ namespace Chirp.Application.Services.Implementation
             return _repo.GetFollowing(author).Select(CreateAuthorDTO).ToList();
         }
 
+        /// <summary>
+        /// Is author with authorId following author with followeeId-boolean.
+        /// </summary>
+        /// <param name="authorId"></param> The unique authorID of the author who might be following.
+        /// <param name="followeeId"></param> The unique authorID of the author who might be followed.
+        /// <returns> Returns a boolean, true if AuthorID is following followeeID, false if not.</returns>
         public bool IsFollowing(string authorId, string followeeId)
         {
             var follower = _repo.FindAuthorById(authorId);
