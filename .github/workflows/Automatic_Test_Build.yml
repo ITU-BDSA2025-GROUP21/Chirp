@@ -2,7 +2,7 @@ name: Automatic_Test_And_Build
 
 on:
   push:
-    branches: [ "main" ]  
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -24,20 +24,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Debug --no-restore
 
+      - name: Build Playwright tests
+        run: dotnet build test/nPlaywrightTests/nPlaywrightTests.csproj --configuration Debug --no-restore
+
       - name: Install Playwright browsers
-        shell: bash
-        run: |
-          set -e
-          echo "Searching for playwright.ps1..."
-          PW_SCRIPT="$(find . -type f -name playwright.ps1 | head -n 1)"
-          echo "Found: $PW_SCRIPT"
-          if [ -z "$PW_SCRIPT" ]; then
-            echo "playwright.ps1 not found. Check that your test project references Microsoft.Playwright."
-            echo "Built outputs:"
-            find . -maxdepth 4 -type d -path "*/bin/*" -print
-            exit 1
-          fi
-          pwsh "$PW_SCRIPT" install --with-deps
+        run: pwsh test/nPlaywrightTests/bin/Debug/net8.0/playwright.ps1 install --with-deps
 
       - name: Test
         run: dotnet test --configuration Debug --no-build --verbosity normal
