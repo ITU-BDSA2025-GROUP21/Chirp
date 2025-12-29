@@ -48,7 +48,7 @@ public partial class Program
         // Add services to the container.
         builder.Services.AddRazorPages(options =>
         {
-            options.Conventions.AddPageRoute("/PublicView", "");
+            // Root route is handled by MapFallbackToPage("/PublicView"); avoid duplicate endpoint.
         });
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<ICheepService, CheepService>();

@@ -48,10 +48,10 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Hej1234!");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Hej1234!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "My information" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Name: noah." })).ToBeVisibleAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Email: noah@outlook.dk" })).ToBeVisibleAsync();
-        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Total Cheeps sent:" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "logout [noah]" })).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile" })).ToBeVisibleAsync();
+        await Expect(Page.GetByLabel("Username")).ToHaveValueAsync("noah@outlook.dk");
     }
 
     [Test]
@@ -83,8 +83,9 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await Expect(Page.Locator("h3")).ToContainTextAsync("What's on your mind philip?");
-        await Page.GetByRole(AriaRole.Link, new() { Name = "My information" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToContainTextAsync("Email: phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Profile" })).ToBeVisibleAsync();
+        await Expect(Page.GetByLabel("Username")).ToHaveValueAsync("phqu@itu.dk");
     }
 
     [Test]
@@ -97,11 +98,11 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = "OfficialChutney Follow Adhede" }).GetByRole(AriaRole.Button).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First.ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First).ToBeVisibleAsync();
-        await Page.GetByRole(AriaRole.Heading, new() { Name = "philip's Timeline" }).ClickAsync();
+        var cheepItem = Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = "Adhede" }).First;
+        await cheepItem.GetByRole(AriaRole.Button, new() { Name = "Follow" }).ClickAsync();
+        await Expect(cheepItem.GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
+        await cheepItem.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        await Expect(cheepItem.GetByRole(AriaRole.Button, new() { Name = "Follow" })).ToBeVisibleAsync();
     }
 
     [Test]
@@ -114,14 +115,11 @@ public class Tests : PageTest
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor123!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = "OfficialChutney Follow Adhede" }).GetByRole(AriaRole.Button).ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First.ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "OfficialChutney" }).First).ToBeVisibleAsync();
-        await Page.GetByRole(AriaRole.Heading, new() { Name = "philip's Timeline" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).First.ClickAsync();
-        await Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-        await Expect(Page.GetByText("OfficialChutney Follow Adhede")).ToBeVisibleAsync();
+        var cheepItem = Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = "Adhede" }).First;
+        await cheepItem.GetByRole(AriaRole.Button, new() { Name = "Follow" }).ClickAsync();
+        await Expect(cheepItem.GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
+        await cheepItem.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        await Expect(cheepItem.GetByRole(AriaRole.Button, new() { Name = "Follow" })).ToBeVisibleAsync();
     }
 
     [Test]
