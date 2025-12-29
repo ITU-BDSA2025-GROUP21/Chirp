@@ -46,7 +46,6 @@ namespace Chirp.Application.Services.Implementation
             };
         }
 
-
         /// <summary>
         /// Retrieves the author with the specified authorID, if one exists.
         /// </summary>
