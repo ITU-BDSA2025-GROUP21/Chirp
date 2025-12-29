@@ -83,7 +83,7 @@ namespace Chirp.Application.Services.Implementation
         /// <summary>
         /// Retrieves a <see cref="CheepDTO"/> that represents the cheep with the specified identifier.
         /// </summary>
-        /// <remarks>Returns <see langword="null"/> if no cheep exists with the specified parameter <paramref name="cheepId"/>.</remarks>
+        /// <remarks>Returns null if no cheep exists with the specified parameter <paramref name="cheepId"/>.</remarks>
         /// <param name="cheepId">The unique identifier of the cheep to retrieve. Must be a positive integer.</param>
         /// <returns>A <see cref="CheepDTO"/> containing the details of the cheep if found; otherwise, <see langword="null"/>.</returns>
         public CheepDTO? GetById(int cheepId)
@@ -95,9 +95,9 @@ namespace Chirp.Application.Services.Implementation
         /// Converts a <see cref="Cheep"/> instance to a <see cref="CheepDTO"/> for data transfer or presentation
         /// purposes.
         /// </summary>
-        /// <remarks>The <c>CreatedDate</c> property is formatted as "dd/MM/yyyy HH:mm". The <c>Likes</c>
-        /// and <c>Dislikes</c> properties represent the number of positive and negative reactions, respectively, based
-        /// on the <c>likeStatus</c> values in the <c>Likes</c> collection.</remarks>
+        /// <remarks>The CreatedDate property is formatted as "dd/MM/yyyy HH:mm". The Likes
+        /// and Dislikes properties represent the number of positive and negative reactions, respectively, based
+        /// on the likeStatus values in the Likes collection.</remarks>
         private readonly Func<Cheep, CheepDTO> CreateCheepDTO =
             c => new CheepDTO
             {
@@ -115,10 +115,10 @@ namespace Chirp.Application.Services.Implementation
         /// </summary>
         /// <param name="cheepId">The unique identifier of the cheep to search for.</param>
         /// <param name="authorId">The unique identifier of the author whose like is being queried. Cannot be null.</param>
-        /// <param name="like"><see langword="true"/> to retrieve a like; <see langword="false"/> to retrieve a dislike or unlike,
+        /// <param name="like">True to retrieve a like; false to retrieve a dislike or unlike,
         /// depending on the application's model. </param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="Like"/> if found;
-        /// otherwise, <see langword="null"/>. </returns>
+        /// otherwise, null. </returns>
         public Task<Like> GetLikeAsync(int cheepId, string authorId, bool like)
         {
             return _cheepRepository.GetLikeAsync(cheepId, authorId, like);

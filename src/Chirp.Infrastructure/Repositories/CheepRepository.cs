@@ -18,6 +18,13 @@ namespace Chirp.Razor.Repositories
             _context = context;
         }
 
+        /// <summary>
+        /// Returns a paginated collection of all cheeps.
+        /// </summary>
+        /// <param name="page">The page number of results to retrieve. Must be greater than or equal to 1. Defaults to 1.</param>        
+        /// <param name="pageSize">The pagination int i.e 32 as default</param>
+        /// <returns>Returns an Enumerable collection of <see cref="Cheep"/> objects representing cheeps from all authors for the requested page.
+        /// If no cheeps are found. the collection will be empty. </returns>
         public IEnumerable<Cheep> GetAll(int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -31,6 +38,15 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        /// <summary>
+        /// Returns a paginated collection of cheeps specifically identified to be made by the same Author.
+        /// </summary>
+        /// <param name="authorId">The unique identification of the Author</param>
+        /// <param name="page">The page number of results to retrieve. Must be grater than or equal to 1. Defaults to 1.</param>
+        /// <param name="pageSize">The pagination int i.e 32 as default</param>
+        /// <returns>Returns an Enumarable collection of <see cref="Cheep"/> objects representing cheeps from the specified <see cref="Author"/>,
+        /// for the specified requested page. 
+        /// If no cheeps are found. The collection will be empty.</returns>
         public IEnumerable<Cheep> GetByAuthorId(string authorId, int page = 1, int pageSize = 32)
         {
             int offset = (page - 1) * pageSize;
@@ -45,6 +61,11 @@ namespace Chirp.Razor.Repositories
                 .ToList();
         }
 
+        /// <summary>
+        /// Returns a specified Cheep from the CheepID
+        /// </summary>
+        /// <param name="id">The unique identifiaction of the Cheep.</param>
+        /// <returns>Returns the requested <see cref="Cheep"/> from the CheepID</returns>
         public Cheep? GetById(int id)
         {
             return _context.Cheeps
