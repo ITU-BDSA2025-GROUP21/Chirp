@@ -19,19 +19,131 @@ Table of contents
 
 [TOC]
 
+
 # Design and architecture of Chirp!
 
 ## Domain model
+Model 1:
+![Illustration of the _Chirp!_ data model as UML class diagram.](/docs/images/DomainModel.png)
+As illustrated, the Domain Model consists of four domain entities: **Author**, **Cheep**, **Like**, and **UserFollow**.
+The model integrates **ASP.NET Identity**, with **Author** inheriting from `IdentityUser` to provide built-in authentication and authorization, including email and password management.
+
+### Author
+
+The central entity of the domain, representing a user of the system.
+
+**Responsibilities and properties:**
+- User name
+- Account creation date
+- Path to a custom profile picture
+- Collection of authored cheeps
+- Collection of followers
+- **Karma**: a likeness score representing user reputation
+
+In addition, `Author` inherits all properties from `IdentityUser`, such as email and password handling.
+
+### Cheep
+
+Represents a post created by an author.
+
+**Properties:**
+- **CheepId**: Unique identifier
+- **Author**: Reference to the author who created the cheep
+- **Text**: The posted message
+- **TimeStamp**: Time of creation
+- **Likes**: Collection of `Like` entities associated with the cheep
+
+### Like
+
+Represents a like or dislike issued by an author on a cheep.
+
+**Properties:**
+- **AuthorId**: Unique identifier of the author issuing the like
+- **CheepId**: Unique identifier of the liked cheep
+- **LikeStatus**: Integer indicating like (`1`) or dislike (`-1`)
+- **Author**: Reference to the liking author
+- **Cheep**: Reference to the liked cheep
+
+### UserFollow
+
+Represents a follow relationship between two authors.
+
+**Properties:**
+- **FollowerId**: Unique identifier of the following author
+- **FolloweeId**: Unique identifier of the followed author
+- **Follower**: Reference to the author who follows
+- **Followee**: Reference to the author being followed
+- **TimeStamp**: Time when the follow occurred
+
 
 ## Architecture -- In the small
+Model 2:
+![Architecture](/docs/images/Architecture.png)
 
-Write about onion structure and insert picture of it...
+As illustrated above, this solution follows the Onion Architecture principle, where all dependencies point inward toward the domain. The goal is to keep business logic isolated from technical and presentation concerns.
+
+### Domain Layer
+
+The core of the application.
+
+- Domain entities
+- Repository interfaces
+- Business rules
+
+**Characteristics:**
+- Dependency-free
+- Independent of frameworks and infrastructure
+- Represents pure business logic
+
+### Application Layer
+
+Coordinates use cases and application workflows.
+
+- Application services and use cases
+- Service interfaces
+- Data Transfer Objects (DTOs)
+- Mapping between domain entities and DTOs
+
+**Characteristics:**
+- Depends only on the Domain layer
+- Contains no infrastructure or UI code
+
+### Infrastructure Layer
+
+Handles technical and external concerns.
+
+- EF Core DbContext and migrations
+- Repository implementations
+- Framework- and third-party-dependent service implementations (e.g. ASP.NET Identity)
+
+**Characteristics:**
+- Implements interfaces from inner layers
+- Depends on Domain and Application layers
+
+### User Interface Layer
+
+Handles presentation and user interaction.
+
+- Razor Pages and Page Models
+- Dependency Injection setup
+- Application startup and configuration
+
+**Characteristics:**
+- Depends on the Application and Infrastructure layer
+- Contains no business logic
+
+### Test Layer
+
+Validates the system across all layers.
+
+- Unit, Integration, End-to-End, and UI tests
+- Not part of the runtime architecture
 
 ## Architecture of deployed application
 
 Write about how we deply, also insert a small model that depicts the git, azure and client fucntions... 
 
-## User activities
+# User activities
 When a user enters the website for the first time they will start off on the public timeline. Here they will have access to the entire public timeline as well as each seperate users timeline.
 While not logged in a user cannot post cheeps, follow authors or like/dislike cheeps, to solve this a user must access either the login page or the register page. From here the user can either create a new profile or login respectively.
 The login and registration can also be done using GitHub.
@@ -45,6 +157,7 @@ Using this page it is also possible to change ones own profile picture, as well 
 
 The following UML chart represents the available "options" a user has depending on where on the website they are located, and whether they're logged in or not.
 
+Model 3:
 ![Untitled Diagram.drawio](https://hackmd.io/_uploads/SkUhOOTQbe.png)
 
 
@@ -54,52 +167,41 @@ The following UML chart represents the available "options" a user has depending 
 # Process
 
 ## Build, test, release and deployment
-**Nok for meget tekst.
-Lav uml diagram over workflow, og bind teksten op i mod den.**
+Figure X, illustrates the flow of activities in the GitHub Actions workflows used to build, test, release, and deploy the application.
+When a pull request is opened an automated CI (continuous integration) workflow is triggered. This workflow restores dependencies, builds the application and executes the automated tests. The purpose of this step is to ensure that changes are valid and does not introduce compile errors or any other errors. If the build or tests fail, the workflow stops and the pull request cannot be merged.
+In addition to automated testing and compiling, CodeFactor is used as a code analysis tool. Quality issues are identified and has to be resolved before a pull request could be merged. If the workflow completes successfully, the pull request can be merged into the main branch. 
+Once changes are merged into the main branch a deployment workflow is triggered. This workflow deploys the application to an Azure Web App. As a result, the production environment is continuously updated with tested and reviewed changes.
+In cases where the merge is tagged with a version, an additional publish workflow is executed. This workflow builds and tests the application, generates versioned release artifacts and creates a corresponding GitHub release. If no version tag is present, the process ends after deployment.
 
-The development process followed a trunk-based development approach, combined with CI (continoues integration) practices. The developmen tprocess ensured that changes were kept small, with frequent integrations into the main branch. The workflow consited of a 
-
-#### Build Process and issues
-The trunk-based git branching strategy entails having a main integration branch and having short lived feature branches. Development starts with the creation of a GitHub issue, the structure of which is based on a user story containing the following:
- - A description of the problem or feature
- - Acceptance criteria defining when the task is considered complete.
-
-The purpose of a GitHub issue is to both grant the developers a shared overview of what needs doing, and define the actual problem, while keeping the overall definiton non-technical and purely user-experience or stakeholder oriented. Each issue should aim to be consice enough to be implemented, reviewed and merged through a single short-lived feature branch. This is not a requirment, but compliments the idea of trunk-based Git branching strategy. For each issue, a feature branch is created with a name that reflects the issue or the feature being worked on. 
-
-#### Test Process
-Testing is a central part of the workflow, providing a human error filter that ensures new features don't accidentally break existing functionality. In the workflow, it is used as a gatekeeper before merging code into the main branch. For the testing process we relied on a combination of:
- - Unit tests for isolated logic 
- - Integration tests to verify interactions between components
- - End-to-end tests for verifying complete user flows throught the application.
-
-When developing new features, tests would be added, covering the introduced functionality. Adding tests is a requirment in the workflow, as new features being continuously introduced could lead to overlapping code that unintentionally breaks existing functionality. By ensuring feature-specific tests, the code is future proofed for incomming additions. 
-
-End-to-end tests were implemented using Playwright, a framework for automating browser input. Playwright allows the application to be tested in a browser enviorment. These test simulated user interactions with the UI, and then validate the behavior or output. This tests the entire application stack, all the way from frontend UI to backend services. 
-
-These tests combined helped ensure that corner cases, regressions and unintended side effects were identified early on in the process. They reduce the likelihood of errors reaching the main branch. To enforce this constistently, the testing process was integrated into automated GitHub workflows, which are described in the following section.
-
-
-#### Github Workflows
-The project used multiple GitHub Actions workflows that automated building, testing, relasing and deploying the application. The workflows acted as gates by verifying that changes followed procedure. One workflow was responsible for automaticly building and testing the application. This was triggered on pushes and pull requests that targeted the main branch. Another workflow handled deployment to Azure, also triggered by pushes and pull requests. In addition, there were also a dedicated publish workflow used for versioning releases. Together these workflows automated alot of processes that would otherwise cost manual overhead.
-
-
-
-#### Release Process
-Releases where handled through merges into main, using pull requests. Once a feature branch passed the automated tests, had been reviewed by peers and checked for code quality, the branch is considered stable enough for merge. The pull request acts as a pre-release checkpoint ensuring only verified and reviewed changes were integrated
-
-This process ensured that the main branch always was in a deployable state, which is one of the core principle of trunk-based developmnent.
-
-Versioning was handled through pull requests. Each merged pull request represented a new version of the application. This meant that changes were released incrementally and remained traceable.
-
-#### Deployment
-The application is deployed using Azure Web App. As stated in the previous section, deployment is handled through GitHub Actions workflow, which triggers on pushes to the main branch.
 
 ## Team work
-"make an illustration of trunk-based develpoment"
+Model 4:
+![trunkbased stuff](https://hackmd.io/_uploads/HkD-Kbl4Zl.png)
 
 During our development of Chirp we have followed a trunk-based development workflow. Short-lived branches were created for individual tasks and features, each branching from the main trunk. Development was carried out on these branches with frequent, small commits documenting progress. Once a task was completed, a pull request was opened targeting the main branch. Team members reviewed the changes to ensure correctness and adherence to project standards. After approval, branches were merged into main, and the corresponding issues were closed. This workflow allowed us to maintain a stable main branch while supporting rapid development and collaboration.
 
+Model 5:
+![CI_CD_flow](https://hackmd.io/_uploads/Hk9vwgeVZl.png)
+
+
+Model 5 is a workflow UML that shows the workflow process, used throughout the development. This model was created early on in the project, to create a uniform and structured way of developing features. 
+Development begins with Github issue with a structure based on a user story, containing a description and acceptance criteria. This is kept non-technical and purely user-experience or stakeholder oriented. Each issue should aim to be consice enough to be implemented, reviewed and merged through a single short-lived feature branch. This is not a requirment, but compliments the idea of trunk-based Git branching strategy. For each issue, a feature branch is created with a name that reflects the issue or the feature being worked on. When the feature has been developed and tests are added and passed, a pull request is created for peers to review. The reviewer should ensure that the acceptance criteria and SOLID principles are covered. Once the Github workflow finishes, the related issue is closed.
+
+### Pair Programming and Commit Attribution
+During the project, a significant portion of the development was carried out through pair programming sessions using Visual Studio Live Share. In these sessions, two or more team members worked together simultaneously on the same code, discussing design decisions and implementing solutions collaboratively.
+
+Although Git supports the use of Co-Authored-By tags, these were not applied consistently or always correctly during development. As a result, the commit history does not fully reflect the actual distribution of contributions, as many commits represent collaborative work rather than individual effort.
+The commit log should therefore be understood as a technical record of changes, not as an exact measure of individual contribution. Knowledge sharing and joint problem solving were intentional parts of the development process and played a significant role in the final solution.
+This is also reflected in a large amount of commits, where only 1 is credited for the commit. Examples include: [133f7ee](https://github.com/ITU-BDSA2025-GROUP21/Chirp/commit/133f7ee19a82129298acbcb4b251df8f84f7f7a0), [3cba4c0](https://github.com/ITU-BDSA2025-GROUP21/Chirp/commit/3cba4c095730e68b9b16332dcb9defd25c327c8e), [386f3b1](https://github.com/ITU-BDSA2025-GROUP21/Chirp/commit/386f3b1ef69797b272527cc5400a18c103f4abd1), [d6e8216](https://github.com/ITU-BDSA2025-GROUP21/Chirp/commit/d6e8216ef668307627530742d961dc456e91d92d)...
+
 ## How to make Chirp! work locally
+
+
+
+## Running Test Suite locally
+
+
+
 
 # Ethics
 
@@ -128,17 +230,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ## LLMs, ChatGPT, CoPilot, and others
-During the development of Chirp, we made limited and deliberate use of Large Language Models (LLMs) as a supportive learning and reference tool. LLMs were primarily used to help us understand various .NET libraries, third-party frameworks, and other unfamiliar technical aspects encountered throughout the project. This usage was restricted to conceptual explanations, clarification of documentation, and general guidance, and did not involve the direct generation of application logic or implementation-specific code. LLMs were not used to produce raw application code, nor was any LLM-generated code directly incorporated into the final solution. 
-Additionally, Copilot was used to assist in generating initial drafts of code documentation. These drafts were then reviewed, refined, and adjusted by the project group to ensure correctness, clarity, and alignment with the actual implementation. Overall, LLMs functioned as a supplementary aid rather than a development tool, and all design decisions, implementation work, and final outputs remain the result of our own work.ase, and deployment
+During the development of Chirp, we made limited and deliberate use of Large Language Models (LLMs) as a supportive learning and reference tool. LLMs were primarily used to help us understand various .NET libraries, third-party frameworks, and other unfamiliar technical aspects, providing conceptual explanations, clarification of documentation, and general guidance. They were not used to generate raw application code, and no LLM-generated code was incorporated into the final solution.
 
-## Team work
-
-## How to make _Chirp!_ work locally
-
-## How to run test suite locally
-
-# Ethics
-
-## License
-
-## LLMs, ChatGPT, CoPilot, and others
+Copilot was also used as an initial aid for the documentation process, offering preliminary suggestions and structure. These suggestions were carefully reviewed and fully rewritten or adapted by the project group to ensure accuracy, clarity, and alignment with the implementation. Overall, LLMs served as a supplementary resource rather than a development tool, with all design decisions, implementation work, and final outputs produced entirely by the project team.
