@@ -4,6 +4,21 @@ using Chirp.Core.Models;
 
 namespace Chirp.Core.Data
 {
+    /// <summary>
+    /// Represents the primary database context for the Chirp application.
+    /// 
+    /// This DbContext is responsible for configuring and managing access to
+    /// all persisted domain data, including authors, cheeps, likes, and
+    /// follow relationships. It integrates ASP.NET Core Identity by inheriting
+    /// from IdentityDbContext, enabling authentication and user-related data
+    /// to coexist with application-specific entities.
+    /// 
+    /// The context is used at runtime by Entity Framework Core to:
+    /// - Query and persist application data
+    /// - Define entity relationships and composite keys
+    /// - Enforce referential integrity and cascade delete behavior
+    /// 
+    /// </summary>
     public class ChirpDBContext : IdentityDbContext<Author>
     {
         public DbSet<Cheep> Cheeps { get; set; }
