@@ -26,11 +26,10 @@ using Chirp.Application.Services.Interface;
 //
 // No application or business logic resides here.
 // -----------------------------------------------------------------------------
-
 var builder = WebApplication.CreateBuilder(args);
 var app = Program.BuildWebApplication(args);
 app.Run();
-
+//Small commit
 public partial class Program
 {
     public static WebApplication BuildWebApplication(
@@ -64,10 +63,8 @@ public partial class Program
             builder.Environment.EnvironmentName = environmentName;
         }
 
-        // Add services to the container.
         builder.Services.AddRazorPages(options =>
         {
-            // Root route is handled by MapFallbackToPage("/PublicView"); avoid duplicate endpoint.
         });
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<ICheepService, CheepService>();
@@ -123,7 +120,7 @@ using (var scope = app.Services.CreateScope())
             app.UseHsts();
         }
 
-        if (!disableHttpsRedirection)
+        if (!disableHttpsRedirection && !app.Environment.IsProduction())
         {
             app.UseHttpsRedirection();
         }

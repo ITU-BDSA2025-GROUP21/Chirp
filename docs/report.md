@@ -214,14 +214,14 @@ The following UML statechart represents the available "options" a user has depen
 The below diagrams of sequences illustrates a sequence of calls in the Chirp! application initiated by a user, for both an unauthenticated and an authenticated user.
 
 ### Unauthorized user
-![Sequence Diagram - Unauthorized User](https://hackmd.io/_uploads/Bkeoivb4Zl.png)
+![Sequence Diagram - Unauthorized User](/images/SequenceDiagramUnauthorizedUser.png)
 The diagram illustrates the sequence of calls made by an unauthorized user accessing the **PublicTimeline**, including redirection to **HTTPS**, which is permitted without authentication.
 
 It also shows attempts to access the **UserTimeline**, like and post cheeps, and follow or unfollow other users. These actions are restricted to **authorized users only**.
 
 
 ### Authorized User
-![Sequence Diagram - Authorized User](https://hackmd.io/_uploads/rklEnDWE-g.png)
+![Sequence Diagram - Authorized User](/images/SequenceDiagramAuthorizedUser.png)
 The diagram illustrates the sequence of calls made by an **authorized user** accessing the **PublicTimeline**, including redirection to **HTTPS**.
 
 It also shows authorized actions such as accessing the **UserTimeline**, liking and posting cheeps, and following or unfollowing other users.
@@ -230,21 +230,21 @@ It also shows authorized actions such as accessing the **UserTimeline**, liking 
 # Process
 
 ## Build, test, release and deployment
-![githubWorkflow](https://hackmd.io/_uploads/rkbqWvZ4-x.png)
+![githubWorkflow](/images/githubWorkflow.png)
 
 The above diagram shows an overall activity UML illustrating the overall CI/CD pipeline of Chirp. The model shows how pull requests are validated through automated testing, merged into the main branch, deployed to production, and optionally released as versioned artifacts. Below we dive into each workflow process.
 
 #### Continuous Integration Workflow
-![Automatic test build - github workflow](https://hackmd.io/_uploads/S1zt5dZ4-e.png)
+![Automatic test build - github workflow](/images/AutomaticTestBuildGithubWorkflow.png)
 
 The above figure expands the continuous integration from the previous model. When a pull request is opened or updated, the workflow restores dependencies, builds the application, and executes the automated test suite. If any step fails, the workflow ends and the pull request cant be merged. CodeFactor is used for static code analysis, and identified quality issues must be resolved before the pull request can be accepted
 
 #### Deployment Workflow
-![Build and Deploy to azure - workflow](https://hackmd.io/_uploads/ryVZiu-4bl.png)
+![Build and Deploy to azure - workflow](/images/BuildAndDeployToAzureWorkflow.png)
 The above figure expands the deployment stag. Once changes are merged into the main branch, the workflow builds the application and deploys it to an Azure Web App. This ensures that production always reflects a tested and integrated version of the codebase.
 
 #### Release Workflow
-![Publish - workflow](https://hackmd.io/_uploads/H15icOWEbx.png)
+![Publish - workflow](/images/PublishWorkflow.png)
 
 The figure above expands the release stage. When a merge is associated with a version tag, the publish workflow is triggered, producing versioned release artifacts and creating a corresponding GitHub release.
 
@@ -253,19 +253,19 @@ The figure above expands the release stage. When a merge is associated with a ve
 ## Team work
 
 ### Project Board
-![image_2025-12-30_172518545](https://hackmd.io/_uploads/r1Dg6d-E-e.png)
+![ChirpKabanboard](/images/ChirpKabanboard.png)
 Above shows our project board. All wished features and functionalities have been implemented.
 
 We where not able to finish UI-tests of the latest features in time, being UI Tests foer the like, dislike, follow and karma buttons.
 
 
 ### Trunkbased Development
-![trunkbased stuff](https://hackmd.io/_uploads/HkD-Kbl4Zl.png)
+![TrunkbasedDevelopment](/images/trunkbasedDevelopment.png)
 
 During our development of Chirp we have followed a trunk-based development workflow. Short-lived branches were created for individual tasks and features, each branching from the main trunk. Development was carried out on these branches with frequent, small commits documenting progress. Once a task is complete a pull request was opened targeting the main branch. Project members reviewed the changes to ensure correctness and adherence to project standards. After approval, branches were merged into main, and the corresponding issues were closed. This workflow allowed us to maintain a stable main branch while supporting rapid development and collaboration.
 
 ### Full workflow process
-![developmentProcessWorkflow](https://hackmd.io/_uploads/rkasbPb4-l.png)
+![developmentProcessWorkflow](/images/developmentProcessWorkflow.png)
 
 The model above is a workflow UML that shows an abstraction of the full workflow process, used throughout the development. This model was created early on in the project, to create a uniform and structured way of developing features. 
 Development begins with Github issue with a structure based on a user story, containing a description and acceptance criteria. This is kept non-technical and purely user-experience or stakeholder oriented. Each issue should aim to be consice enough to be implemented, reviewed and merged through a single short-lived feature branch. This is not a requirment, but compliments the idea of trunk-based Git branching strategy. For each issue, a feature branch is created with a name that reflects the issue or the feature being worked on. When the feature has been developed and tests are added and passed, a pull request is created for peers to review. The reviewer should ensure that the acceptance criteria and SOLID principles are covered. Once the Github workflow finishes, the related issue is closed.
