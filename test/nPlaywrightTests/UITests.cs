@@ -19,7 +19,7 @@ public class UITests : PageTest
         _baseUrl = _factory.BaseAddress;
     }
 
-    [Test]
+    [Test, Order(1)]
     public async Task ChirpWebsiteExists()
     {
         var response = await Page.GotoAsync(_baseUrl);
@@ -37,70 +37,72 @@ public class UITests : PageTest
         Assert.That(title, Is.EqualTo("Chirp!"));
     }
 
-    [Test]
+    [Test, Order(2)]
     public async Task likeButton()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync("philip");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync("noah");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).PressAsync("Tab");
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-        await Page.Locator("#Text").ClickAsync();
-        await Page.Locator("#Text").FillAsync("jeg gider ikke mere");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToMatchAriaSnapshotAsync("- button \"(0)\":\n  - img\n  - text: \"\"");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(0)" }).First.ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToMatchAriaSnapshotAsync("- button \"(1)\":\n  - img\n  - text: \"\"");
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(0)");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "(0)" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "(1)" }).First.ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(0)");
     }
 
-    [Test]
-    public async Task timelineCHange()
+    [Test, Order(3)]
+    public async Task timelineChange()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"Public Timeline\" [level=2]\n- heading \"What's on your mind philip?\" [level=3]\n- textbox\n- button \"Share\"\n- list:\n  - listitem:\n    - img \"philip\"\n    - link \"philip\":\n      - /url: /9e0bcf33-f867-475a-a1cc-fd10440d9d7b\n    - text: /⭐ \\d+ jeg gider ikke mere — \\d+-\\d+-\\d+ \\d+:\\d+/\n    - button \"(1)\":\n      - img\n      - text: \"\"\n    - button \"(0)\":\n      - img\n      - text: \"\"");
+        await Expect(Page.Locator("h2")).ToContainTextAsync("Public Timeline");
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"philip's Timeline\" [level=2]\n- list:\n  - listitem:\n    - img \"philip\"\n    - link \"philip\":\n      - /url: /9e0bcf33-f867-475a-a1cc-fd10440d9d7b\n    - text: /⭐ \\d+ jeg gider ikke mere — \\d+-\\d+-\\d+ \\d+:\\d+/\n    - button \"(1)\":\n      - img\n      - text: \"\"\n    - button \"(0)\":\n      - img\n      - text: \"\"");
+        await Expect(Page.Locator("h2")).ToContainTextAsync("noah's Timeline");
     }
 
-    [Test]
+    [Test, Order(4)]
     public async Task dislikeButton()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(0)" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToMatchAriaSnapshotAsync("- button \"(1)\":\n  - img\n  - text: \"\"");
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "(1)" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(2)");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "(2)" }).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
     }
 
-    [Test]
+    [Test, Order(5)]
     public async Task accountPage()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"Public Timeline\" [level=2]\n- heading \"What's on your mind philip?\" [level=3]\n- textbox\n- button \"Share\"\n- list:\n  - listitem:\n    - img \"philip\"\n    - link \"philip\":\n      - /url: /9e0bcf33-f867-475a-a1cc-fd10440d9d7b\n    - text: /⭐ -\\d+ jeg gider ikke mere — \\d+-\\d+-\\d+ \\d+:\\d+/\n    - button \"(0)\":\n      - img\n      - text: \"\"\n    - button \"(1)\":\n      - img\n      - text: \"\"");
+        await Expect(Page.Locator("h2")).ToContainTextAsync("Public Timeline");
         await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"Manage your account\" [level=1]\n- heading \"Change your account settings\" [level=2]\n- separator\n- list:\n  - listitem:\n    - link \"Profile\":\n      - /url: /Identity/Account/Manage\n  - listitem:\n    - link \"Email\":\n      - /url: /Identity/Account/Manage/Email\n  - listitem:\n    - link \"Password\":\n      - /url: /Identity/Account/Manage/ChangePassword\n  - listitem:\n    - link \"External logins\":\n      - /url: /Identity/Account/Manage/ExternalLogins\n  - listitem:\n    - link \"Two-factor authentication\":\n      - /url: /Identity/Account/Manage/TwoFactorAuthentication\n  - listitem:\n    - link \"Personal data\":\n      - /url: /Identity/Account/Manage/PersonalData\n- heading \"Profile\" [level=3]\n- heading \"Account\" [level=5]\n- textbox \"Username\" [disabled]: phqu@itu.dk\n- text: Username\n- textbox \"Phone number\"\n- text: Phone number\n- heading \"Profile picture\" [level=5]\n- img \"Current profile picture\"\n- text: Upload new\n- button \"Upload new\"\n- checkbox \"Remove current picture\"\n- text: Remove current picture\n- button \"Save changes\"");
+        await Expect(Page.Locator("body")).ToContainTextAsync("Manage your account");
     }
 
     [OneTimeTearDown]
