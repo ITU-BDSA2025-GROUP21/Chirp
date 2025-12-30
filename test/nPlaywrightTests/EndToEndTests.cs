@@ -142,7 +142,24 @@ public class EndToEndTests : PageTest
     [Test]
     public async Task deleteAccount()
     {
-        
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync("fred");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("fred@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Dinmor2610!");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Dinmor2610!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Delete" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
+        await Expect(Page.Locator("#register")).ToContainTextAsync("Register");
     }
 
     [OneTimeTearDown]

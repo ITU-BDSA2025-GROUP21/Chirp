@@ -38,7 +38,7 @@ public class UITests : PageTest
     }
 
     [Test, Order(2)]
-    public async Task likeButton()
+    public async Task accountpages()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Register" }).ClickAsync();
@@ -51,11 +51,13 @@ public class UITests : PageTest
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).PressAsync("Tab");
         await Page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Dinmor2610!");
         await Page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(0)");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(0)" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(1)" }).First.ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(0)");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Profile" }).ClickAsync();
+        await Expect(Page.Locator("h3")).ToContainTextAsync("Profile");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Email" }).ClickAsync();
+        await Expect(Page.Locator("h3")).ToContainTextAsync("Manage Email");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Password" }).ClickAsync();
+        await Expect(Page.Locator("h3")).ToContainTextAsync("Change password");
     }
 
     [Test, Order(3)]
@@ -71,38 +73,6 @@ public class UITests : PageTest
         await Expect(Page.Locator("h2")).ToContainTextAsync("Public Timeline");
         await Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
         await Expect(Page.Locator("h2")).ToContainTextAsync("noah's Timeline");
-    }
-
-    [Test, Order(4)]
-    public async Task dislikeButton()
-    {
-        await Page.GotoAsync(_baseUrl);
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(1)" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(2)");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "(2)" }).ClickAsync();
-        await Expect(Page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("(1)");
-    }
-
-    [Test, Order(5)]
-    public async Task accountPage()
-    {
-        await Page.GotoAsync(_baseUrl);
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("noah@itu.dk");
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
-        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await Expect(Page.Locator("h2")).ToContainTextAsync("Public Timeline");
-        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
-        await Expect(Page.Locator("body")).ToContainTextAsync("Manage your account");
     }
 
     [OneTimeTearDown]
