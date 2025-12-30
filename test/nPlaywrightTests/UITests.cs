@@ -88,6 +88,21 @@ public class UITests : PageTest
         await Expect(Page.GetByRole(AriaRole.Listitem)).ToMatchAriaSnapshotAsync("- button \"(1)\":\n  - img\n  - text: \"\"");
     }
 
+    [Test]
+    public async Task accountPage()
+    {
+        await Page.GotoAsync(_baseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("phqu@itu.dk");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).PressAsync("Tab");
+        await Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Dinmor2610!");
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"Public Timeline\" [level=2]\n- heading \"What's on your mind philip?\" [level=3]\n- textbox\n- button \"Share\"\n- list:\n  - listitem:\n    - img \"philip\"\n    - link \"philip\":\n      - /url: /9e0bcf33-f867-475a-a1cc-fd10440d9d7b\n    - text: /⭐ -\\d+ jeg gider ikke mere — \\d+-\\d+-\\d+ \\d+:\\d+/\n    - button \"(0)\":\n      - img\n      - text: \"\"\n    - button \"(1)\":\n      - img\n      - text: \"\"");
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
+        await Expect(Page.Locator("body")).ToMatchAriaSnapshotAsync("- heading \"Manage your account\" [level=1]\n- heading \"Change your account settings\" [level=2]\n- separator\n- list:\n  - listitem:\n    - link \"Profile\":\n      - /url: /Identity/Account/Manage\n  - listitem:\n    - link \"Email\":\n      - /url: /Identity/Account/Manage/Email\n  - listitem:\n    - link \"Password\":\n      - /url: /Identity/Account/Manage/ChangePassword\n  - listitem:\n    - link \"External logins\":\n      - /url: /Identity/Account/Manage/ExternalLogins\n  - listitem:\n    - link \"Two-factor authentication\":\n      - /url: /Identity/Account/Manage/TwoFactorAuthentication\n  - listitem:\n    - link \"Personal data\":\n      - /url: /Identity/Account/Manage/PersonalData\n- heading \"Profile\" [level=3]\n- heading \"Account\" [level=5]\n- textbox \"Username\" [disabled]: phqu@itu.dk\n- text: Username\n- textbox \"Phone number\"\n- text: Phone number\n- heading \"Profile picture\" [level=5]\n- img \"Current profile picture\"\n- text: Upload new\n- button \"Upload new\"\n- checkbox \"Remove current picture\"\n- text: Remove current picture\n- button \"Save changes\"");
+    }
+
     [OneTimeTearDown]
     public async Task TearDownFactory()
     {
