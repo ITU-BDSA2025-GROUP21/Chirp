@@ -6,7 +6,7 @@ namespace nPlaywrightTests;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class Tests : PageTest
+public class EndToEndTests : PageTest
 {
     private TestChirpWebFactory _factory = null!;
     private string _baseUrl = null!;
