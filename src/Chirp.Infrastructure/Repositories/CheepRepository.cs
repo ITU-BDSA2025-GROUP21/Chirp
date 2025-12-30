@@ -69,7 +69,6 @@ namespace Chirp.Razor.Repositories
                 .Include(c => c.Author)
                 .Include(c => c.Likes)
                 .First(c => c.CheepId == id);
-
         }
         /// <summary>
         /// Returns a paginated collection of cheeps specifically identified to be made by multiple Authors.
