@@ -11,7 +11,7 @@ namespace Chirp.Application.Services.Interface
         void AddCheep(string text, string authorId);
         public IEnumerable<CheepDTO> GetCheepsFromMultipleAuthors(List<string> authorIds, int page = 1);
 
-        public CheepDTO? GetById(int cheepId);
+        public CheepDTO GetById(int cheepId);
 
         public void Like(int cheepId, string authorId, bool like);
 

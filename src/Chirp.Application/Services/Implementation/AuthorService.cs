@@ -31,7 +31,7 @@ namespace Chirp.Application.Services.Implementation
                 karma = author.karma,
                 Email = author.Email == null ? "noEmaiFound@nomail.dk" : author.Email,
                 CreationDate = author.CreationDate.ToString("dd/MM/yyyy HH:mm"),
-                ProfilePicPath = author.ProfilePicPath
+                ProfilePicPath = author.ProfilePicPath == null ? "/images/default-profile.png" : author.ProfilePicPath
             };
         }
 

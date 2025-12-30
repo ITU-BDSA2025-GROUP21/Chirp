@@ -23,10 +23,11 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 var author = _authorService.FindAuthorById(cheep.AuthorId);
+                var path = author?.ProfilePicPath;
 
-                var profilePic = string.IsNullOrWhiteSpace(author?.ProfilePicPath)
+                var profilePic = string.IsNullOrWhiteSpace(path)
                     ? "/images/default_profile_pic.png"
-                    : author.ProfilePicPath;
+                    : path;
 
                 bool IsFollowing = Model.Following.Any(
                 a =>
@@ -51,16 +52,16 @@
                                      (Model.IdentityAuthor == null || cheep.AuthorId != Model.IdentityAuthor.Id))
                                 {
                                     <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
-                                        <input type="hidden" name="followeeId" value="@cheep.AuthorId"/>
+                                        <input type="hidden" name="followeeId" value="@cheep?.AuthorId"/>
                                         <button class="small-button" type="submit">
-                                            @(Model.Following.Any(f => f.Id == cheep.AuthorId) ? "Unfollow" : "Follow")
+                                            @(Model.Following.Any(f => f?.Id == cheep?.AuthorId) ? "Unfollow" : "Follow")
                                         </button>
                                     </form>
                                 }
                             </div>
 
                             <div class="cheep-karma">
-                                ⭐ @author.karma
+                                ⭐ @author?.karma
                             </div>
                         </div>
                     </div>
