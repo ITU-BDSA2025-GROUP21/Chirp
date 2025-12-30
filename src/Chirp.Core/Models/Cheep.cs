@@ -19,6 +19,6 @@ namespace Chirp.Core.Models
 
         [PersonalData] public DateTime TimeStamp { get; set; }
 
-        public List<Likes> Likes { get; set; } = new();
+        public List<Like> Likes { get; set; } = new();
     }
 }

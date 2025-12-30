@@ -208,10 +208,7 @@ div.page ul.cheeps {
         margin: 0;
     }
 
-    div.page ul.cheeps li img {
-        float: left;
-        padding: 0 10px 0 0;
-    }
+
 
     div.page ul.cheeps li small {
         font-size: 0.9em;
@@ -441,4 +438,16 @@ button {
     border: 1px solid #c7d5f5;
     padding: 3px 8px;
     border-radius: 6px;
+}
+
+.cheep-profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
+}
+.cheep-profile-pic:hover {
+    transform: scale(1.05);
 }

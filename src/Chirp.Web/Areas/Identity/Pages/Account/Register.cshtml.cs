@@ -122,6 +122,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 user.Name = Input.Name;
+                
+                user.ProfilePicPath ??= "/images/default_profile_pic.png";
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 

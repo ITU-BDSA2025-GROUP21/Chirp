@@ -1,5 +1,5 @@
 ﻿
-namespace Chirp.Core.DTO
+namespace Chirp.Application.DTO
 {
     public record UserFollowDTO
     {

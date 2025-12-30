@@ -5,23 +5,60 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
+<h3 class="mb-3">@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
+    <div class="col-12 col-md-8 col-lg-6">
+
+        <form id="profile-form" method="post" enctype="multipart/form-data" class="d-grid gap-4">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+
+            <!-- Account -->
+            <div>
+                <h5 class="mb-3">Account</h5>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Username" class="form-control" placeholder="Username" disabled />
+                    <label asp-for="Username" class="form-label"></label>
+                </div>
+
+                <div class="form-floating">
+                    <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone number" />
+                    <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+
+            <!-- Profile picture -->
+            <div>
+                <h5 class="mb-3">Profile picture</h5>
+
+                <div class="d-flex align-items-center gap-3">
+                    <img src="@Model.CurrentProfilePic"
+                         alt="Current profile picture"
+                         class="cheep-profile-pic" />
+
+                    <div class="flex-grow-1">
+                        <label asp-for="Input.ProfilePic" class="form-label mb-1">Upload new</label>
+                        <input asp-for="Input.ProfilePic" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="Input.ProfilePic" class="text-danger"></span>
+
+                        <div class="form-check mt-2">
+                            <input asp-for="Input.RemoveProfilePic" class="form-check-input" type="checkbox" />
+                            <label asp-for="Input.RemoveProfilePic" class="form-check-label">
+                                Remove current picture
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+
+            <button id="update-profile-button" type="submit" class="btn btn-primary btn-lg">
+                Save changes
+            </button>
         </form>
+
     </div>
 </div>
 
