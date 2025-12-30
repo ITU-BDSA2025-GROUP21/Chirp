@@ -75,7 +75,7 @@ public class UITests : PageTest
     }
 
     [Test]
-    public async Task temp()
+    public async Task dislikeButton()
     {
         await Page.GotoAsync(_baseUrl);
         await Page.GetByRole(AriaRole.Link, new() { Name = "Login" }).ClickAsync();
