@@ -62,13 +62,13 @@ namespace Chirp.Razor.Repositories
         /// </summary>
         /// <param name="id">The unique identifiaction of the Cheep.</param>
         /// <returns>Returns the requested <see cref="Cheep"/> from the CheepID</returns>
-        public Cheep? GetById(int id)
+        public Cheep GetById(int id)
         {
             return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
                 .Include(c => c.Likes)
-                .FirstOrDefault(c => c.CheepId == id);
+                .First(c => c.CheepId == id);
         }
         /// <summary>
         /// Returns a paginated collection of cheeps specifically identified to be made by multiple Authors.

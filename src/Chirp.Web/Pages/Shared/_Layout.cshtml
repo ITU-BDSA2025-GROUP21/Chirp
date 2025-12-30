@@ -8,7 +8,7 @@
 
     if (isSignedIn)
     {
-        currentAuthor = await identityUserService.GetCurrentIdentityAuthor(User);
+        currentAuthor = await identityUserService.GetCurrentIdentityAuthor(User!);
     }
 }
 

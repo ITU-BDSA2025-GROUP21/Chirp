@@ -58,14 +58,14 @@
                                     <form method="post" asp-page-handler="ToggleFollow" style="display:inline;">
                                         <input type="hidden" name="followeeId" value="@cheep.AuthorId" />
                                         <button class="small-button" type="submit">
-                                            @(Model.Following.Any(f => f.Id == cheep.AuthorId) ? "Unfollow" : "Follow")
+                                            @(Model.Following.Any(f => f?.Id == cheep.AuthorId) ? "Unfollow" : "Follow")
                                         </button>
                                     </form>
                                 }
                             </div>
 
                             <div class="cheep-karma">
-                                ⭐ @author.karma
+                                ⭐ @author?.karma
                             </div>
                         </div>
                     </div>
