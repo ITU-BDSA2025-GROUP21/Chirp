@@ -47,15 +47,11 @@ namespace Chirp.Razor.Repositories
 
         public Cheep GetById(int id)
         {
-            var cheep = _context.Cheeps
+            return _context.Cheeps
                 .AsNoTracking()
                 .Include(c => c.Author)
                 .Include(c => c.Likes)
-                .FirstOrDefault(c => c.CheepId == id);
-
-            if (cheep == null)
-                throw new KeyNotFoundException($"Cheep with ID {id} not found.");
-            return cheep;
+                .First(c => c.CheepId == id);
 
         }
         public IEnumerable<Cheep> GetByMultipleAuthors(List<string> authorIds, int page = 1, int pageSize = 32)
