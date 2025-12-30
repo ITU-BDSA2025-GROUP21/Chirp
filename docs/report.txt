@@ -1,9 +1,9 @@
----
+ï»¿---
 title: 'Chirp!_Project_Report'
 subtitle: 'ITU BDSA 2025 Group 21'
 author:
 - "Alfred Damgaard <alfd@itu.dk>"
-- "Alfred Schrøder Oldin <aold@itu.dk>"
+- "Alfred Schr der Oldin <aold@itu.dk>"
 - "Andreas John-Holaus <andjo@itu.dk>"
 - "Anton Thejsen <antt@itu.dk>"
 - "Noah Leerbeck Van Wagenen <noav@itu.dk>"
@@ -139,7 +139,7 @@ Validates the system across all layers.
 ## Architecture of deployed application
 ![Deployed Architecture](images/DeployedArchitecture.png)
 
-The application follows a **client–server architecture**.
+The application follows a **client server architecture**.
 
 The server is implemented as a web application and deployed on **Azure App Service**. It exposes the required interfaces and API endpoints that enable communication between the client and the server.
 
