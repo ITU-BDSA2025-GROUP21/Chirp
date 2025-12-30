@@ -64,10 +64,8 @@ public partial class Program
             builder.Environment.EnvironmentName = environmentName;
         }
 
-        // Add services to the container.
         builder.Services.AddRazorPages(options =>
         {
-            // Root route is handled by MapFallbackToPage("/PublicView"); avoid duplicate endpoint.
         });
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<ICheepService, CheepService>();
