@@ -1,10 +1,10 @@
-using Chirp.Core.DTO;
+using Chirp.Application.DTO;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Chirp.Application.Services.Interface;
 
 namespace Chirp.Web.Pages;
 
@@ -127,7 +127,7 @@ public class PublicView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
+        Like like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 
@@ -154,7 +154,7 @@ public class PublicView : PageModel
         if (currentAuthor == null)
             return RedirectToPage();
 
-        Likes like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
+        Like like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, false);
 
         string authorId = _cheepService.GetById(cheepId).AuthorId;
 

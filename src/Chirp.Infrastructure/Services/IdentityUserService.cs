@@ -1,13 +1,8 @@
-﻿using Chirp.Core.DTO;
-using Chirp.Core.Models;
-using Chirp.Core.Services;
+﻿using Chirp.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using Chirp.Application.DTO;
+using Chirp.Application.Services.Interface;
 
 namespace Chirp.Infrastructure.Services
 {

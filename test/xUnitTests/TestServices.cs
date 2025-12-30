@@ -1,8 +1,6 @@
 using Chirp.Core.Data;
 using Chirp.Core.Models;
 using Chirp.Core.Repositories;
-using Chirp.Core.Services;
-using Chirp.Infrastructure.Services;
 using Chirp.Razor.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using xUnitTests.Seed;
+using Chirp.Application.Services.Implementation;
+using Chirp.Application.Services.Interface;
 
 public class TestServices : IDisposable
 {

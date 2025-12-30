@@ -5,6 +5,7 @@
 	  <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>5632450c-4f48-42aa-b1ed-915a0d2b7fef</UserSecretsId>
+	  <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<Folder Include="wwwroot\profilePics\" />
 	<PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.0.0" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 	  <PrivateAssets>all</PrivateAssets>
@@ -31,7 +33,8 @@
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
 	<ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj" />
 	<ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
-	   <Folder Include="Areas\Identity\Data\" />	  
+	<ProjectReference Include="..\Chirp.Application\Chirp.Application.csproj" />
+	  <Folder Include="Areas\Identity\Data\" />	  
 	  
 	
   </ItemGroup></Project>

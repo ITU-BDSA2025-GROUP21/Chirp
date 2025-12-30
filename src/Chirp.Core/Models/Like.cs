@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chirp.Core.Models
 {
-    public class Likes
+    public class Like
     {
         [ForeignKey(nameof(Author))]
         public string authorId { get; set; } = null!;
