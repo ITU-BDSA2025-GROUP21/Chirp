@@ -32,7 +32,6 @@ app.Run();
 
 public partial class Program
 {
-    // CodeFactor: disable ComplexMethod
     public static WebApplication BuildWebApplication(
         string[]? args = null,
         string? connectionStringOverride = null,
