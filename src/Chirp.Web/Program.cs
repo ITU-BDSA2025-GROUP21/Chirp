@@ -26,13 +26,13 @@ using Chirp.Application.Services.Interface;
 //
 // No application or business logic resides here.
 // -----------------------------------------------------------------------------
-// CodeFactor: disable ComplexMethod
 var builder = WebApplication.CreateBuilder(args);
 var app = Program.BuildWebApplication(args);
 app.Run();
 
 public partial class Program
 {
+    // CodeFactor: disable ComplexMethod
     public static WebApplication BuildWebApplication(
         string[]? args = null,
         string? connectionStringOverride = null,
