@@ -123,7 +123,7 @@ using (var scope = app.Services.CreateScope())
             app.UseHsts();
         }
 
-        if (!disableHttpsRedirection)
+        if (!disableHttpsRedirection && !app.Environment.IsProduction())
         {
             app.UseHttpsRedirection();
         }
