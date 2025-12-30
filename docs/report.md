@@ -75,7 +75,7 @@ Represents a follow relationship between two authors.
 
 
 ## Architecture -- In the small
-![Architecture](/images/Architecture.png)
+![Architecture](images/Architecture.png)
 
 As illustrated above, this solution follows the Onion Architecture principle, where all dependencies point inward toward the domain. The goal is to keep business logic isolated from technical and presentation concerns.
 
@@ -137,7 +137,7 @@ Validates the system across all layers.
 - Not part of the runtime architecture
 
 ## Architecture of deployed application
-![Deployed Architecture](/images/DeployedArchitecture.png)
+![Deployed Architecture](images/DeployedArchitecture.png)
 
 The application follows a **client–server architecture**.
 
@@ -147,7 +147,7 @@ The server is implemented as a web application and deployed on **Azure App Servi
 # User Activities
 
 ## Acessibility for a non authorized user
-![UnauthenticatedStateChartImage](/images/UnauthenticatedStateChartImage.png)
+![UnauthenticatedStateChartImage](images/UnauthenticatedStateChartImage.png)
 When a user enters the website for the first time, they are placed on the public timeline.
 
 In this state, the user can:
@@ -160,7 +160,7 @@ However, while unauthenticated, the user cannot perform any interactive actions 
 This section represents the default read-only experience.
 
 ## Login & Registration Flow
-![RegistrationFlowImage](/images/RegistrationFlowImage.png)
+![RegistrationFlowImage](images/RegistrationFlowImage.png)
 
 From the public timeline, an unauthenticated user may choose to log in or register as a new user.
 
@@ -175,7 +175,7 @@ Both login and registration can be completed using:
 Successfull authentication redirects the user to the public timeline.
 
 ## Acessibility for a logged in user
-![ChirpStateChart](/images/ChirpStateChart.png)
+![ChirpStateChart](images/ChirpStateChart.png)
 After a successful login or registration, the user is redirected back to the public timeline, now as an authenticated user.
 
 In this state, the user retains all read-only capabilities but additionally gains the ability to:
@@ -188,7 +188,7 @@ Additionally an authenticated user can navigate to:
     -Account
         
 ## Account Management & Profile Settings
-![AccountChartImage](/images/AccountChartImage.png)
+![AccountChartImage](images/AccountChartImage.png)
 Authenticated users may access the account page, which contains personal profile information.
 
 From this page, the user can:
@@ -205,7 +205,7 @@ If the user deletes or downloads their data, they are:
 This section represents identity, privacy and lifecycle management.
 
 ## Full state chart for logged in and out users
-![ChirpStateChartImage](/images/ChirpStateChartImage.png)
+![ChirpStateChartImage](images/ChirpStateChartImage.png)
 The following UML statechart represents the available "options" a user has depending on where on the website they are located, and whether they're logged in or not.
 
 
@@ -214,14 +214,14 @@ The following UML statechart represents the available "options" a user has depen
 The below diagrams of sequences illustrates a sequence of calls in the Chirp! application initiated by a user, for both an unauthenticated and an authenticated user.
 
 ### Unauthorized user
-![Sequence Diagram - Unauthorized User](/images/SequenceDiagramUnauthorizedUser.png)
+![Sequence Diagram - Unauthorized User](images/SequenceDiagramUnauthorizedUser.png)
 The diagram illustrates the sequence of calls made by an unauthorized user accessing the **PublicTimeline**, including redirection to **HTTPS**, which is permitted without authentication.
 
 It also shows attempts to access the **UserTimeline**, like and post cheeps, and follow or unfollow other users. These actions are restricted to **authorized users only**.
 
 
 ### Authorized User
-![Sequence Diagram - Authorized User](/images/SequenceDiagramAuthorizedUser.png)
+![Sequence Diagram - Authorized User](images/SequenceDiagramAuthorizedUser.png)
 The diagram illustrates the sequence of calls made by an **authorized user** accessing the **PublicTimeline**, including redirection to **HTTPS**.
 
 It also shows authorized actions such as accessing the **UserTimeline**, liking and posting cheeps, and following or unfollowing other users.
@@ -230,21 +230,21 @@ It also shows authorized actions such as accessing the **UserTimeline**, liking 
 # Process
 
 ## Build, test, release and deployment
-![githubWorkflow](/images/githubWorkflow.png)
+![githubWorkflow](images/githubWorkflow.png)
 
 The above diagram shows an overall activity UML illustrating the overall CI/CD pipeline of Chirp. The model shows how pull requests are validated through automated testing, merged into the main branch, deployed to production, and optionally released as versioned artifacts. Below we dive into each workflow process.
 
 #### Continuous Integration Workflow
-![Automatic test build - github workflow](/images/AutomaticTestBuildGithubWorkflow.png)
+![Automatic test build - github workflow](images/AutomaticTestBuildGithubWorkflow.png)
 
 The above figure expands the continuous integration from the previous model. When a pull request is opened or updated, the workflow restores dependencies, builds the application, and executes the automated test suite. If any step fails, the workflow ends and the pull request cant be merged. CodeFactor is used for static code analysis, and identified quality issues must be resolved before the pull request can be accepted
 
 #### Deployment Workflow
-![Build and Deploy to azure - workflow](/images/BuildAndDeployToAzureWorkflow.png)
+![Build and Deploy to azure - workflow](images/BuildAndDeployToAzureWorkflow.png)
 The above figure expands the deployment stag. Once changes are merged into the main branch, the workflow builds the application and deploys it to an Azure Web App. This ensures that production always reflects a tested and integrated version of the codebase.
 
 #### Release Workflow
-![Publish - workflow](/images/PublishWorkflow.png)
+![Publish - workflow](images/PublishWorkflow.png)
 
 The figure above expands the release stage. When a merge is associated with a version tag, the publish workflow is triggered, producing versioned release artifacts and creating a corresponding GitHub release.
 
@@ -253,19 +253,19 @@ The figure above expands the release stage. When a merge is associated with a ve
 ## Team work
 
 ### Project Board
-![ChirpKabanboard](/images/ChirpKabanboard.png)
+![ChirpKabanboard](images/ChirpKabanboard.png)
 Above shows our project board. All wished features and functionalities have been implemented.
 
 We where not able to finish UI-tests of the latest features in time, being UI Tests foer the like, dislike, follow and karma buttons.
 
 
 ### Trunkbased Development
-![TrunkbasedDevelopment](/images/trunkbasedDevelopment.png)
+![TrunkbasedDevelopment](images/trunkbasedDevelopment.png)
 
 During our development of Chirp we have followed a trunk-based development workflow. Short-lived branches were created for individual tasks and features, each branching from the main trunk. Development was carried out on these branches with frequent, small commits documenting progress. Once a task is complete a pull request was opened targeting the main branch. Project members reviewed the changes to ensure correctness and adherence to project standards. After approval, branches were merged into main, and the corresponding issues were closed. This workflow allowed us to maintain a stable main branch while supporting rapid development and collaboration.
 
 ### Full workflow process
-![developmentProcessWorkflow](/images/developmentProcessWorkflow.png)
+![developmentProcessWorkflow](images/developmentProcessWorkflow.png)
 
 The model above is a workflow UML that shows an abstraction of the full workflow process, used throughout the development. This model was created early on in the project, to create a uniform and structured way of developing features. 
 Development begins with Github issue with a structure based on a user story, containing a description and acceptance criteria. This is kept non-technical and purely user-experience or stakeholder oriented. Each issue should aim to be consice enough to be implemented, reviewed and merged through a single short-lived feature branch. This is not a requirment, but compliments the idea of trunk-based Git branching strategy. For each issue, a feature branch is created with a name that reflects the issue or the feature being worked on. When the feature has been developed and tests are added and passed, a pull request is created for peers to review. The reviewer should ensure that the acceptance criteria and SOLID principles are covered. Once the Github workflow finishes, the related issue is closed.
