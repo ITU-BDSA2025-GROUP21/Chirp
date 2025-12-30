@@ -10,6 +10,24 @@ using Microsoft.EntityFrameworkCore;
 using Chirp.Application.Services.Implementation;
 using Chirp.Application.Services.Interface;
 
+// -----------------------------------------------------------------------------
+// Application configuration entry point for the Chirp web app.
+//
+// This file configures and initializes the ASP.NET Core application by:
+// - Registering application services, repositories, and DbContext instances
+//   with the dependency injection container
+// - Configuring authentication and identity, including GitHub OAuth login
+// - Setting up Entity Framework Core with SQLite and applying pending migrations
+// - Defining the HTTP request pipeline and middleware ordering
+//
+// The code in this file is executed once at application startup and represents
+// the composition root of the system, where all infrastructure, services, and
+// framework integrations are wired together.
+//
+// No application or business logic resides here.
+// -----------------------------------------------------------------------------
+
+var builder = WebApplication.CreateBuilder(args);
 var app = Program.BuildWebApplication(args);
 app.Run();
 
