@@ -116,7 +116,7 @@ public class UserTimelineView : PageModel
 
         Like like = await _cheepService.GetLikeAsync(cheepId, currentAuthor.Id, true);
 
-        string authorId = _cheepService.GetById(cheepId).AuthorId;
+        string authorId = _cheepService.GetById(cheepId)!.AuthorId;
 
         int karmaChange = 0;
 
