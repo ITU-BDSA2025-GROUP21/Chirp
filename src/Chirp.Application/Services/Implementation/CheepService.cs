@@ -46,6 +46,7 @@ namespace Chirp.Application.Services.Implementation
         }
 
         public CheepDTO? GetById(int cheepId)
+
         {
             return _cheepRepository.GetById(cheepId) is Cheep cheep ? CreateCheepDTO(cheep) : null;
         }
