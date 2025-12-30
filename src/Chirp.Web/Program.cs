@@ -29,7 +29,7 @@ using Chirp.Application.Services.Interface;
 var builder = WebApplication.CreateBuilder(args);
 var app = Program.BuildWebApplication(args);
 app.Run();
-
+//Small commit
 public partial class Program
 {
     public static WebApplication BuildWebApplication(
