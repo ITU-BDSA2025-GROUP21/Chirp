@@ -62,7 +62,6 @@ namespace Chirp.Razor.Repositories
         /// </summary>
         /// <param name="id">The unique identifiaction of the Cheep.</param>
         /// <returns>Returns the requested <see cref="Cheep"/> from the CheepID</returns>
-        public Cheep? GetById(int id)
         public Cheep GetById(int id)
         {
             return _context.Cheeps
