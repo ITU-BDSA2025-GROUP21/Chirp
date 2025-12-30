@@ -66,6 +66,10 @@ namespace Chirp.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ProfilePicPath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
@@ -116,7 +120,7 @@ namespace Chirp.Infrastructure.Migrations
                     b.ToTable("Cheeps");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Like", b =>
                 {
                     b.Property<string>("authorId")
                         .HasColumnType("TEXT");
@@ -142,10 +146,15 @@ namespace Chirp.Infrastructure.Migrations
                     b.Property<string>("FolloweeId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
                     b.HasKey("FollowerId", "FolloweeId");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("FolloweeId");
 
@@ -291,7 +300,7 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Like", b =>
                 {
                     b.HasOne("Chirp.Core.Models.Cheep", "Cheep")
                         .WithMany("Likes")
@@ -312,6 +321,10 @@ namespace Chirp.Infrastructure.Migrations
 
             modelBuilder.Entity("Chirp.Core.Models.UserFollow", b =>
                 {
+                    b.HasOne("Chirp.Core.Models.Author", null)
+                        .WithMany("UserFollows")
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("Chirp.Core.Models.Author", "Followee")
                         .WithMany()
                         .HasForeignKey("FolloweeId")
@@ -383,6 +396,8 @@ namespace Chirp.Infrastructure.Migrations
             modelBuilder.Entity("Chirp.Core.Models.Author", b =>
                 {
                     b.Navigation("Cheeps");
+
+                    b.Navigation("UserFollows");
                 });
 
             modelBuilder.Entity("Chirp.Core.Models.Cheep", b =>

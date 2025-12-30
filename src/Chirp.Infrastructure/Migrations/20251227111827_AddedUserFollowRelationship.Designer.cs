@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Infrastructure.Migrations
 {
     [DbContext(typeof(ChirpDBContext))]
-    [Migration("20251205035631_initial")]
-    partial class initial
+    [Migration("20251227111827_AddedUserFollowRelationship")]
+    partial class AddedUserFollowRelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,7 +119,7 @@ namespace Chirp.Infrastructure.Migrations
                     b.ToTable("Cheeps");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Like", b =>
                 {
                     b.Property<string>("authorId")
                         .HasColumnType("TEXT");
@@ -145,10 +145,15 @@ namespace Chirp.Infrastructure.Migrations
                     b.Property<string>("FolloweeId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
                     b.HasKey("FollowerId", "FolloweeId");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("FolloweeId");
 
@@ -294,18 +299,18 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Models.Likes", b =>
+            modelBuilder.Entity("Chirp.Core.Models.Like", b =>
                 {
                     b.HasOne("Chirp.Core.Models.Cheep", "Cheep")
                         .WithMany("Likes")
                         .HasForeignKey("CheepId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Chirp.Core.Models.Author", "Author")
                         .WithMany()
                         .HasForeignKey("authorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
@@ -315,16 +320,20 @@ namespace Chirp.Infrastructure.Migrations
 
             modelBuilder.Entity("Chirp.Core.Models.UserFollow", b =>
                 {
+                    b.HasOne("Chirp.Core.Models.Author", null)
+                        .WithMany("UserFollows")
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("Chirp.Core.Models.Author", "Followee")
                         .WithMany()
                         .HasForeignKey("FolloweeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Chirp.Core.Models.Author", "Follower")
                         .WithMany()
                         .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Followee");
@@ -386,6 +395,8 @@ namespace Chirp.Infrastructure.Migrations
             modelBuilder.Entity("Chirp.Core.Models.Author", b =>
                 {
                     b.Navigation("Cheeps");
+
+                    b.Navigation("UserFollows");
                 });
 
             modelBuilder.Entity("Chirp.Core.Models.Cheep", b =>

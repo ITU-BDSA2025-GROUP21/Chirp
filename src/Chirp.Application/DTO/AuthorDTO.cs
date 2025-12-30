@@ -1,4 +1,4 @@
-namespace Chirp.Core.DTO
+namespace Chirp.Application.DTO
 {
     public record AuthorDTO
     {
@@ -6,6 +6,7 @@ namespace Chirp.Core.DTO
         public string Email { get; set; } = null!;
         public string CreationDate { get; set; } = null!;
 
+        public string ProfilePicPath { get; set; }
         public int karma { get; set; }
         public string Id { get; set; } = null!;
     }
