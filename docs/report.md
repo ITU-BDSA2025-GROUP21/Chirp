@@ -78,7 +78,7 @@ Represents a follow relationship between two authors.
 
 ## Architecture -- In the small
 Model 2:
-![Architecture](/docs/images/Architecture.png)
+![Architecture](/docs/images/Architecture	.png)
 
 As illustrated above, this solution follows the Onion Architecture principle, where all dependencies point inward toward the domain. The goal is to keep business logic isolated from technical and presentation concerns.
 
