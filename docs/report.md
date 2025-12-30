@@ -22,7 +22,7 @@ Table of contents
 # Design and architecture of Chirp!
 
 ## Domain model
-![Illustration of the _Chirp!_ data model as UML class diagram.](/images/DomainModel.png)
+![Illustration of the _Chirp!_ data model as UML class diagram.](images/DomainModel.png)
 As illustrated, the Domain Model consists of four domain entities: **Author**, **Cheep**, **Like**, and **UserFollow**.
 The model integrates **ASP.NET Identity**, with **Author** inheriting from `IdentityUser` to provide built-in authentication and authorization, including email and password management.
 
