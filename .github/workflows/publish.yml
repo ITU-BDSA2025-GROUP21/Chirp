@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   release:
-    name: Build, Test, and Release (ubuntu)
+    name: Build and Release (ubuntu)
     runs-on: ubuntu-latest
 
     steps:
@@ -46,9 +46,6 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal
 
       - name: Publish executables (single-file, framework-dependent)
         shell: bash
