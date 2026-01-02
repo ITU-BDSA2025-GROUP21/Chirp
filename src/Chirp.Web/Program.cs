@@ -74,13 +74,13 @@ public partial class Program
         builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 
-builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
+        builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
 
-builder.Services.AddDbContext<ChirpDBContext>(options =>
-{
-    options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection"))
-           .EnableSensitiveDataLogging(false);
-});
+        builder.Services.AddDbContext<ChirpDBContext>(options =>
+        {
+            options.UseSqlite(builder.Configuration.GetConnectionString("ChirpDBConnection"))
+                   .EnableSensitiveDataLogging(false);
+        });
 
         builder.Services.AddDefaultIdentity<Author>(
             options =>
@@ -107,12 +107,12 @@ builder.Services.AddDbContext<ChirpDBContext>(options =>
 
         var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+        using (var scope = app.Services.CreateScope())
+        {
+            var ctx = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
 
-    ctx.Database.Migrate();
-}
+            ctx.Database.Migrate();
+        }
 
         if (!app.Environment.IsDevelopment())
         {
